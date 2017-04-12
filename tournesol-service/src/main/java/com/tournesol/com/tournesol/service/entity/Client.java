@@ -1,24 +1,30 @@
-package com.tournesol.com.tournesol.service.bean;
+package com.tournesol.com.tournesol.service.entity;
 
 import lombok.Data;
+
+import javax.persistence.Entity;
 
 /**
  * Created by iolivier on 10/04/2017.
  */
 @Data
+@Entity
 public class Client {
 
-    private String name;
+    /**
+     * Nom du client
+     */
+    private String nom;
 
     /**
      * Numéro de téléphone fixe
      */
-    private String phoneNumber;
+    private String telephone;
 
     /**
      * Numéro de téléphone mobile.
      */
-    private String mobilePhoneNumber;
+    private String portable;
 
     /**
      * Email.
