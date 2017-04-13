@@ -1,8 +1,9 @@
-package com.tournesol.com.tournesol.service.entity;
+package com.tournesol.service.entity;
 
 import lombok.Data;
 
-import javax.persistence.Entity;
+import javax.persistence.*;
+import java.io.Serializable;
 import java.sql.Date;
 
 /**
@@ -10,7 +11,11 @@ import java.sql.Date;
  */
 @Data
 @Entity
-public class Appareil {
+public class Appareil implements Serializable {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
     /**
      * Adresse où l'appareil est entretenu.
@@ -36,4 +41,7 @@ public class Appareil {
      * Date de mise en service.
      */
     private Date dateMiseEnService;
+
+    @ManyToOne
+    private Client client;
 }
