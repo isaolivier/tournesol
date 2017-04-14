@@ -22,8 +22,8 @@ public class AppareilEntity implements Serializable {
     /**
      * Adresse où l'appareil est entretenu.
      */
-    @Column(name = "adresse", nullable = false)
-    private String adresse;
+    @OneToOne(targetEntity = AdresseEntity.class)
+    private AdresseEntity adresse;
 
     /**
      * Marque de l'appareil.
