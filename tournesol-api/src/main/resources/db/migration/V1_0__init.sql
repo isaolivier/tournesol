@@ -1,1 +1,0 @@
-INSERT INTO APPAREIL(id, adresse, codePostal,)
