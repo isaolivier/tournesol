@@ -1,14 +1,13 @@
 package com.tournesol;
 
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@EnableAutoConfiguration
 @SpringBootApplication
-public class TournesolServiceApplication {
+public class TournesolApiApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(TournesolServiceApplication.class, args);
+		SpringApplication.run(TournesolApiApplication.class, args);
 	}
+
 }

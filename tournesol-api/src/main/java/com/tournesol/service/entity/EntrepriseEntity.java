@@ -2,10 +2,7 @@ package com.tournesol.service.entity;
 
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.io.Serializable;
 
 /**
@@ -13,13 +10,17 @@ import java.io.Serializable;
  */
 @Data
 @Entity
-public class Entreprise implements Serializable {
+@Table(name = "ENTREPRISE")
+public class EntrepriseEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id", nullable = false, unique = true)
     private Long id;
 
+    @Column(name = "nom")
     private String nom;
 
+    @Column(name = "siret")
     private String siret;
 }
