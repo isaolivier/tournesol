@@ -8,7 +8,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>tournesol-api</name>
+    <name>tournesol-back</name>
     <description>Demo project for Spring Boot</description>
 
     <parent>
@@ -85,7 +85,7 @@
     </dependencies>
 
     <build>
-        <plugins>
+        <plugins>git st
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
