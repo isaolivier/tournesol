@@ -1,5 +1,6 @@
 package com.tournesol.service.entity;
 
+import lombok.Builder;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -10,6 +11,7 @@ import java.util.List;
  * Created by iolivier on 10/04/2017.
  */
 @Data
+@Builder
 @Entity
 @Table(name = "CLIENT")
 public class ClientEntity implements Serializable {
@@ -47,7 +49,7 @@ public class ClientEntity implements Serializable {
      * Note du client : entier de 1 à 5.
      */
     @Column(name = "note")
-    private int note;
+    private Integer note;
 
     /**
      * Appareils du client.
