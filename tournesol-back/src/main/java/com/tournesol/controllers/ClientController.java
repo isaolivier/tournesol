@@ -16,7 +16,7 @@ import static com.tournesol.utils.BeanBuilder.*;
  * Created by redeyed on 4/22/17.
  */
 
-@RestController("/client")
+@RestController
 public class ClientController {
 
     @Autowired
@@ -27,7 +27,7 @@ public class ClientController {
      * @param name
      * @return
      */
-    @GetMapping
+    @GetMapping("/client")
     public Iterable<ClientBean> greeting(@RequestParam(value="name") String name) {
 
         Iterable<ClientEntity> clientEntities = clientRepository.findAll();
@@ -37,7 +37,7 @@ public class ClientController {
                 .collect(Collectors.toList());
     }
 
-    @PutMapping
+    @PutMapping("/client")
     public void createClient(ClientBean client) {
 
         clientRepository.save(ClientEntity.builder()
@@ -49,7 +49,7 @@ public class ClientController {
                 .build());
     }
 
-    @PostMapping
+    @PostMapping("/client")
     public void updateClient(ClientBean client) {
 
         clientRepository.save(ClientEntity.builder()

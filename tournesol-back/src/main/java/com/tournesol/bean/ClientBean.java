@@ -1,17 +1,17 @@
 package com.tournesol.bean;
 
-import com.tournesol.service.entity.AppareilEntity;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-
-import javax.persistence.*;
-import java.util.List;
+import lombok.NoArgsConstructor;
 
 /**
  * Created by iolivier on 25/04/2017.
  */
 @Builder
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class ClientBean {
 
     private Long id;
