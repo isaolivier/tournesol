@@ -25,3 +25,5 @@ dependency-tree.log
 *.retry
 .settings
 target
+
+tournesol-front/www/
