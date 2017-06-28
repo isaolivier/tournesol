@@ -17,11 +17,10 @@ public class AdresseBean {
 
     private Long id;
 
-    private String numero;
-
-    private String voie;
+    private String adresse;
 
     private String codePostal;
 
-    private String codePays;
+    private String commune;
+
 }
