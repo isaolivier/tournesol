@@ -1,15 +1,19 @@
 package com.tournesol.service.entity;
 
-import lombok.Data;
-
-import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Date;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 /**
  * Created by iolivier on 10/04/2017.
  */
-@Data
 @Entity
 @Table(name = "APPAREIL")
 public class AppareilEntity implements Serializable {

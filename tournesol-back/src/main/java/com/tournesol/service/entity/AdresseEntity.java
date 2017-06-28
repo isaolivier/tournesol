@@ -1,13 +1,15 @@
 package com.tournesol.service.entity;
 
-import lombok.Data;
-
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  * Created by iolivier on 14/04/2017.
  */
-@Data
 @Entity
 @Table(name = "ADRESSE")
 public class AdresseEntity {

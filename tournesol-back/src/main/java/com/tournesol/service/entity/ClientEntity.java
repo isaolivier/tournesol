@@ -1,17 +1,21 @@
 package com.tournesol.service.entity;
 
-import lombok.Builder;
-import lombok.Data;
-
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 /**
  * Created by iolivier on 10/04/2017.
  */
-@Data
-@Builder
 @Entity
 @Table(name = "CLIENT")
 public class ClientEntity implements Serializable {
@@ -69,4 +73,89 @@ public class ClientEntity implements Serializable {
     @OneToOne(cascade = CascadeType.ALL)
     private AdresseEntity adresse;
 
+    public ClientEntity() {
+    }
+
+    public ClientEntity(String civilite, String nom, String telephone, String portable, String email, Integer note, List<AppareilEntity> appareils, AdresseEntity adresse) {
+        this.civilite = civilite;
+        this.nom = nom;
+        this.telephone = telephone;
+        this.portable = portable;
+        this.email = email;
+        this.note = note;
+        this.appareils = appareils;
+        this.adresse = adresse;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getCivilite() {
+        return civilite;
+    }
+
+    public String getNom() {
+        return nom;
+    }
+
+    public String getTelephone() {
+        return telephone;
+    }
+
+    public String getPortable() {
+        return portable;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public Integer getNote() {
+        return note;
+    }
+
+    public List<AppareilEntity> getAppareils() {
+        return appareils;
+    }
+
+    public AdresseEntity getAdresse() {
+        return adresse;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setCivilite(String civilite) {
+        this.civilite = civilite;
+    }
+
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
+
+    public void setTelephone(String telephone) {
+        this.telephone = telephone;
+    }
+
+    public void setPortable(String portable) {
+        this.portable = portable;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setNote(Integer note) {
+        this.note = note;
+    }
+
+    public void setAppareils(List<AppareilEntity> appareils) {
+        this.appareils = appareils;
+    }
+
+    public void setAdresse(AdresseEntity adresse) {
+        this.adresse = adresse;
+    }
 }

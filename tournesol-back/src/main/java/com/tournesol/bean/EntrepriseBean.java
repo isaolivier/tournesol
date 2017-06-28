@@ -1,15 +1,8 @@
 package com.tournesol.bean;
 
-import lombok.Builder;
-import lombok.Data;
-
-import javax.persistence.Column;
-
 /**
  * Created by iolivier on 25/04/2017.
  */
-@Data
-@Builder
 public class EntrepriseBean {
 
     private Long id;
@@ -17,4 +10,28 @@ public class EntrepriseBean {
     private String nom;
 
     private String siret;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getNom() {
+        return nom;
+    }
+
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
+
+    public String getSiret() {
+        return siret;
+    }
+
+    public void setSiret(String siret) {
+        this.siret = siret;
+    }
 }

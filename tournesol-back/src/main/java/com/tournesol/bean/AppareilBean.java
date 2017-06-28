@@ -1,18 +1,10 @@
 package com.tournesol.bean;
 
-import com.tournesol.service.entity.AdresseEntity;
-import com.tournesol.service.entity.ClientEntity;
-import lombok.Builder;
-import lombok.Data;
-
-import javax.persistence.*;
 import java.sql.Date;
 
 /**
  * Created by iolivier on 25/04/2017.
  */
-@Data
-@Builder
 public class AppareilBean {
 
     private Long id;
@@ -28,4 +20,60 @@ public class AppareilBean {
     private Date dateMiseEnService;
 
     private ClientBean client;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public AdresseBean getAdresse() {
+        return adresse;
+    }
+
+    public void setAdresse(AdresseBean adresse) {
+        this.adresse = adresse;
+    }
+
+    public String getMarque() {
+        return marque;
+    }
+
+    public void setMarque(String marque) {
+        this.marque = marque;
+    }
+
+    public String getNumeroDeSerie() {
+        return numeroDeSerie;
+    }
+
+    public void setNumeroDeSerie(String numeroDeSerie) {
+        this.numeroDeSerie = numeroDeSerie;
+    }
+
+    public Date getDateInstallation() {
+        return dateInstallation;
+    }
+
+    public void setDateInstallation(Date dateInstallation) {
+        this.dateInstallation = dateInstallation;
+    }
+
+    public Date getDateMiseEnService() {
+        return dateMiseEnService;
+    }
+
+    public void setDateMiseEnService(Date dateMiseEnService) {
+        this.dateMiseEnService = dateMiseEnService;
+    }
+
+    public ClientBean getClient() {
+        return client;
+    }
+
+    public void setClient(ClientBean client) {
+        this.client = client;
+    }
 }

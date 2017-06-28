@@ -1,18 +1,8 @@
 package com.tournesol.bean;
 
-import lombok.Builder;
-import lombok.Data;
-
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-
 /**
  * Created by iolivier on 25/04/2017.
  */
-@Builder
-@Data
 public class AdresseBean {
 
     private Long id;
@@ -23,4 +13,35 @@ public class AdresseBean {
 
     private String commune;
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getAdresse() {
+        return adresse;
+    }
+
+    public void setAdresse(String adresse) {
+        this.adresse = adresse;
+    }
+
+    public String getCodePostal() {
+        return codePostal;
+    }
+
+    public void setCodePostal(String codePostal) {
+        this.codePostal = codePostal;
+    }
+
+    public String getCommune() {
+        return commune;
+    }
+
+    public void setCommune(String commune) {
+        this.commune = commune;
+    }
 }
