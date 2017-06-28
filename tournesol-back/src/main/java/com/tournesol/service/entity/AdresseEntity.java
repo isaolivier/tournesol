@@ -17,15 +17,10 @@ public class AdresseEntity {
     @Column(name = "id", nullable = false, unique = true)
     private Long id;
 
-    @Column(name = "numero", nullable = false)
-    private String numero;
-
-    @Column(name = "voie", nullable = false)
-    private String voie;
+    @Column(name = "numeroVoie")
+    private String numeroVoie;
 
     @Column(name = "codePostal", nullable = false)
     private String codePostal;
 
-    @Column(name = "codePays")
-    private String codePays;
 }

@@ -28,7 +28,7 @@ public class ClientController {
      * @return
      */
     @GetMapping
-    public Iterable<ClientBean> greeting(@RequestParam(value="name") String name) {
+    public Iterable<ClientBean> greeting() {
 
         Iterable<ClientEntity> clientEntities = clientRepository.findAll();
 

@@ -22,6 +22,12 @@ public class ClientEntity implements Serializable {
     private Long id;
 
     /**
+     * Mr/Mme/MrMme/Sté
+     */
+    @Column(name = "civilite")
+    private String civilite;
+
+    /**
      * Nom du client
      */
     @Column(name = "nom")
@@ -56,5 +62,11 @@ public class ClientEntity implements Serializable {
      */
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "client", fetch = FetchType.LAZY)
     private List<AppareilEntity> appareils;
+
+    /**
+     * Adresse principale du client.
+     */
+    @OneToOne(cascade = CascadeType.ALL)
+    private AdresseEntity adresse;
 
 }

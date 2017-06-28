@@ -16,7 +16,11 @@ public class ClientBean {
 
     private Long id;
 
+    private String civilite;
+
     private String nom;
+
+    private AdresseBean adresse;
 
     private String telephone;
 

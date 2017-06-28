@@ -22,6 +22,7 @@ public class BeanBuilder {
 
         return ClientBean.builder()
                 .id(client.getId())
+                .civilite(client.getCivilite())
                 .nom(client.getNom())
                 .telephone(client.getTelephone())
                 .portable(client.getPortable())
@@ -39,10 +40,8 @@ public class BeanBuilder {
 
         return AdresseBean.builder()
                 .id(adresse.getId())
-                .numero(adresse.getNumero())
-                .voie(adresse.getVoie())
+                .adresse(adresse.getNumeroVoie())
                 .codePostal(adresse.getCodePostal())
-                .codePays(adresse.getCodePays())
                 .build();
     }
 }
