@@ -11,6 +11,8 @@ public class ClientBean {
 
     private String nom;
 
+    private String societe;
+
     private AdresseBean adresse;
 
     private String telephone;
@@ -24,10 +26,11 @@ public class ClientBean {
     public ClientBean() {
     }
 
-    public ClientBean(Long id, String civilite, String nom, AdresseBean adresse, String telephone, String portable, String email, Integer note) {
+    public ClientBean(Long id, String civilite, String nom, String societe, AdresseBean adresse, String telephone, String portable, String email, Integer note) {
         this.id = id;
         this.civilite = civilite;
         this.nom = nom;
+        this.societe = societe;
         this.adresse = adresse;
         this.telephone = telephone;
         this.portable = portable;
@@ -57,6 +60,14 @@ public class ClientBean {
 
     public void setNom(String nom) {
         this.nom = nom;
+    }
+
+    public String getSociete() {
+        return societe;
+    }
+
+    public void setSociete(String societe) {
+        this.societe = societe;
     }
 
     public AdresseBean getAdresse() {

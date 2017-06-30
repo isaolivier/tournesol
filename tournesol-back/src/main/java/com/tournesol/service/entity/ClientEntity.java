@@ -26,7 +26,7 @@ public class ClientEntity implements Serializable {
     private Long id;
 
     /**
-     * Mr/Mme/MrMme/Sté
+     * Mr/Mme/MrMme
      */
     @Column(name = "civilite")
     private String civilite;
@@ -36,6 +36,12 @@ public class ClientEntity implements Serializable {
      */
     @Column(name = "nom")
     private String nom;
+
+    /**
+     * Nom de la société lorsque le client est une société.
+     */
+    @Column(name = "societe")
+    private String societe;
 
     /**
      * Numéro de téléphone fixe
