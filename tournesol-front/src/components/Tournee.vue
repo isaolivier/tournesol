@@ -12,19 +12,15 @@
             :y2="index * hourIntervall + 33" style="stroke:rgb(180,180,180);stroke-width:0.5"/>
 
       <!-- Rendez-vous -->
-      <rect x="90" y="15" rx="15" ry="15" width="450" height="128"
-            style="fill:white;stroke:lightblue;stroke-width:2;opacity:0.9"/>
-      <text x="100" y="40">Alexandre Durand</text>
-
-      <icon name="phone" scale="2" x="250px" y="18px"></icon>
-      <icon name="waze" scale="2" x="290px"y="18px"></icon>
-
+      <rdv></rdv>
     </svg>
   </div>
 
 </template>
 
 <script>
+  import RendezVous from './RendezVous.vue'
+
   export default {
     name: 'tournee',
 
@@ -40,6 +36,10 @@
         lineWidth: document.documentElement.clientWidth - 200,
         hourIntervall: 46
       }
+    },
+
+    components: {
+      'rdv': RendezVous
     }
   }
 </script>
