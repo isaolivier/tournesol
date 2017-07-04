@@ -23,10 +23,6 @@
       rdv: {
         type: Object,
         required: true
-      },
-      width: {
-        type: Number,
-        default: 500
       }
     },
     data () {
@@ -41,9 +37,6 @@
         let debut = this.rdv.dateDebut.getHours() - 8
         let fin = this.rdv.dateFin.getHours() - 8
         return Config.tournee.hourInterval * (fin - debut) - 10
-      },
-      width: function () {
-        return this.width
       }
     }
   }

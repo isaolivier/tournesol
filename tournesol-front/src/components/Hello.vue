@@ -3,7 +3,7 @@
     <el-tabs type="border-card">
       <el-tab-pane>
         <span slot="label"><i class="el-icon-edit"></i> Client</span>
-        <client></client>
+        <annuaire></annuaire>
       </el-tab-pane>
       <el-tab-pane>
         <span slot="label"><i class="el-icon-date"></i> Tournées</span>
@@ -15,7 +15,7 @@
 </template>
 
 <script>
-  import Client from './Client.vue'
+  import Annuaire from './Annuaire.vue'
   import Tournee from './Tournee.vue'
 
   export default {
@@ -28,7 +28,7 @@
     components: {
       // <my-component> will only be available in parent's template
       Tournee,
-      'client': Client
+      'annuaire': Annuaire
     }
   }
 </script>
