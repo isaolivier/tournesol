@@ -18,6 +18,13 @@
       }
     },
     mounted: function () {
+      this.$http.get('http://localhost:8081/client').then(response => {
+        // get body data
+        console.log(response)
+      }, response => {
+          // error callback
+      })
+
       let clientBean = new ClientBean()
       clientBean.prenom = 'Alex'
       clientBean.nom = 'Durand'

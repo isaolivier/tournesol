@@ -5,10 +5,13 @@ import App from './App'
 import ElementUI from 'element-ui'
 import router from './router'
 import Icon from 'vue-awesome/components/Icon'
+import VueResource from 'vue-resource'
 
 Vue.config.productionTip = false
 
 Vue.use(ElementUI)
+Vue.use(VueResource)
+
 Vue.component('icon', Icon)
 
 Icon.register({
