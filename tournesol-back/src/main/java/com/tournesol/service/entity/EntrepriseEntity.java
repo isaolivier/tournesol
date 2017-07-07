@@ -1,6 +1,7 @@
 package com.tournesol.service.entity;
 
 import java.io.Serializable;
+import java.time.LocalTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -25,4 +26,23 @@ public class EntrepriseEntity implements Serializable {
 
     @Column(name = "siret")
     private String siret;
+
+    /**
+     * Heure d'ouverture.
+     */
+    @Column(name = "heure_debut")
+    private LocalTime heureDebut;
+
+    /**
+     * Heure de fermeture.
+     */
+    @Column(name = "heure_fin")
+    private LocalTime heureFin;
+
+    /**
+     * Indexes des jours d'ouverture de l'entrerpise.
+     * 0, 1, 2, 3, 4 pour lundi, mardi, mercredi jeudi, vendredi.
+     */
+    @Column(name = "jours_ouverture")
+    private int[] joursOuverture;
 }
