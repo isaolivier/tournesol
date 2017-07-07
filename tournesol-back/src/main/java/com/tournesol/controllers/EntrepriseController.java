@@ -1,12 +1,10 @@
 package com.tournesol.controllers;
 
 import com.tournesol.bean.EntrepriseBean;
-import com.tournesol.mapper.EntrepriseMapper;
-import com.tournesol.service.entity.EntrepriseEntity;
 import com.tournesol.service.repository.EntrepriseRepository;
 
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
+import java.time.LocalTime;
+import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,11 +29,19 @@ public class EntrepriseController {
     @GetMapping("/entreprise")
     public Iterable<EntrepriseBean> greeting(@RequestParam(value="name", defaultValue="World") String name) {
 
-        Iterable<EntrepriseEntity> entrepriseEntities = entrepriseRepository.findAll();
+//        Iterable<EntrepriseEntity> entrepriseEntities = entrepriseRepository.findAll();
+//
+//        return StreamSupport.stream(entrepriseEntities.spliterator(), false)
+//                .map(e -> EntrepriseMapper.INSTANCE.entrepriseToEntrepriseBean(e))
+//                .collect(Collectors.toList());
 
-        return StreamSupport.stream(entrepriseEntities.spliterator(), false)
-                .map(e -> EntrepriseMapper.INSTANCE.entrepriseToEntrepriseBean(e))
-                .collect(Collectors.toList());
+        final EntrepriseBean entrepriseBean = new EntrepriseBean();
+        entrepriseBean.setId(1l);
+        entrepriseBean.setNom("Samson Multi Services");
+        entrepriseBean.setHeureDebut(LocalTime.of(8, 00));
+        entrepriseBean.setHeureFin(LocalTime.of(18, 00));
+
+        return Arrays.asList(entrepriseBean);
     }
 
 }
