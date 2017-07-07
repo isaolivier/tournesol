@@ -1,5 +1,6 @@
 <template>
     <svg>
+        <rect x="10" :y="(rang) * 50 + 25" width="90%" height="40" fill="white" stroke="#765373"/>
         <text x="50" :y="(rang + 1) * 50">{{client.nom}}</text>
         <text x="150" :y="(rang + 1) * 50">{{client.prenom}}</text>
     </svg>
@@ -21,9 +22,7 @@
       }
     },
     data () {
-      return {
-
-      }
+      return {}
     }
   }
 </script>
