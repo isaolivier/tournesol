@@ -29,8 +29,8 @@
 
 <script>
   import RendezVous from './RendezVous.vue'
-  import {RendezVousBean} from '../bean/RendezVousBean.js'
-  import Constants from '../bean/Constants'
+  import {RendezVousBean} from '../../bean/RendezVousBean.js'
+  import Constants from '../../bean/Constants'
 
   export default {
     name: 'tournee',

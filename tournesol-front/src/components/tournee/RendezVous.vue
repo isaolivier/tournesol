@@ -15,7 +15,7 @@
 </template>
 
 <script>
-  import Config from '../bean/Constants'
+  import Config from '../../bean/Constants'
 
   export default {
     name: 'rdv',

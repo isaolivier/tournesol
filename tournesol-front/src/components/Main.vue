@@ -15,11 +15,11 @@
 </template>
 
 <script>
-  import Annuaire from './Annuaire.vue'
-  import Tournee from './Tournee.vue'
+  import Annuaire from './client/Annuaire.vue'
+  import Tournee from './tournee/Tournee.vue'
 
   export default {
-    name: 'hello',
+    name: 'main',
     data () {
       return {
         msg: 'Welcome to Your Vue.js App'

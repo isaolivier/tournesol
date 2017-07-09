@@ -6,6 +6,5 @@ export class ClientBean {
   constructor () {
     this.id = null
     this.nom = null
-    this.prenom = null
   }
 }
