@@ -1,11 +1,11 @@
 <template>
-    <div width="100%">
+    <div style="height:80vh; width:100%">
         <div v-if="loading">Loading ...</div>
         <div v-if="error" x="50" :y="100">{{error}}</div>
 
-        <svg width="100%" height="600" v-if="clients">
+        <svg width="100%" height="100%">
             <client v-for="(client, index) in clients" :rang="index" :client="client" :key="client.id"></client>
-            <letters v-if="letters" :model="letters"/>
+            <letters :model="letters"/>
         </svg>
     </div>
 </template>
@@ -21,19 +21,18 @@
       return {
         clients: [],
         loading: false,
-        post: null,
         error: null
       }
     },
     created () {
       this.fetchData()
     },
-    mounted: function () {
-    },
     computed: {
       letters: function () {
         let letters = new Set()
-        this.clients.map(client => client.nom[0]).forEach(letter => letters.add(letter))
+        this.clients.map(client => client.nom[0]
+        ).forEach(letter => letters.add(letter))
+
         return letters
       }
     },
@@ -43,7 +42,7 @@
     },
     methods: {
       fetchData () {
-        this.error = this.post = null
+        this.error = null
         this.loading = true
         let clientResource = new ClientResource()
         clientResource.findAllClient((err, result) => {
