@@ -1,18 +1,33 @@
 package com.tournesol;
 
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
 @SpringBootApplication
 @EnableWebSecurity
 @EnableSwagger2
-public class TournesolApiApplication {
+@EnableOAuth2Sso
+public class TournesolApiApplication extends WebSecurityConfigurerAdapter {
 
-	public static void main(String[] args) {
-		SpringApplication.run(TournesolApiApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(TournesolApiApplication.class, args);
+    }
 
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http
+                .antMatcher("/**")
+                .authorizeRequests()
+                    .antMatchers("/","/entreprise", "/login", "/webjars/**")
+                    .permitAll()
+                .anyRequest()
+                    .authenticated()
+                .and().csrf().disable();
+    }
 }
