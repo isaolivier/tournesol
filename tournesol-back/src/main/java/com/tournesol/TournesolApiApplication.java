@@ -24,7 +24,7 @@ public class TournesolApiApplication extends WebSecurityConfigurerAdapter {
         http
                 .antMatcher("/**")
                 .authorizeRequests()
-                    .antMatchers("/","/entreprise", "/login", "/webjars/**")
+                    .antMatchers("/", "/login", "/webjars/**")
                     .permitAll()
                 .anyRequest()
                     .authenticated()
