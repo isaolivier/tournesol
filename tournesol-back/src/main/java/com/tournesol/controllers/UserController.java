@@ -16,8 +16,4 @@ public class UserController {
         return principal;
     }
 
-    @RequestMapping("/login")
-    public Principal login(Principal principal) {
-        return principal;
-    }
 }
