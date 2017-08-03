@@ -4,12 +4,10 @@
 
 export class RendezVousBean {
 
-  constructor (dateDebut, dateFin, client, appareil) {
-    this.dateDebut = dateDebut
-    this.dateFin = dateFin
-
-    this.client = client
-    this.appareil = appareil
+  constructor () {
+    this.client = null
+    this.appareils = []
+    this.event = null
   }
 
 }

@@ -9,8 +9,6 @@ public class AppareilBean {
 
     private Long id;
 
-    private AdresseBean adresse;
-
     private String marque;
 
     private String numeroDeSerie;
@@ -19,22 +17,12 @@ public class AppareilBean {
 
     private Date dateMiseEnService;
 
-    private ClientBean client;
-
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public AdresseBean getAdresse() {
-        return adresse;
-    }
-
-    public void setAdresse(AdresseBean adresse) {
-        this.adresse = adresse;
     }
 
     public String getMarque() {
@@ -69,11 +57,4 @@ public class AppareilBean {
         this.dateMiseEnService = dateMiseEnService;
     }
 
-    public ClientBean getClient() {
-        return client;
-    }
-
-    public void setClient(ClientBean client) {
-        this.client = client;
-    }
 }

@@ -30,6 +30,12 @@ public class AppareilEntity implements Serializable {
     private AdresseEntity adresse;
 
     /**
+     * Denomination de l'appareil.
+     */
+    @Column(name = "denomination")
+    private String denomination;
+
+    /**
      * Marque de l'appareil.
      */
     @Column(name = "marque")
@@ -55,4 +61,60 @@ public class AppareilEntity implements Serializable {
 
     @ManyToOne(targetEntity = ClientEntity.class)
     private ClientEntity client;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public AdresseEntity getAdresse() {
+        return adresse;
+    }
+
+    public void setAdresse(AdresseEntity adresse) {
+        this.adresse = adresse;
+    }
+
+    public String getMarque() {
+        return marque;
+    }
+
+    public void setMarque(String marque) {
+        this.marque = marque;
+    }
+
+    public String getNumeroDeSerie() {
+        return numeroDeSerie;
+    }
+
+    public void setNumeroDeSerie(String numeroDeSerie) {
+        this.numeroDeSerie = numeroDeSerie;
+    }
+
+    public Date getDateInstallation() {
+        return dateInstallation;
+    }
+
+    public void setDateInstallation(Date dateInstallation) {
+        this.dateInstallation = dateInstallation;
+    }
+
+    public Date getDateMiseEnService() {
+        return dateMiseEnService;
+    }
+
+    public void setDateMiseEnService(Date dateMiseEnService) {
+        this.dateMiseEnService = dateMiseEnService;
+    }
+
+    public ClientEntity getClient() {
+        return client;
+    }
+
+    public void setClient(ClientEntity client) {
+        this.client = client;
+    }
 }

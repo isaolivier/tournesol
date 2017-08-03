@@ -18,6 +18,5 @@ public interface AppareilMapper {
 
     AppareilBean appareilToAppareilBean(AppareilEntity clientEntity);
     AppareilEntity appareilBeanToAppareil(AppareilBean clientBean);
-
 }
 

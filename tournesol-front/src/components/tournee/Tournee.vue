@@ -7,7 +7,7 @@
 
             <!-- Heures -->
             <text v-for="h in (nbHeures + 1)" x="0" :y="(h - 1) * hourInterval + 15">{{h
-                + heuresOuverture[0] - 1}}:00
+            + heuresOuverture[0] - 1}}:00
             </text>
 
             <line v-for="h in (nbHeures + 1)" x1="50" x2="100%"
@@ -29,26 +29,31 @@
 
 <script>
   import RendezVous from './RendezVous.vue'
-  import {RendezVousBean} from '../../bean/RendezVousBean.js'
   import Constants from '../../bean/Constants'
+  import {RendezVousResource} from '../../resource/RendezVousResource'
 
   export default {
     name: 'tournee',
 
     data () {
       return {
+        loading: false,
+        error: null,
         heuresOuverture: [8, 18],
         rendezvous: [],
         hourInterval: Constants.tournee.hourInterval,
         agenda: null
       }
     },
+    created () {
+      this.fetchData()
+    },
     mounted: function () {
-      let rdv1 = new RendezVousBean(new Date(2017, 3, 1, 8, 30), new Date(2017, 3, 1, 10), 'Alex Durand', null)
-      let rdv2 = new RendezVousBean(new Date(2017, 3, 1, 14), new Date(2017, 3, 1, 16), 'David Raluy', null)
-
-      this.rendezvous.push(rdv1)
-      this.rendezvous.push(rdv2)
+//      let rdv1 = new RendezVousBean(new Date(2017, 3, 1, 8, 30), new Date(2017, 3, 1, 10), 'Alex Durand', null)
+//      let rdv2 = new RendezVousBean(new Date(2017, 3, 1, 14), new Date(2017, 3, 1, 16), 'David Raluy', null)
+//
+//      this.rendezvous.push(rdv1)
+//      this.rendezvous.push(rdv2)
     },
     computed: {
       nbHeures: function () {
@@ -57,6 +62,21 @@
     },
     components: {
       'rdv': RendezVous
+    },
+    methods: {
+      fetchData () {
+        this.error = null
+        this.loading = true
+        let rdvResource = new RendezVousResource()
+        rdvResource.findRendezVous((err, result) => {
+          this.loading = false
+          if (err) {
+            this.error = err.toString()
+          } else {
+            this.rendezvous = result
+          }
+        })
+      }
     }
   }
 </script>
