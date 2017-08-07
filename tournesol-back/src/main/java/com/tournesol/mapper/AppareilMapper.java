@@ -6,7 +6,7 @@ package com.tournesol.mapper;
 
 
 import com.tournesol.bean.AppareilBean;
-import com.tournesol.service.entity.AppareilEntity;
+import com.tournesol.service.repository.entity.AppareilEntity;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;

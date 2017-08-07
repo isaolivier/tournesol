@@ -2,7 +2,7 @@ package com.tournesol.controllers;
 
 import com.tournesol.bean.AppareilBean;
 import com.tournesol.mapper.AppareilMapper;
-import com.tournesol.service.entity.AppareilEntity;
+import com.tournesol.service.repository.entity.AppareilEntity;
 import com.tournesol.service.repository.AppareilRepository;
 
 import java.util.stream.Collectors;

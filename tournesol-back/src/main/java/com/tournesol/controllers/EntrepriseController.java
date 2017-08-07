@@ -35,6 +35,7 @@ public class EntrepriseController {
 //                .map(e -> EntrepriseMapper.INSTANCE.entrepriseToEntrepriseBean(e))
 //                .collect(Collectors.toList());
 
+        //TODO: supprimer ces donnees en dur
         final EntrepriseBean entrepriseBean = new EntrepriseBean();
         entrepriseBean.setId(1l);
         entrepriseBean.setNom("Samson Multi Services");

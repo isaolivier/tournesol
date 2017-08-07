@@ -7,8 +7,8 @@ package com.tournesol.mapper;
 
 import com.tournesol.bean.AdresseBean;
 import com.tournesol.bean.ClientBean;
-import com.tournesol.service.entity.AdresseEntity;
-import com.tournesol.service.entity.ClientEntity;
+import com.tournesol.service.repository.entity.AdresseEntity;
+import com.tournesol.service.repository.entity.ClientEntity;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;

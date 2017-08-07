@@ -1,10 +1,8 @@
 package com.tournesol.service.repository;
 
-import com.tournesol.service.entity.AppareilEntity;
-import com.tournesol.service.entity.EntrepriseEntity;
 import org.springframework.data.repository.PagingAndSortingRepository;
-import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.stereotype.Repository;
+import com.tournesol.service.repository.entity.EntrepriseEntity;
 
 /**
  * Created by iolivier on 12/04/2017.

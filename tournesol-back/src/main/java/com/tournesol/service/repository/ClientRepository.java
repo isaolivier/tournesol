@@ -1,12 +1,9 @@
 package com.tournesol.service.repository;
 
-import com.tournesol.service.entity.AppareilEntity;
-import com.tournesol.service.entity.ClientEntity;
+import com.tournesol.service.repository.entity.ClientEntity;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 /**
  * Created by iolivier on 12/04/2017.

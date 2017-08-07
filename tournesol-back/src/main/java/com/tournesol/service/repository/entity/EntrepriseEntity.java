@@ -1,4 +1,4 @@
-package com.tournesol.service.entity;
+package com.tournesol.service.repository.entity;
 
 import java.io.Serializable;
 import java.time.LocalTime;
