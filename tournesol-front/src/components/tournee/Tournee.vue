@@ -2,6 +2,7 @@
 
     <div>
         Slider des dates<br/>
+        <dates></dates>
 
         <svg id="agenda" :height="nbHeures * hourInterval + 20">
 
@@ -29,6 +30,7 @@
 
 <script>
   import RendezVous from './RendezVous.vue'
+  import DateStrip from './DateStrip.vue'
   import Constants from '../../bean/Constants'
   import {RendezVousResource} from '../../resource/RendezVousResource'
 
@@ -48,20 +50,14 @@
     created () {
       this.fetchData()
     },
-    mounted: function () {
-//      let rdv1 = new RendezVousBean(new Date(2017, 3, 1, 8, 30), new Date(2017, 3, 1, 10), 'Alex Durand', null)
-//      let rdv2 = new RendezVousBean(new Date(2017, 3, 1, 14), new Date(2017, 3, 1, 16), 'David Raluy', null)
-//
-//      this.rendezvous.push(rdv1)
-//      this.rendezvous.push(rdv2)
-    },
     computed: {
       nbHeures: function () {
         return this.heuresOuverture[1] - this.heuresOuverture[0]
       }
     },
     components: {
-      'rdv': RendezVous
+      'rdv': RendezVous,
+      'dates': DateStrip
     },
     methods: {
       fetchData () {
