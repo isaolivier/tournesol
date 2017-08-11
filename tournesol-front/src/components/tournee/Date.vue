@@ -45,9 +45,23 @@
         flex-shrink: 0;
         border: solid 1px black;
         margin: 0px 2px;
+        padding : 0 0 4px 0
     }
 
     .highlight {
         border: solid 2px orange;
+        background-color: orange;
+        color: white;
+        text-shadow: 1px 1px 3px #333;
+    }
+
+    .dow {
+        font-size : 10pt;
+        text-align: left;
+        padding-left: 3px;
+    }
+
+    .nb, .month {
+        font-size : 14pt;
     }
 </style>

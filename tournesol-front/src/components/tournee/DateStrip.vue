@@ -1,12 +1,16 @@
 <template>
     <div class="horiz-flex">
-        <icon name="angle-left" scale="4"></icon>
-        <div class="scrolling-container">
-            <div class="horiz-flex" style="margin-left: -50%">
-                <date v-for="date in days" :date="date" :highlight="date.dayOfYear() === dateCourante.dayOfYear()" :key="date.millisecond()"></date>
+        <icon @click.native="shiftLeft" name="angle-left" scale="4"></icon>
+        <div class="scrolling-container ">
+            <div class="gradient"></div>
+            <div class="horiz-flex " style="margin-left: -50%">
+                <date v-for="date in days" :date="date" :highlight="date.dayOfYear() === dateCourante.dayOfYear()"
+                      :key="date.millisecond()" @click.native="selectDay(date)"></date>
             </div>
+            <div class=""></div>
         </div>
-        <icon name="angle-right" scale="4"></icon>
+
+        <icon @click.native="shiftRight" name="angle-right" scale="4"></icon>
     </div>
 </template>
 
@@ -19,18 +23,34 @@
     data: function () {
       return {
         dateCourante: moment(),
+        days: [],
         nbDates: 31
       }
     },
-    computed: {
-      days: function () {
+    created: function () {
+      this.updateDays()
+    },
+    methods: {
+      shiftLeft: function (event) {
+        this.dateCourante.subtract(1, 'days')
+        this.updateDays()
+      },
+      shiftRight: function (event) {
+        this.dateCourante.add(1, 'days')
+        this.updateDays()
+      },
+      selectDay: function (event) {
+        this.dateCourante = event
+        this.updateDays()
+      },
+      updateDays: function () {
         let days = []
         let nbDaysBefore = Math.floor(this.nbDates / 2)
         for (let i = 0; i < this.nbDates; i++) {
           let curDate = moment(this.dateCourante).add(i - nbDaysBefore, 'days')
           days.push(curDate)
         }
-        return days
+        this.days = days
       }
     },
     components: {
@@ -41,14 +61,23 @@
 
 <style scoped>
     .horiz-flex {
-        display:flex;
+        display: flex;
         flex-direction: row;
     }
+    .gradient{
+        background: linear-gradient(to right, white, rgba(0,0,0,0) 10%, rgba(0,0,0,0) 90%, white );
+        position:absolute;
+        left:0; top:0;
+        width: 100%;
+        height:100%;
+        pointer-events: none;
+    }
 
-    .scrolling-container{
+    .scrolling-container {
         width: 100%;
         overflow-x: scroll;
         overflow: hidden;
         text-align: center;
+        position: relative;
     }
 </style>
