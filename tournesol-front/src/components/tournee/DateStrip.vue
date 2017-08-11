@@ -73,16 +73,13 @@
         pointer-events: none;
     }
 
-    .center{
-    margin: auto;
-    }
-
     .scrolling-container {
         width: 100%;
         overflow-x: scroll;
         overflow: hidden;
-        text-align: center;
         position: relative;
         display: flex;
+        justify-content: center;
+        align-items: center;
     }
 </style>
