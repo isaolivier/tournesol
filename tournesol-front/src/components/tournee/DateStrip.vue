@@ -3,7 +3,7 @@
         <icon @click.native="shiftLeft" name="angle-left" scale="4"></icon>
         <div class="scrolling-container ">
             <div class="gradient"></div>
-            <div class="horiz-flex " style="margin-left: -50%">
+            <div class="horiz-flex center">
                 <date v-for="date in days" :date="date" :highlight="date.dayOfYear() === dateCourante.dayOfYear()"
                       :key="date.millisecond()" @click.native="selectDay(date)"></date>
             </div>
@@ -24,7 +24,7 @@
       return {
         dateCourante: moment(),
         days: [],
-        nbDates: 31
+        nbDates: 21
       }
     },
     created: function () {
@@ -73,11 +73,16 @@
         pointer-events: none;
     }
 
+    .center{
+    margin: auto;
+    }
+
     .scrolling-container {
         width: 100%;
         overflow-x: scroll;
         overflow: hidden;
         text-align: center;
         position: relative;
+        display: flex;
     }
 </style>
