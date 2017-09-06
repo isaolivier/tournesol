@@ -1,13 +1,22 @@
 <template>
-    <div>
-        <g-signin-button
-                :params="googleSignInParams"
-                @success="onSignInSuccess"
-                @error="onSignInError">
-            Sign in with Google
-        </g-signin-button>
-
-    </div>
+    <el-row :gutter="20">
+        <el-col :span="18"><div class="grid-content">&nbsp;</div></el-col>
+        <el-col :span="3">
+          <!-- <div class="grid-content">
+            <g-signin-button
+                    :params="googleSignInParams"
+                    @success="onSignInSuccess"
+                    @error="onSignInError">
+                Sign in with Google
+            </g-signin-button>
+          </div> -->
+        </el-col>
+        <el-col :span="3">
+          <div class="grid-content">
+            <!-- <button v-on:click="signOut();">Sign out</button> -->
+          </div>
+        </el-col>
+    </el-row>
 </template>
 
 <script>
@@ -16,12 +25,24 @@
     data: function (router) {
       return {
         googleSignInParams: {
-          client_id: '108454532704-ad5ips5206l0lutsqpmcbvh7229e3t0g.apps.googleusercontent.com'
+          client_id: '108454532704-ad5ips5206l0lutsqpmcbvh7229e3t0g.apps.googleusercontent.com',
+          scope: 'https://www.googleapis.com/auth/calendar'
         }
       }
     },
     methods: {
+      signOut () {
+        console.log('Sign out')
+        window.gapi.auth2.getAuthInstance().signOut().then(function () {
+          console.log('User signed out.')
+        })
+      },
       onSignInSuccess (googleUser) {
+        console.log('onSignInSuccess')
+        console.log('googleUser: ')
+        console.log(googleUser)
+        console.log('googleUser: ')
+        console.log(googleUser)
         // `googleUser` is the GoogleUser object that represents the just-signed-in user.
         // See https://developers.google.com/identity/sign-in/web/reference#users
         const profile = googleUser.getBasicProfile()
@@ -35,7 +56,16 @@
           window.localStorage.setItem('user', JSON.stringify(profile))
           window.localStorage.setItem('token', idToken)
         }
-        this.$router.push('/home')
+        // POST token to back for validation and storage
+        // GET /someUrl
+        this.$http.post('/authcode').then(response => {
+          // success callback
+          console.log('authcode POSTed to BE successfully')
+          this.$router.push('/home')
+        }, response => {
+          // error callback
+          console.log('Could not POST authcode to BE')
+        })
       },
       onSignInError (error) {
         // `error` contains any error occurred.

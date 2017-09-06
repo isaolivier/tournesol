@@ -2,7 +2,6 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import App from './App'
 import ElementUI from 'element-ui'
-import GSignInButton from 'vue-google-signin-button'
 import Icon from 'vue-awesome/components/Icon'
 import router from './router'
 import Vue from 'vue'
@@ -11,9 +10,7 @@ import VueResource from 'vue-resource'
 Vue.config.productionTip = false
 
 Vue.use(ElementUI)
-Vue.use(GSignInButton)
 Vue.use(VueResource)
-
 Vue.component('icon', Icon)
 
 Icon.register({
