@@ -6,7 +6,7 @@ Vue.use(VueResource)
 export class ClientResource {
 
   findAllClient (result) {
-    return Vue.http.get('http://localhost:8081/client').then(response => {
+    return Vue.http.get('http://localhost:8081/client?authorization_code=' + window.localStorage.token).then(response => {
       // get body data
       console.log(response)
       return result(null, response.data)
