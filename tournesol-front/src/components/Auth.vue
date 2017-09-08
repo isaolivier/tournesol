@@ -4,7 +4,7 @@
     <button v-if="!isSignedIn" v-on:click="promptUserConsent"><icon name="power-off"></icon>&nbsp;Sign in</button>
     <button v-if="!isSignedOut" v-on:click="disconnect"><icon name="power-off"></icon>&nbsp;Sign out</button>
     <button v-on:click="fetchCals"><icon name="bolt"></icon>&nbsp;Fetch cals</button>
-    <p v-if="!isSignedOut">Email: {{email}}</p>
+    <p v-if="!isSignedOut">Email: {{email}} | UID: {{uid}}</p>
     <p v-if="!isSignedOut">Cals: {{cals}}</p>
   </div>
 </template>
@@ -26,6 +26,7 @@ export default {
       authCode: '',
       user: '',
       email: '',
+      uid: '',
       cals: ''
     }
   },
@@ -48,6 +49,17 @@ export default {
           // self.updateSigninStatus(window.gapi.auth2.getAuthInstance().isSignedIn.get())
           window.gapi.auth2.getAuthInstance().currentUser.listen(self.updateUser)
           self.updateUser(window.gapi.auth2.getAuthInstance().currentUser.get())
+          if (window.gapi.auth2.getAuthInstance().isSignedIn.get()) {
+            self.log('Already logged in, trying to restore data')
+            if (window.localStorage) {
+              self.user = window.localStorage.getItem('user')
+              self.uid = window.localStorage.getItem('uid')
+              self.email = window.localStorage.getItem('email')
+            } else {
+              self.log('Could not restore data as local storage is not available, killing session and starting a new one')
+              self.disconnect()
+            }
+          }
         })
       })
     },
@@ -83,7 +95,12 @@ export default {
         Vue.http.post('http://localhost:8081/auth', data).then(
           response => {
             self.log('signIn OK')
-            self.log(response.body)
+            self.uid = response.body['uid']
+            if (window.localStorage) {
+              window.localStorage.setItem('user', JSON.stringify(user.getBasicProfile()))
+              window.localStorage.setItem('uid', self.uid)
+              window.localStorage.setItem('email', JSON.stringify(user.getBasicProfile().getEmail()))
+            }
           },
           error => {
             self.log('signIn KO ', error)
@@ -117,7 +134,8 @@ export default {
       let self = this
       self.log('Fetching calendars')
       if (window.gapi.auth2.getAuthInstance() && window.gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile()) {
-        Vue.http.get('http://localhost:8081/fetchCal?email=' + window.gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile().getEmail()).then(
+        let data = {'code': '', 'email': '', 'uid': self.uid}
+        Vue.http.post('http://localhost:8081/fetchCal', data).then(
           response => {
             self.log('Fetch calendars OK')
             self.log(response.body)
