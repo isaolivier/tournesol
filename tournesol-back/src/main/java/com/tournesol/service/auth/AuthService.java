@@ -13,6 +13,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
 import com.google.api.client.auth.oauth2.Credential;
@@ -36,9 +37,13 @@ public class AuthService {
 
     private static final Logger       LOGGER             = LoggerFactory.getLogger(AuthService.class);
 
+    /* Google API component configuration values */
     private static final List<String> SCOPES             = Arrays.asList("email", "profile", CalendarScopes.CALENDAR);
     private static final String       ACCESS_TYPE        = "offline";
     private static final String       APPROVAL_PROMPT    = "force";
+
+    /* UID generation configuration values */
+    private static final String       SALT               = "add-some-salt-over-it#";
     private static final String       ALGORITHM          = "SHA-256";
     private static final String       CLIENT_SECRET_FILE = "client_secret.json";
     static GoogleClientSecrets        SECRETS            = null;
@@ -53,13 +58,16 @@ public class AuthService {
         getFlow();
     }
 
-    AuthInfo generateUID(AuthInfo authInfo) {
+    public AuthInfo generateUID(AuthInfo authInfo) {
         if (authInfo != null && authInfo.getUID() == null) {
             try {
                 MessageDigest digest = MessageDigest.getInstance(ALGORITHM);
-                byte[] hash = digest.digest(authInfo.getEmail().getBytes(StandardCharsets.UTF_8));
-                System.out.println(String.format("Input: %s - Output: %s", authInfo.getEmail(), new String(hash)));
-                authInfo.setUID(new String(hash));
+                byte[] hash = digest.digest((SALT + authInfo.getEmail()).getBytes(StandardCharsets.UTF_8));
+                StringBuilder strBui = new StringBuilder();
+                for (int i = 0; i < hash.length; i++) {
+                    strBui.append(Integer.toString((hash[i] & 0xff) + 0x100, 16).substring(1));
+                }
+                authInfo.setUID(strBui.toString());
             } catch (Exception e) {
                 LOGGER.error(String.format("Could not crypt user email '%s' using '%s'", authInfo.getEmail(), ALGORITHM), e);
             }
@@ -105,8 +113,7 @@ public class AuthService {
     public Credential getCreds(AuthInfo authInfo) {
         if (getFlow() != null) {
             Credential loggedUser = null;
-            AuthInfo authInfoWithUID = generateUID(authInfo);
-            if (authInfo.getCode() != null) {
+            if (!StringUtils.isEmpty(authInfo.getCode())) {
                 // Initial auth
                 LOGGER.debug("###########################################################################################");
                 LOGGER.debug(String.format("auth code detected, proceeding with OAuth2 workflow"));
@@ -115,27 +122,27 @@ public class AuthService {
                 try {
                     tokenResponse = new GoogleAuthorizationCodeTokenRequest(new NetHttpTransport(), JacksonFactory.getDefaultInstance(),
                             GoogleOAuthConstants.TOKEN_SERVER_URL, getGoogleClientSecrets().getDetails().getClientId(),
-                            getGoogleClientSecrets().getDetails().getClientSecret(), authInfoWithUID.getCode(), "postmessage").execute();
+                            getGoogleClientSecrets().getDetails().getClientSecret(), authInfo.getCode(), "postmessage").execute();
                 } catch (IOException e) {
                     LOGGER.error("Could not exchange auth code for access token", e);
                 }
                 try {
-                    LOGGER.debug(String.format("Creating credentials from access token and storing it under id '%s'", authInfoWithUID.getUID()));
-                    loggedUser = getFlow().createAndStoreCredential(tokenResponse, authInfoWithUID.getUID());
+                    LOGGER.debug(String.format("Creating credentials from access token and storing it under id '%s'", authInfo.getUID()));
+                    loggedUser = getFlow().createAndStoreCredential(tokenResponse, authInfo.getUID());
                     return loggedUser;
                 } catch (IOException e) {
-                    LOGGER.error(String.format("Could create and store credentials for", authInfoWithUID.getEmail()), e);
+                    LOGGER.error(String.format("Could create and store credentials for", authInfo.getEmail()), e);
                 }
                 LOGGER.debug("###########################################################################################");
             } else {
                 try {
-                    loggedUser = getFlow().loadCredential(authInfoWithUID.getUID());
+                    loggedUser = getFlow().loadCredential(authInfo.getUID());
                 } catch (IOException e) {
                     LOGGER.error("An error occured while retrieving credentials", e);
                 }
                 if (loggedUser != null) {
                     LOGGER.debug("###########################################################################################");
-                    LOGGER.debug(String.format("%s is already logged into the app, restoring previously stored credentials", authInfoWithUID.getEmail()));
+                    LOGGER.debug(String.format("%s is already logged into the app, restoring previously stored credentials", authInfo.getEmail()));
                     LOGGER.debug("###########################################################################################");
                     return loggedUser;
                 }

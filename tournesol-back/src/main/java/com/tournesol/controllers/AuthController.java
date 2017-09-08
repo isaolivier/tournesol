@@ -44,7 +44,7 @@ public class AuthController {
     public ResponseEntity<?> auth(@RequestBody AuthInfo authInfo) throws FileNotFoundException, IOException {
         LOGGER.debug("#### auth #####");
         LOGGER.debug(authInfo.toString());
-        Credential creds = authSvc.getCreds(authInfo);
+        Credential creds = authSvc.getCreds(authSvc.generateUID(authInfo));
         LOGGER.debug(String.format("AuthInfo %s", authInfo));
         return new ResponseEntity<>(authInfo, creds != null ? HttpStatus.OK : HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -59,17 +59,12 @@ public class AuthController {
     }
 
     @CrossOrigin
-    @GetMapping("/fetchCal")
-    public ResponseEntity<?> fetchCal(@RequestParam String email) {
+    @PostMapping("/fetchCal")
+    public ResponseEntity<?> fetchCal(@RequestBody AuthInfo authInfo) {
         LOGGER.debug("#### fetchCal #####");
-        LOGGER.debug(email);
-        CalendarList calendars = null;
-        if (authSvc.isSignedIn(email)) {
-            AuthInfo authInfo = new AuthInfo();
-            authInfo.setEmail(email);
-            Credential creds = authSvc.getCreds(authInfo);
-            calendars = calSvc.fetchCalendars(creds);
-        }
+        LOGGER.debug(authInfo.toString());
+        Credential creds = authSvc.getCreds(authInfo);
+        CalendarList calendars = calSvc.fetchCalendars(creds);
         return new ResponseEntity<>(calendars, calendars != null ? HttpStatus.OK : HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

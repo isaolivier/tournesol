@@ -54,7 +54,7 @@ public class AuthInfo {
         strBui.append(String.format("[%s]", this.getClass().getSimpleName()));
         strBui.append(String.format(" [%s.code]: %s -", this.getClass().getSimpleName(), this.getCode()));
         strBui.append(String.format(" [%s.email] %s", this.getClass().getSimpleName(), this.getEmail()));
-        strBui.append(String.format(" [%s.uid] %s", this.getClass().getSimpleName(), this.getEmail()));
+        strBui.append(String.format(" [%s.uid] %s", this.getClass().getSimpleName(), this.getUID()));
         return strBui.toString();
     }
 
