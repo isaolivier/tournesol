@@ -64,12 +64,10 @@ public class AuthController {
         LOGGER.debug("#### fetchCal #####");
         LOGGER.debug(email);
         CalendarList calendars = null;
-        if (authSvc.isSignedIn(email)) {
-            AuthInfo authInfo = new AuthInfo();
-            authInfo.setEmail(email);
-            Credential creds = authSvc.getCreds(authInfo);
-            calendars = calSvc.fetchCalendars(creds);
-        }
+        AuthInfo authInfo = new AuthInfo();
+        authInfo.setEmail(email);
+        Credential creds = authSvc.getCreds(authInfo);
+        calendars = calSvc.fetchCalendars(creds);
         return new ResponseEntity<>(calendars, calendars != null ? HttpStatus.OK : HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
