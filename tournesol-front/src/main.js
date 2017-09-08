@@ -6,15 +6,15 @@ import ElementUI from 'element-ui'
 import router from './router'
 import Icon from 'vue-awesome/components/Icon'
 import VueResource from 'vue-resource'
-import GoogleAuth from 'vue-google-auth'
+// import GoogleAuth from 'vue-google-auth'
 
 Vue.config.productionTip = false
 
 Vue.use(ElementUI)
 Vue.use(VueResource)
 Vue.component('icon', Icon)
-Vue.use(GoogleAuth, { client_id: '108454532704-ad5ips5206l0lutsqpmcbvh7229e3t0g.apps.googleusercontent.com' })
-Vue.googleAuth().load()
+// Vue.use(GoogleAuth, { client_id: '108454532704-ad5ips5206l0lutsqpmcbvh7229e3t0g.apps.googleusercontent.com' })
+// Vue.googleAuth().load()
 
 Icon.register({
   waze: {

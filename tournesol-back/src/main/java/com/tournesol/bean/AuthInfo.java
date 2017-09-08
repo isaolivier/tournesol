@@ -52,9 +52,9 @@ public class AuthInfo {
     public String toString() {
         StringBuilder strBui = new StringBuilder();
         strBui.append(String.format("[%s]", this.getClass().getSimpleName()));
-        strBui.append(String.format("[%s.code]: %s -", this.getClass().getSimpleName(), this.getCode()));
-        strBui.append(String.format("[%s.email] %s", this.getClass().getSimpleName(), this.getEmail()));
-        strBui.append(String.format("[%s.uid] %s", this.getClass().getSimpleName(), this.getEmail()));
+        strBui.append(String.format(" [%s.code]: %s -", this.getClass().getSimpleName(), this.getCode()));
+        strBui.append(String.format(" [%s.email] %s", this.getClass().getSimpleName(), this.getEmail()));
+        strBui.append(String.format(" [%s.uid] %s", this.getClass().getSimpleName(), this.getEmail()));
         return strBui.toString();
     }
 

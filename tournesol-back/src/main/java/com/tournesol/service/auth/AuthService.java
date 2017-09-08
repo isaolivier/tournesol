@@ -5,10 +5,10 @@ package com.tournesol.service.auth;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.Arrays;
-
-import javax.crypto.Cipher;
-import javax.crypto.spec.SecretKeySpec;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,14 +34,16 @@ import com.tournesol.bean.AuthInfo;
 @Service
 public class AuthService {
 
-    private static final Logger   LOGGER             = LoggerFactory.getLogger(AuthService.class);
+    private static final Logger       LOGGER             = LoggerFactory.getLogger(AuthService.class);
 
-    private static final String   SPEC               = "AES";
-    private static final String   PASSPHRASE         = "cryptingKey82195";                        // 128 bit key
-    private static final String   CLIENT_SECRET_FILE = "client_secret.json";
-    static GoogleClientSecrets    SECRETS            = null;
-    static AuthorizationCodeFlow  FLOW               = null;
-    static MemoryDataStoreFactory DATASTORE          = null;
+    private static final List<String> SCOPES             = Arrays.asList("email", "profile", CalendarScopes.CALENDAR);
+    private static final String       ACCESS_TYPE        = "offline";
+    private static final String       APPROVAL_PROMPT    = "force";
+    private static final String       ALGORITHM          = "SHA-256";
+    private static final String       CLIENT_SECRET_FILE = "client_secret.json";
+    static GoogleClientSecrets        SECRETS            = null;
+    static AuthorizationCodeFlow      FLOW               = null;
+    static MemoryDataStoreFactory     DATASTORE          = null;
 
     public AuthService() {
         initFlow();
@@ -54,19 +56,12 @@ public class AuthService {
     AuthInfo generateUID(AuthInfo authInfo) {
         if (authInfo != null && authInfo.getUID() == null) {
             try {
-                // Create key and cipher
-                SecretKeySpec aesKey = new SecretKeySpec(PASSPHRASE.getBytes(), SPEC);
-                Cipher cipher = Cipher.getInstance(SPEC);
-                // encrypt the text
-                cipher.init(Cipher.ENCRYPT_MODE, aesKey);
-                byte[] encrypted = cipher.doFinal(authInfo.getEmail().getBytes());
-                authInfo.setUID(new String(encrypted));
-                // decrypt the text
-                // cipher.init(Cipher.DECRYPT_MODE, aesKey);
-                // String decrypted = new String(cipher.doFinal(encrypted));
-                // System.err.println(decrypted);
+                MessageDigest digest = MessageDigest.getInstance(ALGORITHM);
+                byte[] hash = digest.digest(authInfo.getEmail().getBytes(StandardCharsets.UTF_8));
+                System.out.println(String.format("Input: %s - Output: %s", authInfo.getEmail(), new String(hash)));
+                authInfo.setUID(new String(hash));
             } catch (Exception e) {
-                LOGGER.error(String.format("Could not crypt user email '%s' using '%s'", authInfo.getEmail(), SPEC), e);
+                LOGGER.error(String.format("Could not crypt user email '%s' using '%s'", authInfo.getEmail(), ALGORITHM), e);
             }
         }
         return authInfo;
@@ -97,9 +92,8 @@ public class AuthService {
             GoogleClientSecrets clientSecrets = getGoogleClientSecrets();
             try {
                 FLOW = new GoogleAuthorizationCodeFlow.Builder(new NetHttpTransport(), JacksonFactory.getDefaultInstance(),
-                        clientSecrets.getDetails().getClientId(), clientSecrets.getDetails().getClientSecret(),
-                        Arrays.asList("email", "profile", CalendarScopes.CALENDAR)).setDataStoreFactory(getDataStore()).setAccessType("offline")
-                                .setApprovalPrompt("force").build();
+                        clientSecrets.getDetails().getClientId(), clientSecrets.getDetails().getClientSecret(), SCOPES).setDataStoreFactory(getDataStore())
+                                .setAccessType(ACCESS_TYPE).setApprovalPrompt(APPROVAL_PROMPT).build();
             } catch (IOException e) {
                 LOGGER.error("Could not initialize app OAuth2 workflow", e);
                 FLOW = null;
@@ -125,20 +119,12 @@ public class AuthService {
                 } catch (IOException e) {
                     LOGGER.error("Could not exchange auth code for access token", e);
                 }
-                if (validateTokenResponse(tokenResponse)) {
-                    try {
-                        LOGGER.debug(String.format("Creating credentials from access token and storing it under id '%s'", authInfoWithUID.getUID()));
-                        loggedUser = getFlow().createAndStoreCredential(tokenResponse, authInfoWithUID.getUID());
-                        // If at some point we need more profile info
-                        //                        Oauth2 oauth2 = new Oauth2.Builder(new NetHttpTransport(), new JacksonFactory(), loggedUser).setApplicationName("Oauth2").build();
-                        //                        Userinfoplus userinfo = oauth2.userinfo().get().execute();
-                        //                        LOGGER.debug(String.format("Userinfoplus: %s", userinfo.toPrettyString()));
-                        return loggedUser;
-                    } catch (IOException e) {
-                        LOGGER.error(String.format("Could create and store credentials for", authInfoWithUID.getEmail()), e);
-                    }
-                } else {
-                    LOGGER.error(String.format("Workflow interrupted - access token is not valid"));
+                try {
+                    LOGGER.debug(String.format("Creating credentials from access token and storing it under id '%s'", authInfoWithUID.getUID()));
+                    loggedUser = getFlow().createAndStoreCredential(tokenResponse, authInfoWithUID.getUID());
+                    return loggedUser;
+                } catch (IOException e) {
+                    LOGGER.error(String.format("Could create and store credentials for", authInfoWithUID.getEmail()), e);
                 }
                 LOGGER.debug("###########################################################################################");
             } else {
@@ -158,32 +144,16 @@ public class AuthService {
         return null;
     }
 
-    boolean validateTokenResponse(TokenResponse token) {
-        if (token != null) {
-            if (token.getAccessToken() != null) {
-                if (token.getRefreshToken() != null) {
-                    LOGGER.debug("There is a refresh token and an access token (useable)");
-                } else {
-                    LOGGER.debug("There is no refresh token - access token only (still useable)");
-                }
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public void logCreds(Credential creds) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(String.format("Creds: %s", creds)).append(System.lineSeparator());
+    public boolean isSignedIn(String email) {
+        AuthInfo authInfo = new AuthInfo();
+        authInfo.setEmail(email);
+        Credential creds = getCreds(authInfo);
+        boolean credsStillValid = creds != null && creds.getClock().currentTimeMillis() < creds.getExpirationTimeMilliseconds();
         if (creds != null) {
-            builder.append(String.format("getClock().currentTimeMillis : %s", creds.getClock().currentTimeMillis())).append(System.lineSeparator());
-            builder.append(String.format("getExpirationTimeMilliseconds: %s", creds.getExpirationTimeMilliseconds())).append(System.lineSeparator());
-            builder.append(String.format("getExpiresInSeconds: %s", creds.getExpiresInSeconds())).append(System.lineSeparator());
-            builder.append(String.format("getMethod: %s", creds.getMethod())).append(System.lineSeparator());
-            builder.append(String.format("getTokenServerEncodedUrl: %s", creds.getTokenServerEncodedUrl())).append(System.lineSeparator());
-            builder.append(String.format("getAccessToken: %s", creds.getAccessToken()));
+            LOGGER.debug(String.format("Current time: %s - Expiration time: %s", creds.getClock().currentTimeMillis(), creds.getExpirationTimeMilliseconds()));
+            LOGGER.debug(String.format("Current time > Expiration time: %s", creds.getClock().currentTimeMillis() > creds.getExpirationTimeMilliseconds()));
         }
-        LOGGER.debug(builder.toString());
+        return credsStillValid;
     }
 
 }

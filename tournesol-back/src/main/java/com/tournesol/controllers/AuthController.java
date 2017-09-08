@@ -19,13 +19,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.CalendarList;
-import com.google.api.services.calendar.model.CalendarListEntry;
 import com.tournesol.bean.AuthInfo;
 import com.tournesol.service.auth.AuthService;
+import com.tournesol.service.calendars.GoogleCalendarService;
 
 /**
  * @author gtouati
@@ -39,25 +36,26 @@ public class AuthController {
     @Autowired
     AuthService                 authSvc;
 
+    @Autowired
+    GoogleCalendarService       calSvc;
+
     @CrossOrigin
     @PostMapping("/auth")
     public ResponseEntity<?> auth(@RequestBody AuthInfo authInfo) throws FileNotFoundException, IOException {
         LOGGER.debug("#### auth #####");
         LOGGER.debug(authInfo.toString());
         Credential creds = authSvc.getCreds(authInfo);
-        authSvc.logCreds(creds);
-        return new ResponseEntity<>(HttpStatus.OK);
+        LOGGER.debug(String.format("AuthInfo %s", authInfo));
+        return new ResponseEntity<>(authInfo, creds != null ? HttpStatus.OK : HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @CrossOrigin
-    @GetMapping("/creds")
-    public ResponseEntity<?> creds(@RequestParam String email) {
-        LOGGER.debug("#### creds #####");
-        AuthInfo authInfo = new AuthInfo();
-        authInfo.setEmail(email);
-        Credential creds = authSvc.getCreds(authInfo);
-        authSvc.logCreds(creds);
-        return new ResponseEntity<>(creds, HttpStatus.OK);
+    @GetMapping("/isSignedIn")
+    public ResponseEntity<Boolean> isSignedIn(@RequestParam String email) {
+        LOGGER.debug("#### isSignedIn #####");
+        boolean signedIn = authSvc.isSignedIn(email);
+        ResponseEntity<Boolean> resp = new ResponseEntity<>(signedIn, HttpStatus.OK);
+        return resp;
     }
 
     @CrossOrigin
@@ -65,25 +63,14 @@ public class AuthController {
     public ResponseEntity<?> fetchCal(@RequestParam String email) {
         LOGGER.debug("#### fetchCal #####");
         LOGGER.debug(email);
-        AuthInfo authInfo = new AuthInfo();
-        authInfo.setEmail(email);
-        Credential creds = authSvc.getCreds(authInfo);
-        authSvc.logCreds(creds);
-        if (creds != null) {
-            Calendar calendar = new Calendar.Builder(new NetHttpTransport(), JacksonFactory.getDefaultInstance(), creds).setApplicationName("GCal FTW MOFO")
-                    .build();
-            try {
-                CalendarList calendarList = calendar.calendarList().list().execute();
-                for (CalendarListEntry entry : calendarList.getItems()) {
-                    LOGGER.debug(String.format("Entry desc: %s - summary: %s", entry.getDescription(), entry.getSummary()));
-                }
-            } catch (IOException e) {
-                LOGGER.error("Could fetch calendars", e);
-            }
-        } else {
-            LOGGER.error("Could fetch calendars as user is not logged in");
+        CalendarList calendars = null;
+        if (authSvc.isSignedIn(email)) {
+            AuthInfo authInfo = new AuthInfo();
+            authInfo.setEmail(email);
+            Credential creds = authSvc.getCreds(authInfo);
+            calendars = calSvc.fetchCalendars(creds);
         }
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(calendars, calendars != null ? HttpStatus.OK : HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 }
