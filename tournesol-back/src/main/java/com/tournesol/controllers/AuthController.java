@@ -11,11 +11,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.api.client.auth.oauth2.Credential;
@@ -44,17 +43,28 @@ public class AuthController {
     public ResponseEntity<?> auth(@RequestBody AuthInfo authInfo) throws FileNotFoundException, IOException {
         LOGGER.debug("#### auth #####");
         LOGGER.debug(authInfo.toString());
-        Credential creds = authSvc.getCreds(authSvc.generateUID(authInfo));
-        LOGGER.debug(String.format("AuthInfo %s", authInfo));
+        LOGGER.debug("Generating UID");
+        String UID = authSvc.generateUID(authInfo);
+        Credential creds = null;
+        if (!StringUtils.isEmpty(authInfo.getUID()) && !UID.equals(authInfo.getUID())) {
+    		LOGGER.error("UID mismatch - possible break in attempt");
+        } else {
+        	authInfo.setUID(UID);
+        	LOGGER.debug(authInfo.toString());
+            LOGGER.debug("Acquiring credentials");
+            creds = authSvc.getCreds(authInfo);
+        }
+        LOGGER.debug(String.format("creds %s", creds));
+        authInfo.setAuthcode(null);
         return new ResponseEntity<>(authInfo, creds != null ? HttpStatus.OK : HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @CrossOrigin
-    @GetMapping("/isSignedIn")
-    public ResponseEntity<Boolean> isSignedIn(@RequestParam String email) {
-        LOGGER.debug("#### isSignedIn #####");
-        boolean signedIn = authSvc.isSignedIn(email);
-        ResponseEntity<Boolean> resp = new ResponseEntity<>(signedIn, HttpStatus.OK);
+    @PostMapping("/isSessionAlive")
+    public ResponseEntity<Boolean> isSessionAlive(@RequestBody AuthInfo authInfo) {
+        LOGGER.debug("#### isSessionAlive #####");
+        boolean isSessionAlive = authSvc.isSessionAlive(authInfo);
+        ResponseEntity<Boolean> resp = new ResponseEntity<>(isSessionAlive, HttpStatus.OK);
         return resp;
     }
 
