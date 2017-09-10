@@ -58,8 +58,8 @@ public class AuthService {
         getFlow();
     }
 
-    public AuthInfo generateUID(AuthInfo authInfo) {
-        if (authInfo != null && authInfo.getUID() == null) {
+    public String generateUID(AuthInfo authInfo) {
+        if (authInfo != null && !StringUtils.isEmpty(authInfo.getEmail())) {
             try {
                 MessageDigest digest = MessageDigest.getInstance(ALGORITHM);
                 byte[] hash = digest.digest((SALT + authInfo.getEmail()).getBytes(StandardCharsets.UTF_8));
@@ -67,12 +67,12 @@ public class AuthService {
                 for (int i = 0; i < hash.length; i++) {
                     strBui.append(Integer.toString((hash[i] & 0xff) + 0x100, 16).substring(1));
                 }
-                authInfo.setUID(strBui.toString());
+                return strBui.toString();
             } catch (Exception e) {
-                LOGGER.error(String.format("Could not crypt user email '%s' using '%s'", authInfo.getEmail(), ALGORITHM), e);
+                LOGGER.error(String.format("Could not encrypt user email '%s' using '%s' and some salt", authInfo.getEmail(), ALGORITHM), e);
             }
         }
-        return authInfo;
+        return null;
     }
 
     GoogleClientSecrets getGoogleClientSecrets() {
@@ -112,8 +112,7 @@ public class AuthService {
 
     public Credential getCreds(AuthInfo authInfo) {
         if (getFlow() != null) {
-            Credential loggedUser = null;
-            if (!StringUtils.isEmpty(authInfo.getCode())) {
+            if (!StringUtils.isEmpty(authInfo.getAuthcode())) {
                 // Initial auth
                 LOGGER.debug("###########################################################################################");
                 LOGGER.debug(String.format("auth code detected, proceeding with OAuth2 workflow"));
@@ -122,38 +121,49 @@ public class AuthService {
                 try {
                     tokenResponse = new GoogleAuthorizationCodeTokenRequest(new NetHttpTransport(), JacksonFactory.getDefaultInstance(),
                             GoogleOAuthConstants.TOKEN_SERVER_URL, getGoogleClientSecrets().getDetails().getClientId(),
-                            getGoogleClientSecrets().getDetails().getClientSecret(), authInfo.getCode(), "postmessage").execute();
+                            getGoogleClientSecrets().getDetails().getClientSecret(), authInfo.getAuthcode(), "postmessage").execute();
+                } catch (com.google.api.client.auth.oauth2.TokenResponseException e) {
+                    LOGGER.error(String.format("Could not exchange auth code for access token: %n%s", e.getContent()));
                 } catch (IOException e) {
-                    LOGGER.error("Could not exchange auth code for access token", e);
+                	LOGGER.error("Could not exchange auth code for access token", e);
                 }
-                try {
-                    LOGGER.debug(String.format("Creating credentials from access token and storing it under id '%s'", authInfo.getUID()));
-                    loggedUser = getFlow().createAndStoreCredential(tokenResponse, authInfo.getUID());
-                    return loggedUser;
-                } catch (IOException e) {
-                    LOGGER.error(String.format("Could create and store credentials for", authInfo.getEmail()), e);
+                if (tokenResponse!=null) {
+                	try {
+                        LOGGER.debug(String.format("Creating credentials from access token and storing it under id '%s'", authInfo.getUID()));
+                        LOGGER.debug(String.format("/!\\ REMOVE ME !!! TokenResponse: %n%s",tokenResponse.toPrettyString()));
+                        return getFlow().createAndStoreCredential(tokenResponse, authInfo.getUID());
+                    } catch (IOException e) {
+                        LOGGER.error(String.format("Could create and store credentials for", authInfo.getEmail()), e);
+                    }
                 }
                 LOGGER.debug("###########################################################################################");
-            } else {
-                try {
-                    loggedUser = getFlow().loadCredential(authInfo.getUID());
-                } catch (IOException e) {
-                    LOGGER.error("An error occured while retrieving credentials", e);
-                }
-                if (loggedUser != null) {
-                    LOGGER.debug("###########################################################################################");
-                    LOGGER.debug(String.format("%s is already logged into the app, restoring previously stored credentials", authInfo.getEmail()));
-                    LOGGER.debug("###########################################################################################");
-                    return loggedUser;
-                }
+            } else if (!StringUtils.isEmpty(authInfo.getUID())) {
+            	// Already logged in user
+            	String generated = this.generateUID(authInfo);
+            	if (authInfo.getUID().equals(generated)) {
+                    Credential loggedUser = null;
+            		try {
+                        loggedUser = getFlow().loadCredential(authInfo.getUID());
+                    } catch (IOException e) {
+                        LOGGER.error("An error occured while retrieving credentials", e);
+                    }
+                    if (loggedUser != null) {
+                        LOGGER.debug("###########################################################################################");
+                        LOGGER.debug(String.format("%s is already logged into the app, restoring previously stored credentials", authInfo.getEmail()));
+                        LOGGER.debug("###########################################################################################");
+                        return loggedUser;
+                    }            		
+            	} else {
+            		LOGGER.error("###########################################################################################");
+                    LOGGER.error(String.format("Generated UID does not match provided UID %s"), authInfo.getUID());
+                    LOGGER.error("###########################################################################################");
+            	}
             }
         }
         return null;
     }
 
-    public boolean isSignedIn(String email) {
-        AuthInfo authInfo = new AuthInfo();
-        authInfo.setEmail(email);
+    public boolean isSessionAlive(AuthInfo authInfo) {
         Credential creds = getCreds(authInfo);
         boolean credsStillValid = creds != null && creds.getClock().currentTimeMillis() < creds.getExpirationTimeMilliseconds();
         if (creds != null) {

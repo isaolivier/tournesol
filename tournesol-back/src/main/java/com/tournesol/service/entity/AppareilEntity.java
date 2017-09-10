@@ -17,8 +17,10 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "APPAREIL")
 public class AppareilEntity implements Serializable {
+	
+	private static final long serialVersionUID = 2138505980112741865L;
 
-    @Id
+	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false, unique = true)
     private Long id;
