@@ -47,14 +47,23 @@ export default {
           'authURL': '/auth',
           'aliveURL': '/isSessionAlive'
         }
-        authService.init(gapiprops, authserviceprops, this.initCallBack)
+        authService.init(gapiprops, authserviceprops, this.initAuthServiceCallBack, this.onSignedInChanged)
       }
     },
-    initCallBack (e) {
-      console.log('Service initialized')
-      console.log('Signed in: ', authService.isSignedIn)
+    initAuthServiceCallBack (e) {
+      console.log('Auth service initialized')
       this.serviceInitialized = true
       this.$emit('authInitialized')
+    },
+    onSignedInChanged (signedIn) {
+      // console.log('onSignedInChanged ', signedIn)
+      if (signedIn) {
+        console.log('Signed in')
+        this.$emit('signedIn')
+      } else {
+        console.log('Signed out')
+        this.$emit('signedOut')
+      }
     },
     promptUserConsent () {
       authService.promptUserConsent()
