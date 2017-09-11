@@ -74,7 +74,8 @@ class AuthService {
           self.authInfo = {}
         }
       )
-    } else { console.log('Already signed in') }
+    }
+    // else { console.log('Already signed in') }
   }
   signOut () {
     if (this.gapi && this.gapi.auth2 && (this.authInfo['uid'] || this.authInfo['authcode'])) {
@@ -196,7 +197,7 @@ class AuthService {
       this.axios.post(this.serviceprops['authURL'], self.authInfo).then(
         function (response) {
           if (response.data) {
-            console.log('signIn OK')
+            // console.log('signIn OK')
             self.authInfo['uid'] = response.data.uid
             self.authInfo['authcode'] = null
             self._updateLocalStorage()
