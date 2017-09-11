@@ -48,9 +48,13 @@ export default {
           'authURL': '/auth',
           'aliveURL': '/isSessionAlive'
         }
-        this.AuthService.init(gapiprops, authserviceprops)
+        this.AuthService.init(gapiprops, authserviceprops, this.initCallBack)
         this.serviceInitialized = true
       }
+    },
+    initCallBack (e) {
+      console.log('Service initialized')
+      console.log('Signed in: ', this.AuthService.isSignedIn)
     },
     promptUserConsent () {
       this.AuthService.promptUserConsent()

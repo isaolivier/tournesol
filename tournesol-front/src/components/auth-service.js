@@ -10,8 +10,8 @@ class AuthService {
     this.gapi = null
     // The Auth status for listeners
     // plugged onto user profile regarding state as this one is available the last
+    this.isServiceInitialized = false
     this.isSignedIn = false
-    this.isSignedOut = false
     // The current user profile
     this.currentUser = null
     // The AuthInfo used in exchanges with the backend
@@ -39,13 +39,13 @@ class AuthService {
       'isSignedInProp': this.isSignedIn
     }
   }
-  init (gapiprops, serviceprops) {
+  init (gapiprops, serviceprops, callback) {
     // console.log('Init')
     this.gapiprops = gapiprops
     this.serviceprops = serviceprops
     // console.log('Google API props ', JSON.stringify(this.gapiprops))
     // console.log('Service props ', JSON.stringify(this.serviceprops))
-    this._loadRemoteScript()
+    this._loadRemoteScript(callback)
     this.axios = axios.create({
       baseURL: this.serviceprops['backendURL'],
       timeout: this.serviceprops['timeout']
@@ -78,6 +78,7 @@ class AuthService {
       this.gapi.auth2.getAuthInstance().currentUser.get().disconnect()
       console.log('signed out')
     } else { console.log('signOut - already signed out') }
+    this.isSignedIn = false
     this.authInfo = {}
     this._clearLocalStorage()
   }
@@ -85,7 +86,7 @@ class AuthService {
     return this.authInfo
   }
   isSignedIn () {
-    return this.gapi.auth.getAuthInstance().isSignedIn
+    return this.isSignedIn
   }
   fetchCal (callback) {
     // console.log('fetchCal')
@@ -100,7 +101,7 @@ class AuthService {
   }
   // Internal functions
   // Auth component init
-  _loadRemoteScript () {
+  _loadRemoteScript (callback) {
     if (!this.gapi) {
       console.log('Loading Google API ', this.gapiprops['remote_script_url'])
       let script = document.createElement('script')
@@ -109,19 +110,19 @@ class AuthService {
       script.defer = true
       let self = this
       script.onload = function () {
-        self._onScriptLoaded()
+        self._onScriptLoaded(callback)
       }
       document.getElementsByTagName('head')[0].appendChild(script)
     } else { console.log('Google API ', this.gapiprops['remote_script_url'], ' already loaded !') }
   }
-  _onScriptLoaded () {
+  _onScriptLoaded (callback) {
     console.log('Google API ', this.gapiprops['remote_script_url'], ' loaded !')
     if (window.gapi) {
       this.gapi = window.gapi
-      this._loadOAuth2Module()
+      this._loadOAuth2Module(callback)
     } else { return void (console.error('Google API not found. Aborting')) }
   }
-  _loadOAuth2Module () {
+  _loadOAuth2Module (callback) {
     let self = this
     console.log('Loading OAuth2')
     this.gapi.load('auth2', {
@@ -130,20 +131,22 @@ class AuthService {
           client_id: self.gapiprops['client_id'],
           scope: self.gapiprops['scope'],
           fetch_basic_profile: self.gapiprops['fetch_basic_profile']
-        }).then(function () { self._onOAuth2ModuleLoaded() })
+        }).then(function () { self._onOAuth2ModuleLoaded(callback) })
       },
       onerror: function () { console.log('An error occured while loading OAuth2 component') },
       timeout: 5000,
       ontimeout: function () { console.log('OAuth2 could not be loaded within 5s ...') }
     })
   }
-  _onOAuth2ModuleLoaded () {
+  _onOAuth2ModuleLoaded (callback) {
     console.log('OAuth2 component loaded')
     this.authInfo = {}
     let self = this
     // Listen currentUser changes & trigger first event
     this.gapi.auth2.getAuthInstance().currentUser.listen(self._onUserUpdated.bind(self))
     this._onUserUpdated(this.gapi.auth2.getAuthInstance().currentUser.get())
+    this.isServiceInitialized = true
+    callback(this.isServiceInitialized)
     // Listen isSignedIn changes & trigger first event
     // this.gapi.auth2.getAuthInstance().isSignedIn.listen(self._onSignedInChanged.bind(self))
     // this._onSignedInChanged(this.gapi.auth2.getAuthInstance().isSignedIn.get())
@@ -187,6 +190,7 @@ class AuthService {
         function (response) {
           if (response.data) {
             console.log('signIn OK')
+            self.isSignedIn = true
             self.authInfo['uid'] = response.data.uid
             self.authInfo['authcode'] = null
             self._updateLocalStorage()
@@ -214,6 +218,7 @@ class AuthService {
             console.log('session is not alive - clearing data & signing out')
             self.signOut()
           } else {
+            self.isSignedIn = true
             console.log('session is alive')
           }
         }, function (error) { console.error('An error occured while prompting backend for session status ', error) }
