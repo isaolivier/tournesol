@@ -24,7 +24,6 @@
             <rdv v-for="(rdv, key, index) in rendezvous" :rdv="rdv" :key="key"/>
         </svg>
     </div>
-
 </template>
 
 <script>
@@ -32,7 +31,6 @@
   import DateStrip from './DateStrip.vue'
   import Constants from '../../bean/Constants'
   import {RendezVousResource} from '../../resource/RendezVousResource'
-  import {authService} from '../auth/auth-service'
 
   export default {
     name: 'tournee',
@@ -44,16 +42,12 @@
         heuresOuverture: [8, 18],
         rendezvous: [],
         hourInterval: Constants.tournee.hourInterval,
-        agenda: null,
-        authInitialised: authService.isInitialised()
+        agenda: null
       }
     },
     computed: {
       nbHeures: function () {
         return this.heuresOuverture[1] - this.heuresOuverture[0]
-      },
-      authInitialised: function () {
-        this.fetchData()
       }
     },
     components: {
@@ -61,7 +55,7 @@
       'dates': DateStrip
     },
     methods: {
-      fetchData () {
+      fetchData: function () {
         this.error = null
         this.loading = true
         let rdvResource = new RendezVousResource()
