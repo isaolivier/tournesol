@@ -12,12 +12,11 @@ import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
 @Mapper
-public interface EventMapper {
+public interface EventBeanMapper {
 
-    EventMapper INSTANCE = Mappers.getMapper( EventMapper.class );
+    EventBeanMapper INSTANCE = Mappers.getMapper( EventBeanMapper.class );
 
-    EventBean eventToEventBean(EventEntity eventEntity);
-    EventEntity eventBeanToEvent(EventBean eventBean);
-
+    EventBean eventEntityToEventBean(EventEntity eventEntity);
+    EventEntity eventBeanToEventEntity(EventBean eventBean);
 }
 

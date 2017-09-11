@@ -16,20 +16,19 @@
 </template>
 
 <script>
-import { AuthService } from './auth-service'
+import { authService } from './auth-service'
 export default {
   name: 'Auth',
   data: function (router) {
     return {
       section: 'Auth',
-      AuthService: new AuthService(),
       serviceInitialized: false,
       cal: {}
     }
   },
   computed: {
     isSignedIn: function () {
-      this.AuthService.isSignedIn
+      authService.isSignedIn
     }
   },
   methods: {
@@ -48,22 +47,23 @@ export default {
           'authURL': '/auth',
           'aliveURL': '/isSessionAlive'
         }
-        this.AuthService.init(gapiprops, authserviceprops, this.initCallBack)
-        this.serviceInitialized = true
+        authService.init(gapiprops, authserviceprops, this.initCallBack)
       }
     },
     initCallBack (e) {
       console.log('Service initialized')
-      console.log('Signed in: ', this.AuthService.isSignedIn)
+      console.log('Signed in: ', authService.isSignedIn)
+      this.serviceInitialized = true
+      this.$emit('authInitialized')
     },
     promptUserConsent () {
-      this.AuthService.promptUserConsent()
+      authService.promptUserConsent()
     },
     signOut () {
-      this.AuthService.signOut()
+      authService.signOut()
     },
     fetchCal () {
-      this.AuthService.fetchCal(this.fetchCalCallBack)
+      authService.fetchCal(this.fetchCalCallBack)
     },
     fetchCalCallBack (cal) { this.cal = cal }
   },

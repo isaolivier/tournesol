@@ -1,5 +1,4 @@
 <template>
-
     <div>
         Slider des dates<br/>
         <dates></dates>
@@ -33,6 +32,7 @@
   import DateStrip from './DateStrip.vue'
   import Constants from '../../bean/Constants'
   import {RendezVousResource} from '../../resource/RendezVousResource'
+  import {authService} from '../auth/auth-service'
 
   export default {
     name: 'tournee',
@@ -44,15 +44,16 @@
         heuresOuverture: [8, 18],
         rendezvous: [],
         hourInterval: Constants.tournee.hourInterval,
-        agenda: null
+        agenda: null,
+        authInitialised: authService.isInitialised()
       }
-    },
-    created () {
-      this.fetchData()
     },
     computed: {
       nbHeures: function () {
         return this.heuresOuverture[1] - this.heuresOuverture[0]
+      },
+      authInitialised: function () {
+        this.fetchData()
       }
     },
     components: {

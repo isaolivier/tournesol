@@ -14,7 +14,7 @@ public class AuthInfo {
 	}
 
 	/**
-	 * @param code
+	 * @param authcode
 	 *            the code to set
 	 */
 	public void setAuthcode(String authcode) {

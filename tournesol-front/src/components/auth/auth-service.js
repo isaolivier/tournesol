@@ -163,16 +163,16 @@ class AuthService {
     this._checkState()
   }
   _checkState () {
-    // console.log('_checkState authInfo', JSON.stringify(this.authInfo))
+    console.log('_checkState authInfo', JSON.stringify(this.authInfo))
     if (this.authInfo['authcode']) {
-      // console.log('authcode share step')
+      console.log('authcode share step')
       if (this.authInfo['email']) {
         console.log('Status: authcode share step (sending authorization to backend)')
         this._sendAuthCodeToBackEnd()
       } else { console.log('Status: authcode share step (waiting for user profile update)') }
     } else {
       this._loadLocalStorage()
-      // console.log('loaded authInfo', JSON.stringify(this.authInfo))
+      console.log('loaded authInfo', JSON.stringify(this.authInfo))
       if (!this.authInfo['uid'] && !this.authInfo['email']) {
         console.log('Status: signed out')
       } else if (this.authInfo['uid'] && this.authInfo['email'] && this._isSessionAlive()) {
@@ -252,4 +252,5 @@ class AuthService {
     }
   }
 }
-export { AuthService }
+let authService = new AuthService()
+export { authService }

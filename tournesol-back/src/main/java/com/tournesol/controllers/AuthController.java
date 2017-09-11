@@ -1,7 +1,13 @@
 /**
- * 
+ *
  */
 package com.tournesol.controllers;
+
+import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.services.calendar.model.CalendarList;
+import com.tournesol.bean.AuthInfo;
+import com.tournesol.service.auth.AuthService;
+import com.tournesol.service.calendars.GoogleCalendarService;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -17,15 +23,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.services.calendar.model.CalendarList;
-import com.tournesol.bean.AuthInfo;
-import com.tournesol.service.auth.AuthService;
-import com.tournesol.service.calendars.GoogleCalendarService;
-
 /**
  * @author gtouati
- *
  */
 @RestController
 public class AuthController {
@@ -33,10 +32,10 @@ public class AuthController {
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthController.class);
 
     @Autowired
-    AuthService                 authSvc;
+    AuthService authSvc;
 
     @Autowired
-    GoogleCalendarService       calSvc;
+    GoogleCalendarService calSvc;
 
     @CrossOrigin
     @PostMapping("/auth")
@@ -47,10 +46,10 @@ public class AuthController {
         String UID = authSvc.generateUID(authInfo);
         Credential creds = null;
         if (!StringUtils.isEmpty(authInfo.getUID()) && !UID.equals(authInfo.getUID())) {
-    		LOGGER.error("UID mismatch - possible break in attempt");
+            LOGGER.error("UID mismatch - possible break in attempt");
         } else {
-        	authInfo.setUID(UID);
-        	LOGGER.debug(authInfo.toString());
+            authInfo.setUID(UID);
+            LOGGER.debug(authInfo.toString());
             LOGGER.debug("Acquiring credentials");
             creds = authSvc.getCreds(authInfo);
         }

@@ -1,9 +1,10 @@
 package com.tournesol.controllers;
 
+import com.tournesol.bean.AuthInfo;
 import com.tournesol.bean.RendezVousBean;
 import com.tournesol.mapper.AppareilMapper;
 import com.tournesol.mapper.ClientMapper;
-import com.tournesol.mapper.EventMapper;
+import com.tournesol.mapper.EventBeanMapper;
 import com.tournesol.service.entity.EventEntity;
 import com.tournesol.service.entity.RendezVousEntity;
 import com.tournesol.service.events.EventService;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -39,10 +41,16 @@ public class RendezVousController {
      * @return la liste des rendez-vous du jour, aggrégeant l'ensemble des infos relatives au rdv (client, appareil ...)
      */
     @GetMapping("/rdvs")
-    public Iterable<RendezVousBean> greeting(@RequestParam(value = "date", required = false) String date) {
+    public Iterable<RendezVousBean> greeting(@RequestHeader(value = "uid", required = true) String uid,
+                                             @RequestHeader(value = "email", required = true) String email,
+                                             @RequestParam(value = "date", required = false) String date) {
 
-        final Map<String, EventEntity> eventMap = eventService.getEvents(ZonedDateTime.now()).stream()
-                .collect(Collectors.toMap(e -> e.getiCalUID(), e -> e));
+        AuthInfo authInfo = new AuthInfo();
+        authInfo.setUID(uid);
+        authInfo.setEmail(email);
+
+        final Map<String, EventEntity> eventMap = eventService.getEvents(authInfo, ZonedDateTime.now()).stream()
+                .collect(Collectors.toMap(e -> e.getICalUID(), e -> e));
 
         /*
             Recherche des rdvs dans la base locale,
@@ -71,7 +79,7 @@ public class RendezVousController {
         // on récupère donc le client correspondant au premier appareil
         rdv.setClient(ClientMapper.INSTANCE.clientToClientBean(rdvEntities.get(0).getAppareil().getClient()));
 
-        rdv.setEvent(EventMapper.INSTANCE.eventToEventBean(eventEntity));
+        rdv.setEvent(EventBeanMapper.INSTANCE.eventEntityToEventBean(eventEntity));
 
         return rdv;
     }
