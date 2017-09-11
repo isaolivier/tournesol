@@ -1,4 +1,5 @@
 var axios = require('axios')
+// Please consider that what might appear as dead code is actually debug code :D please don't strip
 class AuthService {
   constructor () {
     // Google OAuth2 module props
@@ -13,14 +14,15 @@ class AuthService {
     this.isServiceInitialized = false
     this.isSignedIn = false
     // The current user profile
-    this.currentUser = null
+    this.user = null
     // The AuthInfo used in exchanges with the backend
     this.authInfo = null
     // Axios HTTP client_id
     this.axios = null
     // External callbacks
+    // Service init callback
     this.initcallback = null
-    // SignedIn callback
+    // Signed in/out callback
     this.signedinchangedcallback = null
   }
   sampleGAPIProps () {
@@ -42,17 +44,19 @@ class AuthService {
   }
   init (gapiprops, serviceprops, initcallback, signedinchangedcallback) {
     // console.log('Init')
-    this.gapiprops = gapiprops
-    this.serviceprops = serviceprops
-    this.initcallback = initcallback
-    this.signedinchangedcallback = signedinchangedcallback
-    // console.log('Google API props ', JSON.stringify(this.gapiprops))
-    // console.log('Service props ', JSON.stringify(this.serviceprops))
-    this._loadRemoteScript()
-    this.axios = axios.create({
-      baseURL: this.serviceprops['backendURL'],
-      timeout: this.serviceprops['timeout']
-    })
+    if (!this.isServiceInitialized) {
+      this.gapiprops = gapiprops
+      this.serviceprops = serviceprops
+      this.initcallback = initcallback
+      this.signedinchangedcallback = signedinchangedcallback
+      // console.log('Google API props ', JSON.stringify(this.gapiprops))
+      // console.log('Service props ', JSON.stringify(this.serviceprops))
+      this._loadRemoteScript()
+      this.axios = axios.create({
+        baseURL: this.serviceprops['backendURL'],
+        timeout: this.serviceprops['timeout']
+      })
+    }
   }
   // Externally exposed functions
   promptUserConsent () {
@@ -80,7 +84,7 @@ class AuthService {
   signOut () {
     if (this.gapi && this.gapi.auth2 && (this.authInfo['uid'] || this.authInfo['authcode'])) {
       this.gapi.auth2.getAuthInstance().currentUser.get().disconnect()
-      // console.log('signed out')
+      // console.log('signOut OK')
       this.isSignedIn = false
       if (this.signedinchangedcallback) { this.signedinchangedcallback(this.isSignedIn) }
     }
@@ -88,20 +92,10 @@ class AuthService {
     this.authInfo = {}
     this._clearLocalStorage()
   }
-  getAuthInfo () {
-    return this.authInfo
-  }
-  fetchCal (callback) {
-    // console.log('fetchCal')
-    if (this.authInfo && this.authInfo['uid']) {
-      // Performing a POST request
-      this.axios.post('fetchCal', this.getAuthInfo()).then(
-        function (response) {
-          callback(response.data)
-        }, function (error) { console.error('An error occured while fetchCal ', error) }
-      )
-    }
-  }
+  getAuthInfo () { return this.authInfo }
+  getUser () { return this.user }
+  isServiceInitialized () { return this.isServiceInitialized }
+  isSignedIn () { return this.isSignedIn }
   // Internal functions
   // Auth component init
   _loadRemoteScript () {
@@ -151,18 +145,17 @@ class AuthService {
     this.gapi.auth2.getAuthInstance().currentUser.listen(self._onUserUpdated.bind(self))
     this._onUserUpdated(this.gapi.auth2.getAuthInstance().currentUser.get())
     this.isServiceInitialized = true
-    if (this.initcallback) {
-      this.initcallback(this.isServiceInitialized)
-    }
-    // Listen isSignedIn changes & trigger first event
-    // this.gapi.auth2.getAuthInstance().isSignedIn.listen(self._onSignedInChanged.bind(self))
-    // this._onSignedInChanged(this.gapi.auth2.getAuthInstance().isSignedIn.get())
+    // Launch external init callback
+    if (this.initcallback) { this.initcallback(this.isServiceInitialized) }
   }
   _onUserUpdated (user) {
     // console.log('_onUserUpdated ', user)
     let previousAuthInfo = this.authInfo
     this.authInfo = {}
-    if (user && user.getBasicProfile()) { this.authInfo['email'] = user.getBasicProfile().getEmail() }
+    if (user && user.getBasicProfile()) {
+      this.user = user
+      this.authInfo['email'] = user.getBasicProfile().getEmail()
+    }
     if (previousAuthInfo) {
       if (previousAuthInfo['uid']) { this.authInfo['uid'] = previousAuthInfo['uid'] }
       if (previousAuthInfo['authcode']) { this.authInfo['authcode'] = previousAuthInfo['authcode'] }
@@ -181,11 +174,11 @@ class AuthService {
     } else {
       this._loadLocalStorage()
       // console.log('loaded authInfo', JSON.stringify(this.authInfo))
-      if (!this.authInfo['uid'] && !this.authInfo['email']) {
-        // console.log('Status: signed out')
-      } else if (this.authInfo['uid'] && this.authInfo['email'] && this._isSessionAlive()) {
-        // console.log('Status: signed in (session with backend is alive)')
-      }
+      // if (!this.authInfo['uid'] && !this.authInfo['email']) {
+      //   console.log('Status: signed out')
+      // } else if (this.authInfo['uid'] && this.authInfo['email'] && this._isSessionAlive()) {
+      //   console.log('Status: signed in (session with backend is alive)')
+      // }
     }
   }
   // Backend access methods
@@ -236,6 +229,7 @@ class AuthService {
   }
   _setSignedIn () {
     this.isSignedIn = true
+    // Launch external signed in callback
     if (this.signedinchangedcallback) { this.signedinchangedcallback(this.isSignedIn) }
   }
   // Storage management

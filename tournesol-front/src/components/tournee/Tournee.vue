@@ -34,13 +34,12 @@
 
   export default {
     name: 'tournee',
-
     data () {
       return {
+        store: this.$root.$data,
         loading: false,
         error: null,
         heuresOuverture: [8, 18],
-        rendezvous: [],
         hourInterval: Constants.tournee.hourInterval,
         agenda: null
       }
@@ -48,6 +47,9 @@
     computed: {
       nbHeures: function () {
         return this.heuresOuverture[1] - this.heuresOuverture[0]
+      },
+      rendezvous: function () {
+        if (this.store.initialized && this.store.signedIn) { this.fetchData() }
       }
     },
     components: {
