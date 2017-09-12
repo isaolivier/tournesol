@@ -1,29 +1,24 @@
 <template>
   <div>
+    <div class="alerts">
+      &nbsp;
+      <el-alert v-if="showError" type="error" title="" :closable="false">{{error}}</el-alert>
+      <el-alert v-if="showSuccess" type="success" title="" :closable="false">{{success}}</el-alert>
+    </div>
     <el-row :gutter="20">
-      <el-col :span="4">
-        <small>
-          <div class="grid-content">
-            <el-alert v-if="debug" type="warning" title="" :closable="false">{{store}}</el-alert>
-          </div>
-        </small>
-      </el-col>
-      <el-col :span="1" :push="19">
+      <el-col :span="6">
         <div class="grid-content">
+          &nbsp;
+          <el-alert v-if="debug" type="warning" title="Store " :closable="false"><small>{{store}}</small></el-alert>
+        </div>
+      </el-col>
+      <el-col :span="1" :push="17">
+        <div class="grid-content">
+          &nbsp;
           <div v-if="store.initialized && store.signedIn" v-on:click="signOut"><icon name="power-off" class="signOut"></icon></div>
           <div v-if="store.initialized && !store.signedIn" v-on:click="promptUserConsent"><icon name="power-off" class="signIn"></icon></div>
           <div v-if="!store.initialized" v-on:click="alert('Auth module not available')"><icon name="power-off" class="noSign"></icon></div>
         </div>
-      </el-col>
-    </el-row>
-    <el-row :gutter="20">
-      <el-col :span="8" :push="16">
-        <small>
-          <div class="grid-content">
-            <el-alert v-if="showError" type="error" title="">{{error}}</el-alert>
-            <el-alert v-if="showSuccess" type="success" title="">{{success}}</el-alert>
-          </div>
-        </small>
       </el-col>
     </el-row>
   </div>
@@ -41,7 +36,7 @@ export default {
       error: '&nbsp;',
       showSuccess: false,
       success: '&nbsp;',
-      debug: true
+      debug: false
     }
   },
   methods: {
@@ -50,7 +45,7 @@ export default {
         let gapiprops = {
           'client_id': '108454532704-ad5ips5206l0lutsqpmcbvh7229e3t0g.apps.googleusercontent.com',
           'scope': 'email profile https://www.googleapis.com/auth/calendar.readonly',
-          'fetch_basic_profile': false,
+          'fetch_basic_profile': true,
           'prompt': 'consent',
           'remote_script_url': 'https://apis.google.com/js/api:client.js'
         }
@@ -81,9 +76,10 @@ export default {
       }, 5000)
     },
     onAuthOver (message, error) {
+      // console.log('onAuthOver ', message, error, this.store.signedIn)
       let self = this
       if (message && message === 'success' && this.store.signedIn) {
-        this.success = 'Bienvenue ' + JSON.stringify(authService.getUser()) + '\n' + message
+        this.success = 'Bienvenue ' + authService.getUser().getBasicProfile().getEmail()
         this.showSuccess = true
         window.setTimeout(function () {
           self.showSuccess = false
@@ -124,6 +120,11 @@ export default {
   max-width: 100%;
   max-height: 100%;
 }
+.alerts {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
 .noSign {
   color: gray;
 }
@@ -132,10 +133,5 @@ export default {
 }
 .signOut {
   color: green;
-}
-.power-buttons {
-  position: absolute;
-  top: 5;
-  right: 5;
 }
 </style>

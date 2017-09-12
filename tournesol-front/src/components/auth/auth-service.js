@@ -70,15 +70,15 @@ class AuthService {
         prompt: self.gapiprops['prompt'],
         fetch_basic_profile: self.gapiprops['fetch_basic_profile']
       }
-      console.log('Prompting user consent for ', scope)
+      // console.log('Prompting user consent for ', scope)
       this.gapi.auth2.getAuthInstance().grantOfflineAccess(scope).then(
         function (authCode) {
-          console.log('User consent OK - authcode ', JSON.stringify(authCode))
+          // console.log('User consent OK - authcode ', JSON.stringify(authCode))
           self.authInfo['authcode'] = authCode['code']
         },
         function (error) {
           self.authInfo = {}
-          self.authovercallback('User conset KO - no auth code ', error)
+          self.authovercallback('User consent KO - no auth code ', error)
         }
       )
     }
@@ -87,9 +87,8 @@ class AuthService {
   signOut () {
     if (this.gapi && this.gapi.auth2 && (this.authInfo['uid'] || this.authInfo['authcode'])) {
       this.gapi.auth2.getAuthInstance().currentUser.get().disconnect()
-      this.isSignedIn = false
-      self.authovercallback('success')
-      if (this.signedinchangedcallback) { this.signedinchangedcallback(this.isSignedIn) }
+      this._setSignedOut()
+      this.authovercallback('success')
     }
     // else { console.log('signOut - already signed out') }
     this.authInfo = {}
@@ -158,6 +157,8 @@ class AuthService {
     if (user && user.getBasicProfile()) {
       this.user = user
       this.authInfo['email'] = user.getBasicProfile().getEmail()
+    } else {
+      console.log('User has no basic profile ', user)
     }
     if (previousAuthInfo) {
       if (previousAuthInfo['uid']) { this.authInfo['uid'] = previousAuthInfo['uid'] }
@@ -177,6 +178,7 @@ class AuthService {
     } else {
       this._loadLocalStorage()
       // console.log('loaded authInfo', JSON.stringify(this.authInfo))
+      this._isSessionAlive()
       // if (!this.authInfo['uid'] && !this.authInfo['email']) {
       //   console.log('Status: signed out')
       // } else if (this.authInfo['uid'] && this.authInfo['email'] && this._isSessionAlive()) {
@@ -233,6 +235,11 @@ class AuthService {
   }
   _setSignedIn () {
     this.isSignedIn = true
+    // Launch external signed in callback
+    if (this.signedinchangedcallback) { this.signedinchangedcallback(this.isSignedIn) }
+  }
+  _setSignedOut () {
+    this.isSignedIn = false
     // Launch external signed in callback
     if (this.signedinchangedcallback) { this.signedinchangedcallback(this.isSignedIn) }
   }

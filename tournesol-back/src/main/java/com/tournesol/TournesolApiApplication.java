@@ -13,7 +13,7 @@ public class TournesolApiApplication {
 
     private static final Logger  LOGGER        = LoggerFactory.getLogger(TournesolApiApplication.class);
 
-    private static final Boolean PROXY_ENABLED = false;
+    private static final Boolean PROXY_ENABLED = true;
 
     public static void main(String[] args) {
         SpringApplication.run(TournesolApiApplication.class, args);
