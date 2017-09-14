@@ -9,11 +9,12 @@
         <span class="telephone">{{client.telephone}}</span><span class="portable">{{client.portable}}</span>
         <span class="mail">{{client.email}}</span>
         <span class="note"><i v-for="nb in client.note" class="fa fa-star"></i><i v-for="nb in (5 - client.note)" class="fa fa-star-o"></i></span>
+        <span class="ajouter-rdv"><rdvForm :client="client"></rdvForm></span>
     </div>
 </template>
 
 <script>
-  // import {ClientBean} from '../bean/ClientBean'
+  import RendezVousForm from './RendezVousForm.vue'
 
   export default {
     name: 'annuaire',
@@ -29,6 +30,9 @@
     },
     data () {
       return {}
+    },
+    components: {
+      'rdvForm': RendezVousForm
     }
   }
 </script>

@@ -20,14 +20,14 @@ public class RendezVousEntity {
     @ManyToOne(targetEntity = AppareilEntity.class)
     private AppareilEntity appareil;
 
-    @Column(name = "event_id")
+    @Column(name = "event_cal_id")
     private String eventId;
 
     public AppareilEntity getAppareil() {
         return appareil;
     }
 
-    public void setAppareils(AppareilEntity appareil) {
+    public void setAppareil(AppareilEntity appareil) {
         this.appareil = appareil;
     }
 

@@ -2,9 +2,11 @@ package com.tournesol.controllers;
 
 import com.tournesol.bean.AuthInfo;
 import com.tournesol.bean.RendezVousBean;
+import com.tournesol.bean.input.RendezVousInputBean;
 import com.tournesol.mapper.AppareilMapper;
 import com.tournesol.mapper.ClientMapper;
 import com.tournesol.mapper.EventBeanMapper;
+import com.tournesol.service.entity.AppareilEntity;
 import com.tournesol.service.entity.EventEntity;
 import com.tournesol.service.entity.RendezVousEntity;
 import com.tournesol.service.events.EventService;
@@ -18,6 +20,8 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -49,6 +53,9 @@ public class RendezVousController {
         authInfo.setUID(uid);
         authInfo.setEmail(email);
 
+        /*
+            Recherche des évenements dans le calendrier distant (google)
+         */
         final Map<String, EventEntity> eventMap = eventService.getEvents(authInfo, ZonedDateTime.now()).stream()
                 .collect(Collectors.toMap(e -> e.getICalUID(), e -> e));
 
@@ -59,9 +66,40 @@ public class RendezVousController {
         final Map<String, List<RendezVousEntity>> rendezVousEntities = rdvRepository.findRendezVousEntities(new ArrayList<>(eventMap.keySet())).stream()
                 .collect(Collectors.groupingBy(RendezVousEntity::getEventId, Collectors.toList()));
 
+        /*
+            Aggrégation des données
+         */
         return rendezVousEntities.entrySet().stream()
                 .map(e -> buildRendezVousBean(e.getValue(), eventMap.get(e.getKey())))
                 .collect(Collectors.toList());
+    }
+
+    @PutMapping("/rdv")
+    public void create(@RequestHeader(value = "uid", required = true) String uid,
+                         @RequestHeader(value = "email", required = true) String email,
+                         @RequestBody RendezVousInputBean rdv) {
+
+        AuthInfo authInfo = new AuthInfo();
+        authInfo.setUID(uid);
+        authInfo.setEmail(email);
+
+        /*
+            Création de l'évenement dans le calendrier distant
+         */
+        final EventEntity event = eventService.createEvent(authInfo, EventBeanMapper.INSTANCE.eventBeanToEventEntity(rdv.getEvent()));
+
+        rdv.getAppareils().stream().forEach(a -> {
+            /*
+              Création d'un rendez-vous en base pour chacun des appareils
+             */
+            RendezVousEntity rdvEntity = new RendezVousEntity();
+            rdvEntity.setEventId(event.getICalUID());
+
+            rdvEntity.setAppareil(new AppareilEntity());
+            rdvEntity.getAppareil().setId(a);
+
+            rdvRepository.save(rdvEntity);
+        });
     }
 
     /**

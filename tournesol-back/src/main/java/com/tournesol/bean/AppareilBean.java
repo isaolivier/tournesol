@@ -1,13 +1,16 @@
 package com.tournesol.bean;
 
+import java.io.Serializable;
 import java.sql.Date;
 
 /**
  * Created by iolivier on 25/04/2017.
  */
-public class AppareilBean {
+public class AppareilBean implements Serializable {
 
     private Long id;
+
+    private String denomination;
 
     private String marque;
 
@@ -57,4 +60,11 @@ public class AppareilBean {
         this.dateMiseEnService = dateMiseEnService;
     }
 
+    public String getDenomination() {
+        return denomination;
+    }
+
+    public void setDenomination(String denomination) {
+        this.denomination = denomination;
+    }
 }

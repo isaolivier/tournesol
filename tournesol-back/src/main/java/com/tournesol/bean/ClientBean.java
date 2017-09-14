@@ -1,9 +1,11 @@
 package com.tournesol.bean;
 
+import java.io.Serializable;
+
 /**
  * Created by iolivier on 25/04/2017.
  */
-public class ClientBean {
+public class ClientBean  implements Serializable {
 
     private Long id;
 

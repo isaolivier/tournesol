@@ -12,5 +12,5 @@ insert into client(id, civilite, nom, telephone, portable, email, adresse_id) va
 insert into appareil(id, denomination, marque, client_id) values (1, 'Poêle à granulés', 'Jolly Mec', 1);
 insert into appareil(id, denomination, marque, client_id) values (2, 'Chaudière Fuel', 'Palazetti', 2);
 
-insert into rendezvous(id, event_id, appareil_id) values (1, '1bikrj8dcpv29qse91jhghcirf@google.com', 1);
-insert into rendezvous(id, event_id, appareil_id) values (2, 'rdv2', 2);
+insert into rendezvous(id, event_cal_id, appareil_id) values (1, '1bikrj8dcpv29qse91jhghcirf@google.com', 1);
+insert into rendezvous(id, event_cal_id, appareil_id) values (2, 'rdv2', 2);

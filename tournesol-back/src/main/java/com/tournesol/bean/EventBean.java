@@ -1,8 +1,9 @@
 package com.tournesol.bean;
 
+import java.io.Serializable;
 import java.time.ZonedDateTime;
 
-public class EventBean {
+public class EventBean implements Serializable {
 
     private String id;
 

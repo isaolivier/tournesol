@@ -1,9 +1,10 @@
 package com.tournesol.bean;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RendezVousBean {
+public class RendezVousBean implements Serializable {
 
     private ClientBean client;
 

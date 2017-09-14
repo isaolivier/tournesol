@@ -25,9 +25,6 @@ public class AppareilEntity implements Serializable {
     @Column(name = "id", nullable = false, unique = true)
     private Long id;
 
-    /**
-     * Denomination de l'appareil.
-     */
     @Column(name = "client_id", insertable = false, updatable = false)
     private String clientId;
 
@@ -132,5 +129,13 @@ public class AppareilEntity implements Serializable {
 
     public void setClientId(String clientId) {
         this.clientId = clientId;
+    }
+
+    public String getDenomination() {
+        return denomination;
+    }
+
+    public void setDenomination(String denomination) {
+        this.denomination = denomination;
     }
 }

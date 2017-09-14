@@ -12,6 +12,7 @@ import org.mapstruct.Mapper;
 
 @Mapper
 public class DateMapper {
+
     public static ZonedDateTime map(DateTime value) {
         final ZoneOffset zoneOffsetInHours = ZoneOffset.ofHours(value.getTimeZoneShift() / 60);
         return ZonedDateTime.ofInstant(Instant.ofEpochMilli(value.getValue()), ZoneId.from(zoneOffsetInHours));

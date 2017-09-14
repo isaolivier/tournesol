@@ -1,11 +1,12 @@
 package com.tournesol.bean;
 
+import java.io.Serializable;
 import java.time.LocalTime;
 
 /**
  * Created by iolivier on 25/04/2017.
  */
-public class EntrepriseBean {
+public class EntrepriseBean  implements Serializable {
 
     private Long id;
 

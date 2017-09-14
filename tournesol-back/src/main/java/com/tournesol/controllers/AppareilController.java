@@ -5,8 +5,8 @@ import com.tournesol.mapper.AppareilMapper;
 import com.tournesol.service.entity.AppareilEntity;
 import com.tournesol.service.repository.AppareilRepository;
 
+import java.util.Collection;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,9 +29,9 @@ public class AppareilController {
     @GetMapping("/appareil/{clientId}")
     public Iterable<AppareilBean> greeting(@PathVariable String clientId) {
 
-        Iterable<AppareilEntity> appareilEntities = appareilRepository.findAppareilEntities(clientId);
+        Collection<AppareilEntity> appareilEntities = appareilRepository.findAppareilEntities(clientId);
 
-        return StreamSupport.stream(appareilEntities.spliterator(), false)
+        return appareilEntities.stream()
                 .map(a -> AppareilMapper.INSTANCE.appareilToAppareilBean(a))
                 .collect(Collectors.toList());
     }
