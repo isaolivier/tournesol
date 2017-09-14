@@ -1,5 +1,5 @@
 <template>
-    <div :class="[dateClass, { highlight: highlight}]">
+    <div :class="[dateClass, { highlight: highlight, eow: isEOW}]">
         <div class="dow">{{dow}}</div>
         <div class="nb">{{nb}}</div>
         <div class="month">{{month}}</div>
@@ -33,6 +33,9 @@
       },
       month: function () {
         return this.date.format('MMM')
+      },
+      isEOW: function () {
+        return this.date.day() === 6 || this.date.day() === 0
       }
     }
   }
@@ -53,6 +56,13 @@
         background-color: orange;
         color: white;
         text-shadow: 1px 1px 3px #333;
+    }
+
+    .eow {
+        color: grey;
+        border: solid 1px #aaa;
+        width: 50px;
+        background-color: #eee;
     }
 
     .dow {
