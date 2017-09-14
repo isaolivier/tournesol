@@ -89,11 +89,11 @@ public class EventEntity {
         this.end = end;
     }
 
-    public String getiCalUID() {
+    public String getICalUID() {
         return iCalUID;
     }
 
-    public void setiCalUID(String iCalUID) {
+    public void setICalUID(String iCalUID) {
         this.iCalUID = iCalUID;
     }
 }

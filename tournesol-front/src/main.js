@@ -11,7 +11,6 @@ Vue.config.productionTip = false
 
 Vue.use(ElementUI)
 Vue.use(VueResource)
-
 Vue.component('icon', Icon)
 
 Icon.register({
@@ -41,11 +40,15 @@ Icon.register({
 
 import 'element-ui/lib/theme-default/index.css'
 import 'vue-awesome/icons'
-
+const AuthStatus = {
+  initialized: false,
+  signedIn: false
+}
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,
   template: '<App/>',
-  components: { App, Icon }
+  components: { App, Icon },
+  data: AuthStatus
 })

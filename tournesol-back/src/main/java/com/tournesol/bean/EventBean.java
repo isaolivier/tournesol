@@ -4,23 +4,21 @@ import java.time.ZonedDateTime;
 
 public class EventBean {
 
-    String id;
+    private String id;
 
-    ZonedDateTime created;
+    private ZonedDateTime created;
 
-    ZonedDateTime updated;
+    private ZonedDateTime updated;
 
-    String summary;
+    private String summary;
 
-    String description;
+    private String description;
 
-    String location;
+    private String location;
 
-    ZonedDateTime start;
+    private ZonedDateTime start;
 
-    ZonedDateTime end;
-
-    String iCalUID;
+    private ZonedDateTime end;
 
     public String getId() {
         return id;
@@ -86,11 +84,4 @@ public class EventBean {
         this.end = end;
     }
 
-    public String getiCalUID() {
-        return iCalUID;
-    }
-
-    public void setiCalUID(String iCalUID) {
-        this.iCalUID = iCalUID;
-    }
 }

@@ -10,8 +10,10 @@ import javax.persistence.*;
 @Entity
 @Table(name = "CLIENT")
 public class ClientEntity implements Serializable {
+	
+	private static final long serialVersionUID = -4413980880542144023L;
 
-    @Id
+	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false, unique = true)
     private Long id;

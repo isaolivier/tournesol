@@ -1,12 +1,17 @@
 <template>
   <div id="app">
+    <auth></auth>
     <router-view></router-view>
   </div>
 </template>
 
 <script>
+import Auth from './components/auth/Auth'
 export default {
-  name: 'app'
+  name: 'app',
+  components: {
+    'auth': Auth
+  }
 }
 </script>
 

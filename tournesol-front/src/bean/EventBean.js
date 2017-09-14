@@ -6,5 +6,6 @@ export class EventBean {
   constructor () {
     this.start = null
     this.end = null
+    this.location = null
   }
 }

@@ -1,5 +1,4 @@
 <template>
-
     <div>
         Slider des dates<br/>
         <dates></dates>
@@ -25,7 +24,6 @@
             <rdv v-for="(rdv, key, index) in rendezvous" :rdv="rdv" :key="key"/>
         </svg>
     </div>
-
 </template>
 
 <script>
@@ -36,23 +34,22 @@
 
   export default {
     name: 'tournee',
-
     data () {
       return {
+        store: this.$root.$data,
         loading: false,
         error: null,
         heuresOuverture: [8, 18],
-        rendezvous: [],
         hourInterval: Constants.tournee.hourInterval,
         agenda: null
       }
     },
-    created () {
-      this.fetchData()
-    },
     computed: {
       nbHeures: function () {
         return this.heuresOuverture[1] - this.heuresOuverture[0]
+      },
+      rendezvous: function () {
+        if (this.store.initialized && this.store.signedIn) { this.fetchData() }
       }
     },
     components: {
@@ -60,7 +57,7 @@
       'dates': DateStrip
     },
     methods: {
-      fetchData () {
+      fetchData: function () {
         this.error = null
         this.loading = true
         let rdvResource = new RendezVousResource()
