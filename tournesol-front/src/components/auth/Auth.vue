@@ -5,7 +5,7 @@
       <el-alert v-if="showError" type="error" title="" :closable="false">{{error}}</el-alert>
       <el-alert v-if="showSuccess" type="success" title="" :closable="false">{{success}}</el-alert>
     </div>
-    <el-row :gutter="20">
+    <el-row>
       <el-col :span="6">
         <div class="grid-content">
           &nbsp;
@@ -15,9 +15,9 @@
       <el-col :span="1" :push="17">
         <div class="grid-content">
           &nbsp;
-          <div v-if="store.initialized && store.signedIn" v-on:click="signOut"><icon name="power-off" class="signOut"></icon></div>
-          <div v-if="store.initialized && !store.signedIn" v-on:click="promptUserConsent"><icon name="power-off" class="signIn"></icon></div>
-          <div v-if="!store.initialized" v-on:click="alert('Auth module not available')"><icon name="power-off" class="noSign"></icon></div>
+          <div v-if="store.initialized && store.signedIn" @click="signOut"><i class="fa fa-power-off signOut"></i></div>
+          <div v-if="store.initialized && !store.signedIn" @click="promptUserConsent"><i class="fa fa-power-off signIn"></i></div>
+          <div v-if="!store.initialized" @click="alert('Auth module not available')"><i class="fa fa-power-off noSign"></i></div>
         </div>
       </el-col>
     </el-row>
