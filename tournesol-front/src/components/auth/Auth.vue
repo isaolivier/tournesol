@@ -1,10 +1,26 @@
 <template>
-  <div class="container container-table">
-    <small><small><div>
-      <button v-on:click="promptUserConsent"><icon name="power-off"></icon>&nbsp;Sign in</button>
-      <button v-on:click="signOut"><icon name="power-off"></icon>&nbsp;Sign out</button>
-      &nbsp; Store: {{store}}
-    </div></small></small>
+  <div>
+    <div class="alerts">
+      &nbsp;
+      <el-alert v-if="showError" type="error" title="" :closable="false">{{error}}</el-alert>
+      <el-alert v-if="showSuccess" type="success" title="" :closable="false">{{success}}</el-alert>
+    </div>
+    <el-row :gutter="20">
+      <el-col :span="6">
+        <div class="grid-content">
+          &nbsp;
+          <el-alert v-if="debug" type="warning" title="Store " :closable="false"><small>{{store}}</small></el-alert>
+        </div>
+      </el-col>
+      <el-col :span="1" :push="17">
+        <div class="grid-content">
+          &nbsp;
+          <div v-if="store.initialized && store.signedIn" v-on:click="signOut"><icon name="power-off" class="signOut"></icon></div>
+          <div v-if="store.initialized && !store.signedIn" v-on:click="promptUserConsent"><icon name="power-off" class="signIn"></icon></div>
+          <div v-if="!store.initialized" v-on:click="alert('Auth module not available')"><icon name="power-off" class="noSign"></icon></div>
+        </div>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
@@ -15,7 +31,12 @@ export default {
   data: function (router) {
     return {
       section: 'Auth',
-      store: this.$root.$data
+      store: this.$root.$data,
+      showError: false,
+      error: '&nbsp;',
+      showSuccess: false,
+      success: '&nbsp;',
+      debug: false
     }
   },
   methods: {
@@ -24,7 +45,7 @@ export default {
         let gapiprops = {
           'client_id': '108454532704-ad5ips5206l0lutsqpmcbvh7229e3t0g.apps.googleusercontent.com',
           'scope': 'email profile https://www.googleapis.com/auth/calendar.readonly',
-          'fetch_basic_profile': false,
+          'fetch_basic_profile': true,
           'prompt': 'consent',
           'remote_script_url': 'https://apis.google.com/js/api:client.js'
         }
@@ -34,7 +55,7 @@ export default {
           'authURL': '/auth',
           'aliveURL': '/isSessionAlive'
         }
-        authService.init(gapiprops, authserviceprops, this.serviceInitCallBack, this.onSignInStatusChanged)
+        authService.init(gapiprops, authserviceprops, this.serviceInitCallBack, this.onSignInStatusChanged, this.onAuthOver)
       }
     },
     serviceInitCallBack () {
@@ -45,6 +66,36 @@ export default {
         this.store.signedIn = true
       } else {
         this.store.signedIn = false
+      }
+    },
+    alert (message) {
+      this.error = message
+      this.showError = true
+      window.setTimeout(function () {
+        self.showError = false
+      }, 5000)
+    },
+    onAuthOver (message, error) {
+      // console.log('onAuthOver ', message, error, this.store.signedIn)
+      let self = this
+      if (message && message === 'success' && this.store.signedIn) {
+        this.success = 'Bienvenue ' + authService.getUser().getBasicProfile().getEmail()
+        this.showSuccess = true
+        window.setTimeout(function () {
+          self.showSuccess = false
+        }, 5000)
+      } else if (message && message === 'success' && !this.store.signedIn) {
+        this.success = 'Vous avez été déconnecté'
+        this.showSuccess = true
+        window.setTimeout(function () {
+          self.showSuccess = false
+        }, 5000)
+      } else {
+        this.error = 'Une erreur est survenue ' + '\n' + message + '\n' + JSON.stringify(error)
+        this.showError = true
+        window.setTimeout(function () {
+          self.showError = false
+        }, 5000)
       }
     },
     promptUserConsent () {
@@ -59,3 +110,28 @@ export default {
   }
 }
 </script>
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped>
+.fa-icon {
+  width: auto;
+  height: 1em; /* or any other relative font sizes */
+
+  /* You would have to include the following two lines to make this work in Safari */
+  max-width: 100%;
+  max-height: 100%;
+}
+.alerts {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+.noSign {
+  color: gray;
+}
+.signIn {
+  color: red;
+}
+.signOut {
+  color: green;
+}
+</style>

@@ -22,6 +22,8 @@ class AuthService {
     // External callbacks
     // Service init callback
     this.initcallback = null
+    // Auth over callback
+    this.authovercallback = null
     // Signed in/out callback
     this.signedinchangedcallback = null
   }
@@ -42,13 +44,14 @@ class AuthService {
       'aliveURL': '/isSessionAlive'
     }
   }
-  init (gapiprops, serviceprops, initcallback, signedinchangedcallback) {
+  init (gapiprops, serviceprops, initcallback, signedinchangedcallback, authovercallback) {
     // console.log('Init')
     if (!this.isServiceInitialized) {
       this.gapiprops = gapiprops
       this.serviceprops = serviceprops
       this.initcallback = initcallback
       this.signedinchangedcallback = signedinchangedcallback
+      this.authovercallback = authovercallback
       // console.log('Google API props ', JSON.stringify(this.gapiprops))
       // console.log('Service props ', JSON.stringify(this.serviceprops))
       this._loadRemoteScript()
@@ -74,8 +77,8 @@ class AuthService {
           self.authInfo['authcode'] = authCode['code']
         },
         function (error) {
-          console.log('User conset KO - no auth code ', error)
           self.authInfo = {}
+          self.authovercallback('User consent KO - no auth code ', error)
         }
       )
     }
@@ -84,9 +87,8 @@ class AuthService {
   signOut () {
     if (this.gapi && this.gapi.auth2 && (this.authInfo['uid'] || this.authInfo['authcode'])) {
       this.gapi.auth2.getAuthInstance().currentUser.get().disconnect()
-      // console.log('signOut OK')
-      this.isSignedIn = false
-      if (this.signedinchangedcallback) { this.signedinchangedcallback(this.isSignedIn) }
+      this._setSignedOut()
+      this.authovercallback('success')
     }
     // else { console.log('signOut - already signed out') }
     this.authInfo = {}
@@ -155,6 +157,8 @@ class AuthService {
     if (user && user.getBasicProfile()) {
       this.user = user
       this.authInfo['email'] = user.getBasicProfile().getEmail()
+    } else {
+      console.log('User has no basic profile ', user)
     }
     if (previousAuthInfo) {
       if (previousAuthInfo['uid']) { this.authInfo['uid'] = previousAuthInfo['uid'] }
@@ -174,6 +178,7 @@ class AuthService {
     } else {
       this._loadLocalStorage()
       // console.log('loaded authInfo', JSON.stringify(this.authInfo))
+      this._isSessionAlive()
       // if (!this.authInfo['uid'] && !this.authInfo['email']) {
       //   console.log('Status: signed out')
       // } else if (this.authInfo['uid'] && this.authInfo['email'] && this._isSessionAlive()) {
@@ -195,14 +200,15 @@ class AuthService {
             self.authInfo['authcode'] = null
             self._updateLocalStorage()
             self._setSignedIn()
+            self.authovercallback('success')
           } else {
-            // console.log('signIn KO - clearing data & signing out')
             self.signOut()
+            self.authovercallback('signIn KO - clearing data & signing out' + JSON.stringify(response))
           }
         },
         function (error) {
-          // console.error('An error occured while sending authcode to backend - clearing data & signing out ', error)
           self.signOut(error)
+          self.authovercallback('An error occured while sending authcode to backend - clearing data & signing out ', error)
         }
       )
     } else { console.log('Could not send authcode to backend as it\'s emtpy') }
@@ -229,6 +235,11 @@ class AuthService {
   }
   _setSignedIn () {
     this.isSignedIn = true
+    // Launch external signed in callback
+    if (this.signedinchangedcallback) { this.signedinchangedcallback(this.isSignedIn) }
+  }
+  _setSignedOut () {
+    this.isSignedIn = false
     // Launch external signed in callback
     if (this.signedinchangedcallback) { this.signedinchangedcallback(this.isSignedIn) }
   }
