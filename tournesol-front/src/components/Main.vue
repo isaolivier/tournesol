@@ -1,6 +1,8 @@
 <template>
   <div class="hello">
-    <el-tabs type="border-card">
+    <auth></auth>
+
+    <el-tabs type="border-card" v-if="this.store && this.store.initialized && this.store.signedIn">
       <el-tab-pane>
         <span slot="label"><i class="el-icon-edit"></i> Client</span>
         <annuaire></annuaire>
@@ -10,11 +12,13 @@
         <tournee></tournee>
       </el-tab-pane>
     </el-tabs>
+
   </div>
 
 </template>
 
 <script>
+  import Auth from './auth/Auth'
   import Annuaire from './client/Annuaire.vue'
   import Tournee from './tournee/Tournee.vue'
 
@@ -22,12 +26,13 @@
     name: 'main',
     data () {
       return {
-        msg: 'Welcome to Your Vue.js App'
+        store: this.$root.$data
       }
     },
     components: {
       // <my-component> will only be available in parent's template
-      Tournee,
+      'auth': Auth,
+      'tournee': Tournee,
       'annuaire': Annuaire
     }
   }

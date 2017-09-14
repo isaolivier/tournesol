@@ -36,20 +36,20 @@
     name: 'tournee',
     data () {
       return {
-        store: this.$root.$data,
         loading: false,
         error: null,
         heuresOuverture: [8, 18],
         hourInterval: Constants.tournee.hourInterval,
-        agenda: null
+        agenda: null,
+        rendezvous: null
       }
+    },
+    created () {
+      this.fetchData()
     },
     computed: {
       nbHeures: function () {
         return this.heuresOuverture[1] - this.heuresOuverture[0]
-      },
-      rendezvous: function () {
-        if (this.store.initialized && this.store.signedIn) { this.fetchData() }
       }
     },
     components: {
@@ -58,6 +58,8 @@
     },
     methods: {
       fetchData: function () {
+        console.log('Fetching rdvs')
+
         this.error = null
         this.loading = true
         let rdvResource = new RendezVousResource()
