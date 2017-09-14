@@ -9,9 +9,9 @@ export class ClientResource {
     return Vue.http.get('http://localhost:8081/client').then(response => {
       // get body data
       console.log(response)
-      return result(null, response.data)
+      result(null, response.data)
     }, response => {
-      return (response, null)
+      result(response, null)
     })
   }
 }
