@@ -1,18 +1,21 @@
 <template>
   <div class="hello">
-    <auth></auth>
-
-    <el-tabs type="border-card" v-if="this.store && this.store.initialized && this.store.signedIn">
-      <el-tab-pane>
-        <span slot="label"><i class="el-icon-edit"></i> Client</span>
-        <annuaire></annuaire>
-      </el-tab-pane>
-      <el-tab-pane>
-        <span slot="label"><i class="el-icon-date"></i> Tournées</span>
-        <tournee></tournee>
-      </el-tab-pane>
-    </el-tabs>
-
+    <header>
+      <h1>Tournesol</h1>
+      <auth></auth>
+    </header>
+    <div class="content">
+      <el-tabs type="border-card" v-if="this.store && this.store.initialized && this.store.signedIn">
+        <el-tab-pane>
+          <span slot="label"><i class="el-icon-edit"></i> Client</span>
+          <annuaire></annuaire>
+        </el-tab-pane>
+        <el-tab-pane>
+          <span slot="label"><i class="el-icon-date"></i> Tournées</span>
+          <tournee></tournee>
+        </el-tab-pane>
+      </el-tabs>
+    </div>
   </div>
 
 </template>
@@ -56,5 +59,22 @@
 
   a {
     color: #42b983;
+  }
+
+  .hello{
+    height: 100vh;
+  }
+
+  header{
+    height: 150px;
+    overflow:auto
+  }
+
+  .content{
+    height: calc(100vh - 150px);
+  }
+
+  .content .el-tabs{
+    height: 100%;
   }
 </style>

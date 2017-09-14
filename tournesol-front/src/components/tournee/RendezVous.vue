@@ -22,13 +22,12 @@
 
 <script>
   import Config from '../../bean/Constants'
-  import {RendezVousBean} from '../../bean/RendezVousBean'
 
   export default {
     name: 'rdv',
     props: {
       rdv: {
-        type: RendezVousBean,
+        type: Object,
         required: true
       }
     },

@@ -1,12 +1,8 @@
 <template>
-    <div style="height:80vh; width:100%">
+    <div>
         <div v-if="loading">Loading ...</div>
         <div v-if="error" x="50" :y="100">{{error}}</div>
-
-        <svg width="100%" height="100%">
-            <client v-for="(client, index) in clients" :rang="index" :client="client" :key="client.id"></client>
-            <letters :model="letters"/>
-        </svg>
+        <client v-for="(client, index) in clients" :rang="index" :client="client" :key="client.id"></client>
     </div>
 </template>
 
@@ -60,6 +56,15 @@
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style>
 
+    .el-tabs, .el-tab-pane {
+        position: relative;
+        height: calc(100% - 44px);
+    }
+
+    .el-tabs__content {
+        height: calc(100% - 74px);
+        overflow-y: scroll;
+    }
 </style>

@@ -1,6 +1,6 @@
 <template>
     <div class="horiz-flex">
-        <icon @click.native="shiftLeft" name="angle-left" scale="4"></icon>
+        <i @click="shiftLeft" class="fa fa-angle-left fa-4x"></i>
         <div class="scrolling-container ">
             <div class="gradient"></div>
             <div class="horiz-flex center">
@@ -10,7 +10,7 @@
             <div class=""></div>
         </div>
 
-        <icon @click.native="shiftRight" name="angle-right" scale="4"></icon>
+        <i @click="shiftRight" class="fa fa-angle-right fa-4x"></i>
     </div>
 </template>
 
