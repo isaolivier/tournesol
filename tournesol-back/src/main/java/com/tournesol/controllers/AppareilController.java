@@ -10,6 +10,7 @@ import java.util.stream.StreamSupport;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -22,13 +23,13 @@ public class AppareilController {
     private AppareilRepository appareilRepository;
 
     /**
-     * Recherche de l'ensemble des appareils
+     * Recherche de l'ensemble des appareils pour un client donné.
      * @return
      */
-    @GetMapping("/appareil")
-    public Iterable<AppareilBean> greeting() {
+    @GetMapping("/appareil/{clientId}")
+    public Iterable<AppareilBean> greeting(@PathVariable String clientId) {
 
-        Iterable<AppareilEntity> appareilEntities = appareilRepository.findAll();
+        Iterable<AppareilEntity> appareilEntities = appareilRepository.findAppareilEntities(clientId);
 
         return StreamSupport.stream(appareilEntities.spliterator(), false)
                 .map(a -> AppareilMapper.INSTANCE.appareilToAppareilBean(a))

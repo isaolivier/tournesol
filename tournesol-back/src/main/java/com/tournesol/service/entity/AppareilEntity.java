@@ -26,6 +26,12 @@ public class AppareilEntity implements Serializable {
     private Long id;
 
     /**
+     * Denomination de l'appareil.
+     */
+    @Column(name = "client_id", insertable = false, updatable = false)
+    private String clientId;
+
+    /**
      * Adresse où l'appareil est entretenu.
      */
     @OneToOne(targetEntity = AdresseEntity.class)
@@ -118,5 +124,13 @@ public class AppareilEntity implements Serializable {
 
     public void setClient(ClientEntity client) {
         this.client = client;
+    }
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
     }
 }
