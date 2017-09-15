@@ -146,7 +146,7 @@ public class RendezVousController {
         RendezVousBean rdv = new RendezVousBean();
 
         rdvEntities.stream().forEach(r ->
-                rdv.getAppareils().add(AppareilMapper.INSTANCE.appareilToAppareilBean(r.getAppareil()))
+                rdv.getAppareils().add(AppareilMapper.INSTANCE.map(r.getAppareil()))
         );
 
         // Un rdv peut être pris sur plusieurs appareils mais pour un seul client,

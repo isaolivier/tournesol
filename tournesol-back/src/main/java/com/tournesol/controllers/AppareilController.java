@@ -32,7 +32,7 @@ public class AppareilController {
         Collection<AppareilEntity> appareilEntities = appareilRepository.findAppareilEntities(clientId);
 
         return appareilEntities.stream()
-                .map(a -> AppareilMapper.INSTANCE.appareilToAppareilBean(a))
+                .map(a -> AppareilMapper.INSTANCE.map(a))
                 .collect(Collectors.toList());
     }
 
