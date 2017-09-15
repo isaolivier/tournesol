@@ -1,7 +1,9 @@
 <template>
     <div>
-        <el-button type="text" @click="showDialog">Créer un rendez-vous</el-button>
-
+        <span @click="showDialog" class="fa-stack fa-lg">
+          <i class="fa fa-circle fa-stack-2x"></i>
+          <i class="fa fa-calendar-plus-o fa-stack-1x fa-inverse"></i>
+        </span>
         <el-dialog title="Création d'un rendez-vous" :visible.sync="dialogFormVisible">
             <el-form :model="form">
 
@@ -77,5 +79,10 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+
+    .fa-circle{
+        color: #f25f5c;
+        text-shadow: 1px 1px 3px black;
+    }
 
 </style>

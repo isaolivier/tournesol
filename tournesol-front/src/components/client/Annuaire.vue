@@ -3,6 +3,7 @@
         <div v-if="loading">Loading ...</div>
         <div v-if="error" x="50" :y="100">{{error}}</div>
         <client v-for="(client, index) in clients" :rang="index" :client="client" :key="client.id"></client>
+        <letters :model="letters"/>
     </div>
 </template>
 
@@ -56,15 +57,6 @@
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style>
+<style scoped>
 
-    .el-tabs, .el-tab-pane {
-        position: relative;
-        height: calc(100% - 44px);
-    }
-
-    .el-tabs__content {
-        height: calc(100% - 74px);
-        overflow-y: scroll;
-    }
 </style>

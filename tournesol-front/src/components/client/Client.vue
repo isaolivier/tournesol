@@ -1,15 +1,25 @@
 <template>
     <div class="client">
-        <span class="client-nom">{{client.civilite}} {{client.nom}}</span>
-        <i class="fa fa-phone icone-tel"></i>
-        <i class="fa fa-envelope-o icone-mail"></i>
-        <i class="fa fa-comment-o icone-chat"></i>
-        <i class="fa fa-pencil edit"></i>
+        <span class="client-nom">{{client.civilite}} <strong>{{client.nom}}</strong></span>
+        <span class="fa-stack fa-lg icone-chat">
+                <i class="fa fa-square fa-stack-2x"></i>
+                <i class="fa fa-comment-o fa-stack-1x fa-inverse"></i>
+            </span>
+        <div class="edit">
+            <span class="fa-stack fa-lg">
+                <i class="fa fa-square fa-stack-2x"></i>
+                <i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
+            </span>
+        </div>
         <span class="adresse">{{client.adresse.adresse}}{{client.adresse.codePostal}}{{client.adresse.commune}}</span>
-        <span class="telephone">{{client.telephone}}</span><span class="portable">{{client.portable}}</span>
-        <span class="mail">{{client.email}}</span>
-        <span class="note"><i v-for="nb in client.note" class="fa fa-star"></i><i v-for="nb in (5 - client.note)" class="fa fa-star-o"></i></span>
-        <span class="ajouter-rdv"><rdvForm :client="client"></rdvForm></span>
+        <span v-if="client.telephone" class="telephone"><span class="clickable"><i class="fa fa-phone"></i> {{client.telephone}}</span></span>
+        <span v-if="client.portable" class="portable"><span class="clickable"><i class="fa fa-mobile"></i> {{client.portable}}</span></span>
+        <span v-if="client.email" class="mail"><span class="clickable"><i class="fa fa-envelope-o"></i> {{client.email}}</span></span>
+        <span class="note">
+            <i v-for="nb in client.note" class="fa fa-star"></i>
+            <i v-for="nb in (5 - client.note)" class="fa fa-star-o"></i>
+        </span>
+        <rdvForm class="ajouter-rdv" :client="client"></rdvForm>
     </div>
 </template>
 
@@ -39,77 +49,66 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.client {
-    display: grid;
-    grid-template-rows: 1fr 1fr 1fr 1fr 1fr min-content;
-    grid-template-columns: 2fr 2fr 1fr 1fr 1fr 5fr;
-    grid-template-areas: "nomclient nomclient icone-tel icone-mail icone-chat edit"
-                        "adresse adresse adresse adresse adresse adresse"
-                        "telephone telephone portable portable . ."
-                        "mail mail mail mail . ."
-                        ". . . rdv rdv ajouter-rdv"
-                        "etoiles etoiles . . . .";
-    background-color: rgba(0, 96, 149, 0.11);
-    box-shadow: 0px 0px 5px black;
-    border-radius: 5px;
-    padding: 10px;
-    margin: 10px;
+    .client {
+        display: grid;
+        grid-template-rows: repeat(5, auto-fit);
+        grid-template-columns: 2fr 2fr 3em 3em 3em 5fr 50px;
+        grid-template-areas: "nomclient nomclient icone-chat . . . edit"
+            "adresse adresse adresse adresse adresse adresse edit"
+            "telephone telephone portable portable portable portable ."
+            "mail mail mail mail . . ajouter-rdv"
+            "etoiles etoiles . . . . ajouter-rdv";
+        background-color: #d8cfaf;
+        padding: 10px;
+        width: 70%;
+        margin: 10px auto;
+    }
 
-}
+    .client-nom {
+        grid-area: nomclient;
+    }
 
-.client-nom{
-    grid-area: nomclient;
-}
+    .telephone {
+        grid-area: telephone;
+    }
 
-.telephone{
-    grid-area: telephone;
-}
+    .mail {
+        grid-area: mail;
+    }
 
-.telephone:before{
-    font-family: "FontAwesome";
-    content: "\f095";
-}
+    .note {
+        grid-area: etoiles
+    }
 
-.mail{
-    grid-area: mail;
-}
+    .portable {
+        grid-area: portable;
+    }
 
-.mail:before{
-    font-family: "FontAwesome";
-    content: "\F003";
-}
 
-.note {
-    grid-area: etoiles
-}
+    .adresse {
+        grid-area: adresse;
+    }
 
-.portable{
-    grid-area: portable;
-}
+    .icone-chat {
+        grid-area: icone-chat;
+    }
 
-.portable:before{
-    font-family: "FontAwesome";
-    content: "\f10b";
-}
+    .edit {
+        text-align: right;
+        grid-area: edit;
+    }
 
-.adresse{
-    grid-area: adresse;
-}
+    .ajouter-rdv {
+        text-align: right;
+        grid-area: ajouter-rdv;
+    }
 
-.icone-tel{
-    grid-area: icone-tel;
-}
-
-.icone-mail{
-    grid-area: icone-mail;
-}
-
-.icone-chat{
-    grid-area: icone-chat;
-}
-
-.edit{
-    grid-area: edit;
-    text-align: right;
-}
+    .clickable {
+        background-color: #2C3E50;
+        color: white;
+        border-radius: 5px;
+        padding: 4px 6px;
+        margin: 0 0;
+        line-height: 2em;
+    }
 </style>

@@ -14,12 +14,22 @@ export default {
 
 <style>
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: 'FontAwesome', Helvetica, Arial, sans-serif;
   color: #2c3e50;
 }
 
 body{
   margin: 0;
   overflow: hidden;
+}
+
+.el-tabs, .el-tab-pane {
+  position: relative;
+  height: calc(100% - 44px);
+}
+
+.el-tabs__content {
+  height: calc(100% - 74px);
+  overflow-y: scroll;
 }
 </style>
