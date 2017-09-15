@@ -5,8 +5,6 @@
           <i class="fa fa-calendar-plus-o fa-stack-1x fa-inverse"></i>
         </span>
 
-        <el-alert v-if="dialogFormVisible && error" type="error" title="" :closable="false">{{error}}</el-alert>
-
         <el-dialog title="Création d'un rendez-vous" :visible.sync="dialogFormVisible">
             <el-form :model="form">
 
@@ -19,16 +17,19 @@
                 <el-date-picker
                         v-model="form.date"
                         type="date"
-                        placeholder="Date">
+                        placeholder="Date"
+                        :picker-options="{
+                          disabledDate: disabledDate
+                        }">
                 </el-date-picker>
 
                 <el-time-select
                         placeholder="Heure Début"
                         v-model="form.startTime"
                         :picker-options="{
-                          start: '08:30',
-                          step: '00:30',
-                          end: '18:30'
+                          start: this.heureOuverture,
+                          step: this.step,
+                          end: this.heureFermeture
                         }">
 
                 </el-time-select>
@@ -36,10 +37,10 @@
                         placeholder="Heure Fin"
                         v-model="form.endTime"
                         :picker-options="{
-                          start: '08:00',
-                          step: '00:30',
-                          end: '18:30',
-                          minTime: startTime
+                          start: this.heureOuverture,
+                          step: this.step,
+                          end: this.heureFermeture,
+                          minTime: this.form.startTime
                         }">
 
                 </el-time-select>
@@ -54,6 +55,8 @@
 </template>
 
 <script>
+  import moment from 'moment'
+  import Constants from '../../bean/Constants'
   import {AppareilResource} from '../../resource/AppareilResource'
   import {RendezVousResource} from '../../resource/RendezVousResource'
 
@@ -70,21 +73,39 @@
       return {
         error: null,
         dialogFormVisible: false,
+        heureOuverture: Constants.rdv.heuresOuverture[0] + ':00',
+        heureFermeture: Constants.rdv.heuresOuverture[1] + ':00',
+        step: Constants.rdv.timeStep,
         appareils: [],
+        now: moment().startOf('day'),
         form: {
           appareils: [],
           client: this.client.id,
           date: '',
-          startTime: '',
+          startTime: this.heureOuverture,
           endTime: ''
         }
       }
     },
+    watch: {
+      // Ajout du temps de rdv par défaut lors du choix de l'heure de début
+      'form.startTime': function (newStartTime) {
+        let m = moment(newStartTime, 'HH:mm').add(Constants.rdv.tempsRdv, 'm')
+        this.form.endTime = m.format('HH:mm')
+      }
+    },
     methods: {
+      // Calcul des dates désactivées lors du choix des dates
+      disabledDate (date) {
+        return this.now > moment(date)
+      },
+
       showDialog () {
         this.dialogFormVisible = true
         this.fetchData()
       },
+
+      // Chargement des appareils
       fetchData: function () {
         console.log('Fetching appareils')
 
@@ -97,6 +118,8 @@
           }
         })
       },
+
+      // Calcul du label affiché pour un appreil
       getAppareilLabel (appareil) {
         return appareil.denomination + ' [' + appareil.marque + ']'
       },

@@ -4,6 +4,11 @@
 
 export default{
   tournee: {
-    hourInterval: 100
+    hourInterval: 100 // nb d'intervalles en px entre 2 heures
+  },
+  rdv: {
+    timeStep: '00:30',
+    heuresOuverture: [8, 19],
+    tempsRdv: 90 // Temps d'un rdv par défaut en minutes
   }
 }

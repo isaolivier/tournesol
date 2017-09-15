@@ -38,7 +38,7 @@
       return {
         loading: false,
         error: null,
-        heuresOuverture: [8, 18],
+        heuresOuverture: Constants.rdv.heuresOuverture,
         hourInterval: Constants.tournee.hourInterval,
         agenda: null,
         rendezvous: null
