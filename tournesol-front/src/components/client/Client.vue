@@ -1,10 +1,6 @@
 <template>
     <div class="client">
         <span class="client-nom">{{client.civilite}} <strong>{{client.nom}}</strong></span>
-        <span class="fa-stack fa-lg icone-chat">
-                <i class="fa fa-square fa-stack-2x"></i>
-                <i class="fa fa-comment-o fa-stack-1x fa-inverse"></i>
-            </span>
         <div class="edit">
             <span class="fa-stack fa-lg">
                 <i class="fa fa-square fa-stack-2x"></i>
@@ -13,7 +9,13 @@
         </div>
         <span class="adresse">{{client.adresse.adresse}}{{client.adresse.codePostal}}{{client.adresse.commune}}</span>
         <span v-if="client.telephone" class="telephone"><span class="clickable"><i class="fa fa-phone"></i> {{client.telephone}}</span></span>
-        <span v-if="client.portable" class="portable"><span class="clickable"><i class="fa fa-mobile"></i> {{client.portable}}</span></span>
+        <span v-if="client.portable" class="portable">
+            <span class="clickable"><i class="fa fa-mobile"></i> {{client.portable}}</span>
+            <span class="fa-stack icone-chat">
+                <i class="fa fa-square fa-stack-2x"></i>
+                <i class="fa fa-comment-o fa-stack-1x fa-inverse"></i>
+            </span>
+        </span>
         <span v-if="client.email" class="mail"><span class="clickable"><i class="fa fa-envelope-o"></i> {{client.email}}</span></span>
         <span class="note">
             <i v-for="nb in client.note" class="fa fa-star"></i>
@@ -55,7 +57,7 @@
         grid-template-columns: 2fr 2fr 3em 3em 3em 5fr 50px;
         grid-template-areas: "nomclient nomclient icone-chat . . . edit"
             "adresse adresse adresse adresse adresse adresse edit"
-            "telephone telephone portable portable portable portable ."
+            "telephone telephone portable portable portable portable edit"
             "mail mail mail mail . . ajouter-rdv"
             "etoiles etoiles . . . . ajouter-rdv";
         background-color: #d8cfaf;
