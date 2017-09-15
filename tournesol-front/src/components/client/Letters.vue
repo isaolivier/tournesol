@@ -1,7 +1,7 @@
 <template>
     <div class="letters">
         <ul>
-            <li v-for="(letter, index) in letters" x="98%" :y="index * 20 + 30">{{letter}}</li>
+            <li v-for="(letter, index) in letters" x="98%" :y="index * 20 + 30" ><a :href="'#'+letter">{{letter}}</a></li>
         </ul>
     </div>
 </template>
@@ -11,7 +11,7 @@
     name: 'letters',
     props: {
       model: {
-        type: Set,
+        type: Array,
         required: true
       }
     },

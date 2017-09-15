@@ -2,19 +2,15 @@
     <div class="client">
         <span class="client-nom">{{client.civilite}} <strong>{{client.nom}}</strong></span>
         <div class="edit">
-            <span class="fa-stack fa-lg">
-                <i class="fa fa-square fa-stack-2x"></i>
-                <i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
+            <span class="clickable">
+                <i class="fa fa-pencil fa-2x"></i>
             </span>
         </div>
         <span class="adresse">{{client.adresse.adresse}}{{client.adresse.codePostal}}{{client.adresse.commune}}</span>
         <span v-if="client.telephone" class="telephone"><span class="clickable"><i class="fa fa-phone"></i> {{client.telephone}}</span></span>
         <span v-if="client.portable" class="portable">
             <span class="clickable"><i class="fa fa-mobile"></i> {{client.portable}}</span>
-            <span class="fa-stack icone-chat">
-                <i class="fa fa-square fa-stack-2x"></i>
-                <i class="fa fa-comment-o fa-stack-1x fa-inverse"></i>
-            </span>
+                <i class="fa fa-comment-o clickable"></i>
         </span>
         <span v-if="client.email" class="mail"><span class="clickable"><i class="fa fa-envelope-o"></i> {{client.email}}</span></span>
         <span class="note">
@@ -53,17 +49,24 @@
 <style scoped>
     .client {
         display: grid;
-        grid-template-rows: repeat(5, auto-fit);
+        grid-template-rows: repeat(5, minmax(0px, max-content));
         grid-template-columns: 2fr 2fr 3em 3em 3em 5fr 50px;
         grid-template-areas: "nomclient nomclient icone-chat . . . edit"
             "adresse adresse adresse adresse adresse adresse edit"
-            "telephone telephone portable portable portable portable edit"
+            "telephone telephone portable portable portable portable ."
             "mail mail mail mail . . ajouter-rdv"
             "etoiles etoiles . . . . ajouter-rdv";
-        background-color: #d8cfaf;
         padding: 10px;
         width: 70%;
         margin: 10px auto;
+        border: solid 1px #D1DBE5;
+        border-radius: 0px;
+        background-color: #EEF1F6;
+        align-items: center
+    }
+
+    .fa {
+        color: grey
     }
 
     .client-nom {
@@ -79,7 +82,8 @@
     }
 
     .note {
-        grid-area: etoiles
+        grid-area: etoiles;
+        padding: 4px 6px 0px 6px;
     }
 
     .portable {
@@ -89,6 +93,7 @@
 
     .adresse {
         grid-area: adresse;
+        padding: 2px 6px;
     }
 
     .icone-chat {
@@ -104,11 +109,10 @@
     }
 
     .clickable {
-        background-color: #2C3E50;
-        color: white;
+        display: inline-block;
+        border: solid 1px grey;
         border-radius: 5px;
-        padding: 4px 6px;
-        margin: 0 0;
-        line-height: 2em;
+        padding: 2px 6px;
+        margin: 4px 0;
     }
 </style>
