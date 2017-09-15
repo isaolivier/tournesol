@@ -96,12 +96,10 @@
     }
 
     .edit {
-        text-align: right;
         grid-area: edit;
     }
 
     .ajouter-rdv {
-        text-align: right;
         grid-area: ajouter-rdv;
     }
 

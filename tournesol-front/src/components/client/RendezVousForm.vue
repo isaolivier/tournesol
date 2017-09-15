@@ -5,7 +5,7 @@
           <i class="fa fa-calendar-plus-o fa-stack-1x fa-inverse"></i>
         </span>
 
-        <el-alert v-if="dialogFormVisible" type="error" title="" :closable="false">{{error}}</el-alert>
+        <el-alert v-if="dialogFormVisible && error" type="error" title="" :closable="false">{{error}}</el-alert>
 
         <el-dialog title="Création d'un rendez-vous" :visible.sync="dialogFormVisible">
             <el-form :model="form">
@@ -66,7 +66,7 @@
         required: true
       }
     },
-    data() {
+    data () {
       return {
         error: null,
         dialogFormVisible: false,
@@ -81,7 +81,7 @@
       }
     },
     methods: {
-      showDialog() {
+      showDialog () {
         this.dialogFormVisible = true
         this.fetchData()
       },
@@ -97,7 +97,7 @@
           }
         })
       },
-      getAppareilLabel(appareil) {
+      getAppareilLabel (appareil) {
         return appareil.denomination + ' [' + appareil.marque + ']'
       },
       createRendezVous () {
