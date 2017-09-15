@@ -31,7 +31,7 @@ class AuthService {
     return {
       'client_id': 'SOMETHINGREAL.apps.googleusercontent.com',
       'fetch_basic_profile': false,
-      'scope': 'profile email https://www.googleapis.com/auth/calendar.readonly',
+      'scope': 'profile email https://www.googleapis.com/auth/calendar',
       'prompt': 'consent',
       'remote_script_url': 'https://apis.google.com/js/api:client.js'
     }

@@ -14,11 +14,17 @@ import org.mapstruct.Mapper;
 public class DateMapper {
 
     public static ZonedDateTime map(DateTime value) {
-        final ZoneOffset zoneOffsetInHours = ZoneOffset.ofHours(value.getTimeZoneShift() / 60);
-        return ZonedDateTime.ofInstant(Instant.ofEpochMilli(value.getValue()), ZoneId.from(zoneOffsetInHours));
+        if(value != null) {
+            final ZoneOffset zoneOffsetInHours = ZoneOffset.ofHours(value.getTimeZoneShift() / 60);
+            return ZonedDateTime.ofInstant(Instant.ofEpochMilli(value.getValue()), ZoneId.from(zoneOffsetInHours));
+        }
+        return null;
     };
 
     public static DateTime map(ZonedDateTime value) {
-        return new DateTime(value.format(DateTimeFormatter.ISO_INSTANT));
+        if(value != null) {
+            return new DateTime(value.format(DateTimeFormatter.ISO_INSTANT));
+        }
+        return null;
     };
 }

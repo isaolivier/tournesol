@@ -34,19 +34,19 @@ public class ClientController {
         Iterable<ClientEntity> clientEntities = clientRepository.findAll();
 
         return StreamSupport.stream(clientEntities.spliterator(), false)
-                .map(c -> ClientMapper.INSTANCE.clientToClientBean(c))
+                .map(c -> ClientMapper.INSTANCE.map(c))
                 .collect(Collectors.toList());
     }
 
     @PutMapping("/client")
     public void createClient(ClientBean client) {
-        final ClientEntity clientEntity = ClientMapper.INSTANCE.clientBeanToClient(client);
+        final ClientEntity clientEntity = ClientMapper.INSTANCE.map(client);
         clientRepository.save(clientEntity);
     }
 
     @PostMapping("/client")
     public void updateClient(ClientBean client) {
-        final ClientEntity clientEntity = ClientMapper.INSTANCE.clientBeanToClient(client);
+        final ClientEntity clientEntity = ClientMapper.INSTANCE.map(client);
         clientRepository.save(clientEntity);
     }
 }

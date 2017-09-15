@@ -16,7 +16,7 @@ public interface AppareilMapper {
 
     AppareilMapper INSTANCE = Mappers.getMapper( AppareilMapper.class );
 
-    AppareilBean appareilToAppareilBean(AppareilEntity clientEntity);
-    AppareilEntity appareilBeanToAppareil(AppareilBean clientBean);
+    AppareilBean map(AppareilEntity clientEntity);
+    AppareilEntity map(AppareilBean clientBean);
 }
 

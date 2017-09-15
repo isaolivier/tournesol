@@ -16,7 +16,7 @@ public interface EventBeanMapper {
 
     EventBeanMapper INSTANCE = Mappers.getMapper( EventBeanMapper.class );
 
-    EventBean eventEntityToEventBean(EventEntity eventEntity);
-    EventEntity eventBeanToEventEntity(EventBean eventBean);
+    EventBean map(EventEntity eventEntity);
+    EventEntity map(EventBean eventBean);
 }
 

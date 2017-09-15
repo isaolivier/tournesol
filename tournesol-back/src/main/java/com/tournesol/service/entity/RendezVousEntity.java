@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -19,6 +20,9 @@ public class RendezVousEntity {
 
     @ManyToOne(targetEntity = AppareilEntity.class)
     private AppareilEntity appareil;
+
+    @OneToOne(targetEntity = ClientEntity.class)
+    private ClientEntity client;
 
     @Column(name = "event_cal_id")
     private String eventId;
@@ -37,5 +41,13 @@ public class RendezVousEntity {
 
     public void setEventId(String eventId) {
         this.eventId = eventId;
+    }
+
+    public ClientEntity getClient() {
+        return client;
+    }
+
+    public void setClient(ClientEntity client) {
+        this.client = client;
     }
 }

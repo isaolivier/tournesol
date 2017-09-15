@@ -16,8 +16,8 @@ public interface EntrepriseMapper {
 
     EntrepriseMapper INSTANCE = Mappers.getMapper( EntrepriseMapper.class );
 
-    EntrepriseBean entrepriseToEntrepriseBean(EntrepriseEntity clientEntity);
-    EntrepriseEntity entrepriseBeanToEntreprise(EntrepriseBean clientBean);
+    EntrepriseBean map(EntrepriseEntity clientEntity);
+    EntrepriseEntity map(EntrepriseBean clientBean);
 
 }
 

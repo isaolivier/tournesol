@@ -19,10 +19,36 @@ public class AdresseEntity {
     @Column(name = "id", nullable = false, unique = true)
     private Long id;
 
-    @Column(name = "numeroVoie")
-    private String numeroVoie;
+    @Column(name = "adresse")
+    private String adresse;
 
     @Column(name = "codePostal", nullable = false)
     private String codePostal;
 
+    @Column(name = "commune")
+    private String commune;
+
+    public String getAdresse() {
+        return adresse;
+    }
+
+    public void setAdresse(String adresse) {
+        this.adresse = adresse;
+    }
+
+    public String getCodePostal() {
+        return codePostal;
+    }
+
+    public void setCodePostal(String codePostal) {
+        this.codePostal = codePostal;
+    }
+
+    public String getCommune() {
+        return commune;
+    }
+
+    public void setCommune(String commune) {
+        this.commune = commune;
+    }
 }

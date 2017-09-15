@@ -18,8 +18,8 @@ public interface ClientMapper {
 
     ClientMapper INSTANCE = Mappers.getMapper( ClientMapper.class );
 
-    ClientBean clientToClientBean(ClientEntity clientEntity);
-    ClientEntity clientBeanToClient(ClientBean clientBean);
+    ClientBean map(ClientEntity clientEntity);
+    ClientEntity map(ClientBean clientBean);
 
     AdresseBean map(AdresseEntity value);
     AdresseEntity map(AdresseBean value);

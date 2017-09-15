@@ -44,7 +44,7 @@ export default {
       if (!this.store.initialized) {
         let gapiprops = {
           'client_id': '108454532704-ad5ips5206l0lutsqpmcbvh7229e3t0g.apps.googleusercontent.com',
-          'scope': 'email profile https://www.googleapis.com/auth/calendar.readonly',
+          'scope': 'email profile https://www.googleapis.com/auth/calendar',
           'fetch_basic_profile': true,
           'prompt': 'consent',
           'remote_script_url': 'https://apis.google.com/js/api:client.js'

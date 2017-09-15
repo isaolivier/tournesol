@@ -1,4 +1,4 @@
-package com.tournesol.service.events;
+package com.tournesol.service;
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -10,7 +10,6 @@ import com.google.api.services.calendar.model.Events;
 import com.tournesol.bean.AuthInfo;
 import com.tournesol.mapper.DateMapper;
 import com.tournesol.mapper.EventGoogleMapper;
-import com.tournesol.service.auth.AuthService;
 import com.tournesol.service.entity.EventEntity;
 
 import java.io.IOException;
