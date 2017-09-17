@@ -63,7 +63,7 @@ class AuthService {
   }
   // Externally exposed functions
   promptUserConsent () {
-    if (this.gapi && this.gapi.auth2 && !this.authInfo['uid'] && !this.authInfo['authcode']) {
+    if (this.gapi && this.gapi.auth2 && (!this.authInfo['uid'] || !this.authInfo['authcode'])) {
       let self = this
       let scope = {
         scope: self.gapiprops['scope'],
@@ -158,7 +158,7 @@ class AuthService {
       this.user = user
       this.authInfo['email'] = user.getBasicProfile().getEmail()
     } else {
-      console.log('User has no basic profile ', user)
+      // console.log('User has no basic profile ', user)
     }
     if (previousAuthInfo) {
       if (previousAuthInfo['uid']) { this.authInfo['uid'] = previousAuthInfo['uid'] }
