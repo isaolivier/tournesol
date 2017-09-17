@@ -1,11 +1,6 @@
 <template>
     <div class="client">
         <span class="client-nom">{{client.civilite}} <strong>{{client.nom}}</strong></span>
-        <div class="edit">
-            <span class="clickable">
-                <i class="fa fa-pencil fa-2x"></i>
-            </span>
-        </div>
         <span class="adresse">{{client.adresse.adresse}}{{client.adresse.codePostal}}{{client.adresse.commune}}</span>
         <span v-if="client.telephone" class="telephone"><span class="clickable"><i class="fa fa-phone"></i> {{client.telephone}}</span></span>
         <span v-if="client.portable" class="portable">
@@ -17,11 +12,13 @@
             <i v-for="nb in client.note" class="fa fa-star"></i>
             <i v-for="nb in (5 - client.note)" class="fa fa-star-o"></i>
         </span>
-        <rdvForm class="ajouter-rdv" :client="client"></rdvForm>
+        <rdv-form class="ajouter-rdv" :client="client"></rdv-form>
+        <client-form class="edit clickable" :client="client"></client-form>
     </div>
 </template>
 
 <script>
+  import ClientForm from './ClientForm.vue'
   import RendezVousForm from './RendezVousForm.vue'
 
   export default {
@@ -40,7 +37,8 @@
       return {}
     },
     components: {
-      'rdvForm': RendezVousForm
+      'client-form': ClientForm,
+      'rdv-form': RendezVousForm
     }
   }
 </script>

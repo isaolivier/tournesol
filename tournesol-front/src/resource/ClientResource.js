@@ -14,4 +14,13 @@ export class ClientResource {
       result(response, null)
     })
   }
+
+  createClient (client, result) {
+    return Vue.http.post('http://localhost:8081/client', client).then(response => {
+      console.log(response)
+      result(null)
+    }, response => {
+      result(response)
+    })
+  }
 }

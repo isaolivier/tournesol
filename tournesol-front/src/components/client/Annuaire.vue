@@ -2,6 +2,9 @@
     <div>
         <div v-if="loading">Loading ...</div>
         <div v-if="error" x="50" :y="100">{{error}}</div>
+
+        <client-form></client-form>
+
         <template v-for="(client, index) in elements">
             <template v-if="client.nom">
                 <client :rang="index" :client="client" :key="client.id"></client>
@@ -19,6 +22,7 @@
   import Client from './Client.vue'
   import Letters from './Letters.vue'
   import Letter from './Letter.vue'
+  import ClientForm from './ClientForm.vue'
 
   export default {
     name: 'annuaire',
@@ -45,6 +49,7 @@
       }
     },
     components: {
+      'client-form': ClientForm,
       'client': Client,
       'letters': Letters,
       'letter': Letter
