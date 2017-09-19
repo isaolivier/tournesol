@@ -72,7 +72,8 @@
 
             <span slot="footer" class="dialog-footer">
                 <el-button @click="dialogFormVisible = false">Annuler</el-button>
-                <el-button type="primary" @click="createClient">Créer</el-button>
+                <el-button v-if="client" type="primary" @click="updateClient">Enregistrer</el-button>
+                <el-button v-else type="primary" @click="createClient">Créer</el-button>
             </span>
         </el-dialog>
     </div>
@@ -137,6 +138,16 @@
       createClient () {
         let clientResource = new ClientResource()
         clientResource.createClient(this.form, (err) => {
+          if (err) {
+            this.error = err.toString()
+          } else {
+            this.dialogFormVisible = false
+          }
+        })
+      },
+      updateClient () {
+        let clientResource = new ClientResource()
+        clientResource.updateClient(this.form, (err) => {
           if (err) {
             this.error = err.toString()
           } else {

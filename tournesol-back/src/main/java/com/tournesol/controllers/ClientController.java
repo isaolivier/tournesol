@@ -1,9 +1,9 @@
 package com.tournesol.controllers;
 
-import com.google.maps.model.AddressComponentType;
 import com.google.maps.model.PlaceDetails;
 import com.tournesol.bean.ClientOutputBean;
 import com.tournesol.bean.input.ClientInputBean;
+import com.tournesol.mapper.AdresseMapper;
 import com.tournesol.mapper.ClientInputMapper;
 import com.tournesol.mapper.ClientOutputMapper;
 import com.tournesol.service.MapService;
@@ -11,11 +11,12 @@ import com.tournesol.service.entity.AdresseEntity;
 import com.tournesol.service.entity.ClientEntity;
 import com.tournesol.service.repository.ClientRepository;
 
-import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -50,11 +51,25 @@ public class ClientController {
                 .collect(Collectors.toList());
     }
 
+    @CrossOrigin(origins = "http://localhost:8080")
     @PutMapping("/client")
-    public void updateClient(@RequestBody ClientInputBean client) {
-        final ClientEntity clientEntity = ClientInputMapper.INSTANCE.map(client);
+    public void updateClient(@RequestBody ClientInputBean client) throws Exception {
 
-        clientRepository.save(clientEntity);
+        ClientEntity existingClient = clientRepository.findById(client.getId()).orElse(null);
+
+        if(existingClient != null) {
+            if (!StringUtils.equals(client.getPlaceId(), existingClient.getAdresse().getPlaceId())) {
+                final PlaceDetails placeDetails = mapService.getPlaceDetails(client.getPlaceId());
+
+                AdresseEntity adresseEntity = AdresseMapper.map(placeDetails);
+                adresseEntity.setPlaceId(client.getPlaceId());
+                adresseEntity.setId(existingClient.getAdresse().getId());
+            }
+
+            final ClientEntity clientEntity = ClientInputMapper.INSTANCE.map(client);
+
+            clientRepository.save(clientEntity);
+        }
     }
 
     @PostMapping("/client")
@@ -63,28 +78,12 @@ public class ClientController {
 
         final PlaceDetails placeDetails = mapService.getPlaceDetails(client.getPlaceId());
 
-        AdresseEntity adresseEntity = new AdresseEntity();
-        clientEntity.setAdresse(adresseEntity);
-
+        AdresseEntity adresseEntity = AdresseMapper.map(placeDetails);
         adresseEntity.setPlaceId(client.getPlaceId());
-        adresseEntity.setNumero(getDetailProperty(placeDetails, AddressComponentType.STREET_NUMBER));
-        adresseEntity.setVoie(getDetailProperty(placeDetails, AddressComponentType.ROUTE));
-        adresseEntity.setCommune(getDetailProperty(placeDetails, AddressComponentType.LOCALITY));
-        adresseEntity.setCodePostal(getDetailProperty(placeDetails, AddressComponentType.POSTAL_CODE));
 
-        adresseEntity.setLatitude(placeDetails.geometry.location.lat);
-        adresseEntity.setLongitude(placeDetails.geometry.location.lng);
-        adresseEntity.setPlaceId(placeDetails.placeId);
+        clientEntity.setAdresse(adresseEntity);
 
         clientRepository.save(clientEntity);
     }
 
-    private String getDetailProperty(PlaceDetails placeDetails, AddressComponentType type) {
-
-        return Arrays.stream(placeDetails.addressComponents)
-                .filter(a -> Arrays.stream(a.types).anyMatch(t -> t == type))
-                .findFirst()
-                .map(e -> e.longName)
-                .orElse(null);
-    }
 }

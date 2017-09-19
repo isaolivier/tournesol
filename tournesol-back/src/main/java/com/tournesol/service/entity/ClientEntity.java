@@ -69,7 +69,7 @@ public class ClientEntity implements Serializable {
     /**
      * Adresse principale du client.
      */
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private AdresseEntity adresse;
 
     public ClientEntity() {

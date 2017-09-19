@@ -24,4 +24,14 @@ export class ClientResource {
       result(response)
     })
   }
+
+  updateClient (client, result) {
+    console.log(client)
+    return Vue.http.put(Constants.back.hostname + '/client', client).then(response => {
+      console.log(response)
+      result(null)
+    }, response => {
+      result(response)
+    })
+  }
 }
