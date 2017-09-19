@@ -1,12 +1,12 @@
 import Vue from 'vue'
 import VueResource from 'vue-resource'
-
+import Constants from '../bean/Constants'
 Vue.use(VueResource)
 
 export class ClientResource {
 
   findAllClient (result) {
-    return Vue.http.get('http://localhost:8081/client').then(response => {
+    return Vue.http.get(Constants.back.hostname + '/client').then(response => {
       // get body data
       console.log(response)
       result(null, response.data)

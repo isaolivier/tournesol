@@ -6,6 +6,9 @@ export default{
   tournee: {
     hourInterval: 100 // nb d'intervalles en px entre 2 heures
   },
+  back: {
+    hostname: 'http://localhost:8081'
+  },
   rdv: {
     timeStep: '00:30',
     heuresOuverture: [8, 19],

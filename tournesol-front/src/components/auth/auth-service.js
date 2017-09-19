@@ -85,14 +85,15 @@ class AuthService {
     // else { console.log('Already signed in') }
   }
   signOut () {
+    this.authInfo = {}
+    this._clearLocalStorage()
     if (this.gapi && this.gapi.auth2 && (this.authInfo['uid'] || this.authInfo['authcode'])) {
       this.gapi.auth2.getAuthInstance().currentUser.get().disconnect()
       this._setSignedOut()
       this.authovercallback('success')
+    } else {
+      console.log('signOut - already signed out')
     }
-    // else { console.log('signOut - already signed out') }
-    this.authInfo = {}
-    this._clearLocalStorage()
   }
   getAuthInfo () { return this.authInfo }
   getUser () { return this.user }
