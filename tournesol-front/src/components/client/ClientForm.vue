@@ -14,51 +14,60 @@
         <el-dialog :title="this.title" :visible.sync="dialogFormVisible">
             <el-form :model="form">
 
-                <el-form-item>
-                    <el-radio-group v-model="form.civilite">
-                        <el-radio-button label="Mr">Mr</el-radio-button>
-                        <el-radio-button label="Mme">Mme</el-radio-button>
-                        <el-radio-button label="MrMme">Mr & Mme</el-radio-button>
-                    </el-radio-group>
-                </el-form-item>
+                <el-row :gutter="20">
+                    <el-col :span="6">
+                        <el-radio-group v-model="form.civilite">
+                            <el-radio-button label="Mr">Mr</el-radio-button>
+                            <el-radio-button label="Mme">Mme</el-radio-button>
+                            <el-radio-button label="MrMme">Mr & Mme</el-radio-button>
+                        </el-radio-group>
+                    </el-col>
 
-                <el-form-item>
-                    <el-input placeholder="Nom" v-model="form.nom"></el-input>
-                </el-form-item>
-                <el-form-item>
-                    <el-input placeholder="Société" v-model="form.societe"></el-input>
-                </el-form-item>
+                    <el-col :span="18">
+                        <el-input placeholder="Nom" v-model="form.nom"></el-input>
+                    </el-col>
+                </el-row>
 
-                <el-form-item>
-                    <el-input placeholder="Adresse" v-model="form.adresse.adresse"></el-input>
-                </el-form-item>
-                <el-form-item>
-                    <el-input placeholder="Code Postal" v-model="form.adresse.codePostal"
-                              type="number" maxlength="5" size="small"></el-input>
-                </el-form-item>
-                <el-form-item>
-                    <el-input placeholder="Localité" v-model="form.adresse.commune"></el-input>
-                </el-form-item>
+                <el-row :gutter="20">
+                    <el-col :span="24">
+                        <el-input placeholder="Société" v-model="form.societe"></el-input>
+                    </el-col>
+                </el-row>
 
-                <el-form-item>
-                    <el-input placeholder="Téléphone" v-model="form.telephone"></el-input>
-                </el-form-item>
+                <el-row :gutter="20">
+                    <el-col :span="24">
+                        <el-autocomplete
+                                v-model="fullAdresse"
+                                :fetch-suggestions="searchPlaces"
+                                placeholder="Saisir une adresse"
+                                @select="handlePlaceSelect"></el-autocomplete>
+                    </el-col>
+                </el-row>
 
-                <el-form-item>
-                    <el-input placeholder="Portable" v-model="form.portable"></el-input>
-                </el-form-item>
+                <el-row :gutter="20">
+                    <el-col :span="4">
+                        <el-input placeholder="Téléphone" v-model="form.telephone"></el-input>
+                    </el-col>
+                    <el-col :span="4">
+                        <el-input placeholder="Portable" v-model="form.portable"></el-input>
+                    </el-col>
+                </el-row>
 
-                <el-form-item>
-                    <el-input placeholder="Mail" v-model="form.email"></el-input>
-                </el-form-item>
+                <el-row :gutter="20">
+                    <el-col :span="8">
+                        <el-input placeholder="Mail" v-model="form.email"></el-input>
+                    </el-col>
+                    <el-col :span="8">
+                        <div class="stars">
+                            <i :class="'fa fa-star' + iconStarOff(1) + ' fa-2x'" @click="setNote(1)"></i>
+                            <i :class="'fa fa-star' + iconStarOff(2) + ' fa-2x'" @click="setNote(2)"></i>
+                            <i :class="'fa fa-star' + iconStarOff(3) + ' fa-2x'" @click="setNote(3)"></i>
+                            <i :class="'fa fa-star' + iconStarOff(4) + ' fa-2x'" @click="setNote(4)"></i>
+                            <i :class="'fa fa-star' + iconStarOff(5) + ' fa-2x'" @click="setNote(5)"></i>
+                        </div>
+                    </el-col>
+                </el-row>
 
-                <el-form-item>
-                    <i :class="iconStarOnOff(1)" @click="setNote(1)"></i>
-                    <i :class="iconStarOnOff(2)" @click="setNote(2)"></i>
-                    <i :class="iconStarOnOff(3)" @click="setNote(3)"></i>
-                    <i :class="iconStarOnOff(4)" @click="setNote(4)"></i>
-                    <i :class="iconStarOnOff(5)" @click="setNote(5)"></i>
-                </el-form-item>
             </el-form>
 
             <span slot="footer" class="dialog-footer">
@@ -86,15 +95,12 @@
         title: '',
         error: null,
         dialogFormVisible: false,
+        fullAdresse: '',
         form: {
           civilite: '',
           nom: '',
           societe: '',
-          adresse: {
-            adresse: '',
-            codePostal: '',
-            commune: ''
-          },
+          placeId: null,
           telephone: '',
           portable: '',
           email: '',
@@ -105,6 +111,11 @@
     created () {
       if (this.client) {
         this.form = this.client
+        this.form.placeId = this.client.adresse.placeId
+        this.fullAdresse = this.client.adresse.numero + ' ' +
+          this.client.adresse.voie + ', ' +
+          this.client.adresse.commune + ' ' + this.client.adresse.codePostal
+
         this.title = ''
       } else {
         this.title = 'Création d\'un client'
@@ -114,11 +125,11 @@
       showDialog () {
         this.dialogFormVisible = true
       },
-      iconStarOnOff (index) {
+      iconStarOff (index) {
         if (index <= this.form.note) {
-          return 'el-icon-star-on'
+          return ''
         }
-        return 'el-icon-star-off'
+        return '-o'
       },
       setNote (note) {
         this.form.note = note
@@ -132,6 +143,33 @@
             this.dialogFormVisible = false
           }
         })
+      },
+      searchPlaces (queryString, cb) {
+        let google = window.google || {}
+
+        let displaySuggestions = function (predictions, status) {
+          var results = []
+          if (status !== google.maps.places.PlacesServiceStatus.OK) {
+            cb(status)
+            return
+          }
+          predictions.forEach(function (prediction) {
+            results.push({'value': prediction.description, 'placeId': prediction.place_id})
+          })
+          cb(results)
+        }
+
+        if (queryString && queryString.length > 3) {
+          console.log('Search places for \'' + queryString + '\'')
+          let service = new google.maps.places.AutocompleteService()
+          service.getPlacePredictions({input: queryString, componentRestrictions: {country: 'fr'}}, displaySuggestions)
+        } else {
+          cb([])
+        }
+      },
+      handlePlaceSelect (placeId) {
+        console.log(placeId)
+        this.form.placeId = placeId.placeId
       }
     }
   }
@@ -143,6 +181,15 @@
     .fa-circle {
         color: #f25f5c;
         text-shadow: 1px 1px 3px black;
+    }
+
+    .el-row {
+        margin-bottom: 20px;
+    }
+
+    .stars {
+        float: right;
+        margin: 20px 50px 0 0;
     }
 
 </style>

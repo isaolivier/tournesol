@@ -157,4 +157,12 @@ public class ClientEntity implements Serializable {
     public void setAdresse(AdresseEntity adresse) {
         this.adresse = adresse;
     }
+
+    public String getSociete() {
+        return societe;
+    }
+
+    public void setSociete(String societe) {
+        this.societe = societe;
+    }
 }

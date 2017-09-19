@@ -1,7 +1,7 @@
 <template>
     <div class="client">
         <span class="client-nom">{{client.civilite}} <strong>{{client.nom}}</strong></span>
-        <span class="adresse">{{client.adresse.adresse}}{{client.adresse.codePostal}}{{client.adresse.commune}}</span>
+        <span class="adresse">{{client.adresse.numero}} {{client.adresse.voie}}, {{client.adresse.codePostal}} {{client.adresse.commune}}</span>
         <span v-if="client.telephone" class="telephone"><span class="clickable"><i class="fa fa-phone"></i> {{client.telephone}}</span></span>
         <span v-if="client.portable" class="portable">
             <span class="clickable"><i class="fa fa-mobile"></i> {{client.portable}}</span>
