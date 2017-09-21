@@ -1,14 +1,11 @@
 <template>
     <div>
-        <!--
-        <span @click="showDialog" class="fa-stack fa-lg">>
-            <i class="fa fa-pencil fa-2x"></i>
-        </span>
-        -->
-
         <span @click="showDialog">
-          <i v-if="client" class="fa fa-pencil fa-2x"></i>
-          <i class="fa fa-plus fa-2x" v-else></i>
+            <i v-if="client" class="fa fa-pencil fa-2x"></i>
+            <span v-else class="fa-stack fa-3x add-button">
+              <i class="fa fa-circle fa-stack-2x"></i>
+              <i class="fa fa-plus fa-stack-1x fa-inverse"></i>
+            </span>
         </span>
 
         <el-dialog :title="this.title" :visible.sync="dialogFormVisible">
@@ -229,4 +226,9 @@
         width: 100%;
     }
 
+    .add-button{
+        position: fixed;
+        right: 50px;
+        bottom: 40px;
+    }
 </style>
