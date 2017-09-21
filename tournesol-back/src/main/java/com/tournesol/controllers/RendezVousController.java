@@ -4,7 +4,7 @@ import com.tournesol.bean.AuthInfo;
 import com.tournesol.bean.RendezVousBean;
 import com.tournesol.bean.input.RendezVousInputBean;
 import com.tournesol.mapper.AppareilMapper;
-import com.tournesol.mapper.ClientMapper;
+import com.tournesol.mapper.ClientOutputMapper;
 import com.tournesol.mapper.EventBeanMapper;
 import com.tournesol.service.EventService;
 import com.tournesol.service.entity.AppareilEntity;
@@ -13,6 +13,7 @@ import com.tournesol.service.entity.EventEntity;
 import com.tournesol.service.entity.RendezVousEntity;
 import com.tournesol.service.repository.RendezVousRepository;
 
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -49,7 +50,7 @@ public class RendezVousController {
     @GetMapping("/rdvs")
     public Iterable<RendezVousBean> greeting(@RequestHeader(value = "uid", required = true) String uid,
                                              @RequestHeader(value = "email", required = true) String email,
-                                             @RequestParam(value = "date", required = false) String date) {
+                                             @RequestParam(value = "date", required = false) LocalDateTime date) {
 
         AuthInfo authInfo = new AuthInfo();
         authInfo.setUID(uid);
@@ -58,7 +59,9 @@ public class RendezVousController {
         /*
             Recherche des évenements dans le calendrier distant (google)
          */
-        final Map<String, EventEntity> eventMap = eventService.getEvents(authInfo, ZonedDateTime.now()).stream()
+        ZonedDateTime dateRecherche = date == null ? ZonedDateTime.now() : ZonedDateTime.of(date, ZoneId.of("Europe/Paris"));
+
+        final Map<String, EventEntity> eventMap = eventService.getEvents(authInfo, dateRecherche).stream()
                 .collect(Collectors.toMap(e -> e.getICalUID(), e -> e));
 
         /*
@@ -107,7 +110,7 @@ public class RendezVousController {
      * Sauvegarde du rendez-vous en local.
      * Un rdv pour chaque appareil, si aucun appareil est précisé, seul le client est précisé.
      */
-    private void saveRendezVous(@RequestBody RendezVousInputBean rdv, EventEntity event) {
+    private void saveRendezVous(RendezVousInputBean rdv, EventEntity event) {
 
         if (rdv.getAppareils().isEmpty()) {
 
@@ -151,7 +154,7 @@ public class RendezVousController {
 
         // Un rdv peut être pris sur plusieurs appareils mais pour un seul client,
         // on récupère donc le client correspondant au premier appareil
-        rdv.setClient(ClientMapper.INSTANCE.map(rdvEntities.get(0).getAppareil().getClient()));
+        rdv.setClient(ClientOutputMapper.INSTANCE.map(rdvEntities.get(0).getAppareil().getClient()));
 
         rdv.setEvent(EventBeanMapper.INSTANCE.map(eventEntity));
 

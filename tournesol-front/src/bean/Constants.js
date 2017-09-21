@@ -10,8 +10,9 @@ export default{
     hostname: 'http://localhost:8081'
   },
   rdv: {
-    timeStep: '00:30',
-    heuresOuverture: [8, 19],
-    tempsRdv: 90 // Temps d'un rdv par défaut en minutes
+    timeStep: '00:30', // Steps utilisés pour l'affichage des heures dans le form de prise de rdv
+    heuresOuverture: [8, 19], // Heures d'ouverture 8h -> 19h
+    tempsRdv: 90, // Temps d'un rdv par défaut en minutes
+    dateFormat: 'YYYY-MM-DD'
   }
 }

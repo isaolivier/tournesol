@@ -15,7 +15,7 @@
                 </el-form-item>
 
                 <el-date-picker
-                        v-model="form.date"
+                        v-model="date"
                         type="date"
                         placeholder="Date"
                         :picker-options="{
@@ -75,6 +75,7 @@
         dialogFormVisible: false,
         heureOuverture: Constants.rdv.heuresOuverture[0] + ':00',
         heureFermeture: Constants.rdv.heuresOuverture[1] + ':00',
+        date: '',
         step: Constants.rdv.timeStep,
         appareils: [],
         now: moment().startOf('day'),
@@ -92,6 +93,9 @@
       'form.startTime': function (newStartTime) {
         let m = moment(newStartTime, 'HH:mm').add(Constants.rdv.tempsRdv, 'm')
         this.form.endTime = m.format('HH:mm')
+      },
+      date: function (newDate) {
+        this.form.date = moment(newDate).format(Constants.rdv.dateFormat)
       }
     },
     methods: {

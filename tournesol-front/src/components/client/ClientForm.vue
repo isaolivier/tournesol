@@ -15,28 +15,32 @@
             <el-form :model="form">
 
                 <el-row :gutter="20">
+                    <el-col :span="3">
+                        <el-select v-model="form.civilite" placeholder="Choisir">
+                            <el-option value="Mr" label="Mr"></el-option>
+                            <el-option value="Mme" label="Mme"></el-option>
+                            <el-option value="Mlle" label="Mlle"></el-option>
+                            <el-option value="MrMme" label="Mr & Mme"></el-option>
+                        </el-select>
+                    </el-col>
+
+                    <el-col :span="15"><el-input placeholder="NOM Prénom" v-model="form.nom"></el-input></el-col>
+
                     <el-col :span="6">
-                        <el-radio-group v-model="form.civilite">
-                            <el-radio-button label="Mr">Mr</el-radio-button>
-                            <el-radio-button label="Mme">Mme</el-radio-button>
-                            <el-radio-button label="MrMme">Mr & Mme</el-radio-button>
-                        </el-radio-group>
+                        <div class="stars">
+                            <i v-for="i in 5" :class="{'fa  fa-2x': true, 'fa-star':(i <= form.note), 'fa-star-o':(i > form.note)}" @click="setNote(i)"></i>
+                        </div>
                     </el-col>
+                </el-row>
 
+                <el-row :gutter="20">
+                    <el-col :span="18"><el-input placeholder="Société" v-model="form.societe"></el-input></el-col>
+                </el-row>
+
+                <el-row :gutter="20">
                     <el-col :span="18">
-                        <el-input placeholder="Nom" v-model="form.nom"></el-input>
-                    </el-col>
-                </el-row>
-
-                <el-row :gutter="20">
-                    <el-col :span="24">
-                        <el-input placeholder="Société" v-model="form.societe"></el-input>
-                    </el-col>
-                </el-row>
-
-                <el-row :gutter="20">
-                    <el-col :span="24">
                         <el-autocomplete
+                                class="input-icon address"
                                 v-model="fullAdresse"
                                 :fetch-suggestions="searchPlaces"
                                 placeholder="Saisir une adresse"
@@ -45,27 +49,12 @@
                 </el-row>
 
                 <el-row :gutter="20">
-                    <el-col :span="4">
-                        <el-input placeholder="Téléphone" v-model="form.telephone"></el-input>
-                    </el-col>
-                    <el-col :span="4">
-                        <el-input placeholder="Portable" v-model="form.portable"></el-input>
-                    </el-col>
+                    <el-col :span="4"><el-input class="input-icon tel" placeholder="Téléphone" v-model="form.telephone"></el-input></el-col>
+                    <el-col :span="4"><el-input class="input-icon mobile" placeholder="Portable" v-model="form.portable"></el-input></el-col>
                 </el-row>
 
                 <el-row :gutter="20">
-                    <el-col :span="8">
-                        <el-input placeholder="Mail" v-model="form.email"></el-input>
-                    </el-col>
-                    <el-col :span="8">
-                        <div class="stars">
-                            <i :class="'fa fa-star' + iconStarOff(1) + ' fa-2x'" @click="setNote(1)"></i>
-                            <i :class="'fa fa-star' + iconStarOff(2) + ' fa-2x'" @click="setNote(2)"></i>
-                            <i :class="'fa fa-star' + iconStarOff(3) + ' fa-2x'" @click="setNote(3)"></i>
-                            <i :class="'fa fa-star' + iconStarOff(4) + ' fa-2x'" @click="setNote(4)"></i>
-                            <i :class="'fa fa-star' + iconStarOff(5) + ' fa-2x'" @click="setNote(5)"></i>
-                        </div>
-                    </el-col>
+                    <el-col :span="8"><el-input class="input-icon mail" placeholder="Mail" v-model="form.email"></el-input></el-col>
                 </el-row>
 
             </el-form>
@@ -111,8 +100,17 @@
     },
     created () {
       if (this.client) {
-        this.form = this.client
-        this.form.placeId = this.client.adresse.placeId
+        this.form = {
+          civilite: this.client.civilite,
+          nom: this.client.nom,
+          societe: this.client.societe,
+          placeId: this.client.adresse.placeId,
+          telephone: this.client.telephone,
+          portable: this.client.portable,
+          email: this.client.email,
+          note: this.client.note
+        }
+
         this.fullAdresse = this.client.adresse.numero + ' ' +
           this.client.adresse.voie + ', ' +
           this.client.adresse.commune + ' ' + this.client.adresse.codePostal
@@ -200,7 +198,35 @@
 
     .stars {
         float: right;
-        margin: 20px 50px 0 0;
+        margin-right: 40px;
+    }
+
+    .input-icon:after {
+        font-family: 'FontAwesome';
+        position: absolute;
+        right: 10px;
+        top: 5px;
+        font-size: 1.8em;
+    }
+
+    .input-icon.tel:after {
+        content: '\f095';
+    }
+
+    .input-icon.mobile:after {
+        content: '\f10b';
+    }
+
+    .input-icon.address:after {
+        content: '\f041';
+    }
+
+    .input-icon.mail:after {
+        content: '\f003';
+    }
+
+    .el-autocomplete {
+        width: 100%;
     }
 
 </style>
