@@ -10,9 +10,8 @@
 
         <el-dialog :title="this.title" :visible.sync="dialogFormVisible">
             <el-form :model="form">
-
                 <el-row :gutter="20">
-                    <el-col :span="3">
+                    <el-col :span="5">
                         <el-select v-model="form.civilite" placeholder="Choisir">
                             <el-option value="Mr" label="Mr"></el-option>
                             <el-option value="Mme" label="Mme"></el-option>
@@ -21,21 +20,20 @@
                         </el-select>
                     </el-col>
 
-                    <el-col :span="15"><el-input placeholder="NOM Prénom" v-model="form.nom"></el-input></el-col>
-
-                    <el-col :span="6">
+                    <el-col :span="19"><el-input placeholder="NOM Prénom" v-model="form.nom"></el-input></el-col>
+                </el-row>
+                <el-row :gutter="20">
+                    <el-col :offset="5" :span="19"><el-input placeholder="Société" v-model="form.societe"></el-input></el-col>
+                </el-row>
+                <el-row :gutter="20">
+                    <el-col  :span="21" :offset="5">
                         <div class="stars">
                             <i v-for="i in 5" :class="{'fa  fa-2x': true, 'fa-star':(i <= form.note), 'fa-star-o':(i > form.note)}" @click="setNote(i)"></i>
                         </div>
                     </el-col>
                 </el-row>
-
                 <el-row :gutter="20">
-                    <el-col :span="18"><el-input placeholder="Société" v-model="form.societe"></el-input></el-col>
-                </el-row>
-
-                <el-row :gutter="20">
-                    <el-col :span="18">
+                    <el-col :span="24">
                         <el-autocomplete
                                 class="input-icon address"
                                 v-model="fullAdresse"
@@ -46,20 +44,18 @@
                 </el-row>
 
                 <el-row :gutter="20">
-                    <el-col :span="4"><el-input class="input-icon tel" placeholder="Téléphone" v-model="form.telephone"></el-input></el-col>
-                    <el-col :span="4"><el-input class="input-icon mobile" placeholder="Portable" v-model="form.portable"></el-input></el-col>
+                    <el-col :span="12"><el-input class="input-icon tel" placeholder="Téléphone" v-model="form.telephone"></el-input></el-col>
+                    <el-col :span="12"><el-input class="input-icon mobile" placeholder="Portable" v-model="form.portable"></el-input></el-col>
                 </el-row>
 
                 <el-row :gutter="20">
-                    <el-col :span="8"><el-input class="input-icon mail" placeholder="Mail" v-model="form.email"></el-input></el-col>
+                    <el-col :span="24"><el-input class="input-icon mail" placeholder="Mail" v-model="form.email"></el-input></el-col>
                 </el-row>
-
             </el-form>
-
             <span slot="footer" class="dialog-footer">
-                <el-button @click="dialogFormVisible = false">Annuler</el-button>
-                <el-button v-if="client" type="primary" @click="updateClient">Enregistrer</el-button>
-                <el-button v-else type="primary" @click="createClient">Créer</el-button>
+                <el-button v-if="client" type="primary" @click="updateClient"  size="large">Enregistrer</el-button>
+                <el-button v-else type="primary" @click="createClient"  size="large">Créer</el-button>
+                <el-button @click="dialogFormVisible = false" size="large">Annuler</el-button>
             </span>
         </el-dialog>
     </div>
@@ -190,11 +186,10 @@
     }
 
     .el-row {
-        margin-bottom: 20px;
+        margin-bottom: 15px;
     }
 
     .stars {
-        float: right;
         margin-right: 40px;
     }
 
