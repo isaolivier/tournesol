@@ -13,8 +13,7 @@ import com.tournesol.mapper.EventGoogleMapper;
 import com.tournesol.service.entity.EventEntity;
 
 import java.io.IOException;
-import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -38,7 +37,7 @@ public class EventService {
     /**
      * Recherche des évènements correspondant au jour spécifié.
      */
-    public List<EventEntity> getEvents(AuthInfo authInfo, ZonedDateTime day) {
+    public List<EventEntity> getEvents(AuthInfo authInfo, LocalDate day) {
         final List<EventEntity> events = new ArrayList<>();
         Credential creds = authService.getCreds(authInfo);
 
@@ -46,8 +45,8 @@ public class EventService {
             Calendar calendar = new Calendar.Builder(new NetHttpTransport(), JacksonFactory.getDefaultInstance(), creds).setApplicationName("TOURNESOL")
                     .build();
             try {
-                final DateTime timeMin = DateMapper.map(day.truncatedTo(ChronoUnit.DAYS));
-                final DateTime timeMax = DateMapper.map(day.plusDays(1).truncatedTo(ChronoUnit.DAYS));
+                final DateTime timeMin = DateMapper.map(day);
+                final DateTime timeMax = DateMapper.map(day.plusDays(1));
 
                 final Events googleEvents = calendar.events().list("primary")
                         .setTimeMin(timeMin)
@@ -61,7 +60,7 @@ public class EventService {
                 events.addAll(googlEvents);
 
             } catch (IOException e) {
-                LOGGER.error("Could fetch calendars", e);
+                LOGGER.error("Could not fetch calendars", e);
             }
         } else {
             LOGGER.error("Could not fetch calendars as user is not logged in");

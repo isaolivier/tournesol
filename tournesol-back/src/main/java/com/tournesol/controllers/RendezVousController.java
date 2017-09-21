@@ -13,7 +13,7 @@ import com.tournesol.service.entity.EventEntity;
 import com.tournesol.service.entity.RendezVousEntity;
 import com.tournesol.service.repository.RendezVousRepository;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -50,7 +51,7 @@ public class RendezVousController {
     @GetMapping("/rdvs")
     public Iterable<RendezVousBean> greeting(@RequestHeader(value = "uid", required = true) String uid,
                                              @RequestHeader(value = "email", required = true) String email,
-                                             @RequestParam(value = "date", required = false) LocalDateTime date) {
+                                             @RequestParam(value = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
 
         AuthInfo authInfo = new AuthInfo();
         authInfo.setUID(uid);
@@ -59,7 +60,7 @@ public class RendezVousController {
         /*
             Recherche des évenements dans le calendrier distant (google)
          */
-        ZonedDateTime dateRecherche = date == null ? ZonedDateTime.now() : ZonedDateTime.of(date, ZoneId.of("Europe/Paris"));
+        LocalDate dateRecherche = date == null ? LocalDate.now() : date;
 
         final Map<String, EventEntity> eventMap = eventService.getEvents(authInfo, dateRecherche).stream()
                 .collect(Collectors.toMap(e -> e.getICalUID(), e -> e));
@@ -148,13 +149,11 @@ public class RendezVousController {
 
         RendezVousBean rdv = new RendezVousBean();
 
-        rdvEntities.stream().forEach(r ->
-                rdv.getAppareils().add(AppareilMapper.INSTANCE.map(r.getAppareil()))
+        rdvEntities.stream().forEach(r -> {
+                    rdv.getAppareils().add(AppareilMapper.INSTANCE.map(r.getAppareil()));
+                    rdv.setClient(ClientOutputMapper.INSTANCE.map(r.getClient()));
+                }
         );
-
-        // Un rdv peut être pris sur plusieurs appareils mais pour un seul client,
-        // on récupère donc le client correspondant au premier appareil
-        rdv.setClient(ClientOutputMapper.INSTANCE.map(rdvEntities.get(0).getAppareil().getClient()));
 
         rdv.setEvent(EventBeanMapper.INSTANCE.map(eventEntity));
 

@@ -3,6 +3,8 @@ package com.tournesol.mapper;
 import com.google.api.client.util.DateTime;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -27,4 +29,9 @@ public class DateMapper {
         }
         return null;
     };
+
+    public static DateTime map(final LocalDate day) {
+        final ZonedDateTime zdt = ZonedDateTime.of(day, LocalTime.MIN, ZoneId.systemDefault());
+        return new DateTime(zdt.format(DateTimeFormatter.ISO_INSTANT));
+    }
 }

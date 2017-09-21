@@ -13,4 +13,6 @@ insert into appareil(id, denomination, marque, client_id) values (1000, 'Poêle 
 insert into appareil(id, denomination, marque, client_id) values (1001, 'Chaudière Fuel', 'Palazetti', 1001);
 
 insert into rendezvous(id, event_cal_id, client_id, appareil_id) values (1000, '1bikrj8dcpv29qse91jhghcirf@google.com', 1000, 1000);
-insert into rendezvous(id, event_cal_id, client_id, appareil_id) values (1001, 'rdv2', 1001, 1001);
+insert into rendezvous(id, event_cal_id, client_id, appareil_id) values (1001, '07uivgj6fsimjr813hulhubv6c@google.com', 1002, null);
+insert into rendezvous(id, event_cal_id, client_id, appareil_id) values (1002, 'deui79ic3lgc577p5gl6q05mgs@google.com', 1003, null);
+insert into rendezvous(id, event_cal_id, client_id, appareil_id) values (1003, 'rdv2', 1001, 1001);
