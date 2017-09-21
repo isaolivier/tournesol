@@ -1,5 +1,5 @@
 <template>
-    <div class="client">
+    <div :class="{'client': true,'collapsed':isCollapsed}" @click="collapse">
         <span class="client-nom">{{client.civilite}} <strong>{{client.nom}}</strong></span>
         <span class="adresse">{{client.adresse.numero}} {{client.adresse.voie}}, {{client.adresse.codePostal}} {{client.adresse.commune}}</span>
         <span v-if="client.telephone" class="telephone"><span class="clickable"><i class="fa fa-phone"></i> {{client.telephone}}</span></span>
@@ -34,11 +34,19 @@
       }
     },
     data () {
-      return {}
+      return {
+        isCollapsed: true
+      }
     },
     components: {
       'client-form': ClientForm,
       'rdv-form': RendezVousForm
+    },
+    methods: {
+      collapse () {
+        console.log('collpase ', this.isCollapsed)
+        this.isCollapsed = !this.isCollapsed
+      }
     }
   }
 </script>
@@ -49,11 +57,7 @@
         display: grid;
         grid-template-rows: repeat(5, minmax(0px, max-content));
         grid-template-columns: 2fr 2fr 3em 3em 3em 5fr 50px;
-        grid-template-areas: "nomclient nomclient icone-chat . . . edit"
-            "adresse adresse adresse adresse adresse adresse edit"
-            "telephone telephone portable portable portable portable ."
-            "mail mail mail mail . . ajouter-rdv"
-            "etoiles etoiles . . . . ajouter-rdv";
+        grid-template-areas: "nomclient nomclient icone-chat . . . edit" "adresse adresse adresse adresse adresse adresse edit" "telephone telephone portable portable portable portable ." "mail mail mail mail . . ajouter-rdv" "etoiles etoiles . . . . ajouter-rdv";
         padding: 10px;
         width: 70%;
         margin: 10px auto;
@@ -61,6 +65,34 @@
         border-radius: 0px;
         background-color: #EEF1F6;
         align-items: center
+    }
+
+    .client.collapsed {
+        grid-template-rows: repeat(1, minmax(0px, max-content));
+        grid-template-areas: "nomclient nomclient icone-chat . . ajouter-rdv edit";
+
+    }
+
+    .client.collapsed .client-nom {
+        padding-left: 0em;
+    }
+
+    .client.collapsed .client-nom:before {
+        content: '\f078';
+        justify-self: flex-start;
+        padding: 0 1em;
+    }
+
+    .client.collapsed .ajouter-rdv {
+        justify-self: flex-end;
+    }
+
+    .client.collapsed .adresse,
+    .client.collapsed .mail,
+    .client.collapsed .telephone,
+    .client.collapsed .portable,
+    .client.collapsed .note {
+        display: none;
     }
 
     .fa {
@@ -87,7 +119,6 @@
     .portable {
         grid-area: portable;
     }
-
 
     .adresse {
         grid-area: adresse;
