@@ -8,7 +8,7 @@ Vue.use(VueResource)
 export class RendezVousResource {
 
   findRendezVous (result, dateStr) {
-    return Vue.http.get(Constants.back.hostname + '/rdvs/' + dateStr,
+    return Vue.http.get(Constants.back.hostname + '/rdvs?date=' + dateStr,
       {
         headers: {
           'uid': authService.getAuthInfo().uid,
@@ -22,7 +22,7 @@ export class RendezVousResource {
   }
 
   createRendezVous (rdv, result) {
-    return Vue.http.post('http://localhost:8081/rdv', rdv,
+    return Vue.http.post(Constants.back.hostname + '/rdv', rdv,
       {
         headers: {
           'uid': authService.getAuthInfo().uid,

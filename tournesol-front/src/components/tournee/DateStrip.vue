@@ -42,6 +42,7 @@
       selectDay: function (event) {
         this.dateCourante = event
         this.updateDays()
+        this.$emit('dayChanged', this.dateCourante)
       },
       updateDays: function () {
         let days = []

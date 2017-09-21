@@ -1,7 +1,7 @@
 <template>
     <div>
         Slider des dates<br/>
-        <dates></dates>
+        <dates @dayChanged="fetchData"></dates>
 
         <svg id="agenda" :height="nbHeures * hourInterval + 20">
 
@@ -30,6 +30,7 @@
   import RendezVous from './RendezVous.vue'
   import DateStrip from './DateStrip.vue'
   import Constants from '../../bean/Constants'
+  import moment from 'moment'
   import {RendezVousResource} from '../../resource/RendezVousResource'
 
   export default {
@@ -41,11 +42,12 @@
         heuresOuverture: Constants.rdv.heuresOuverture,
         hourInterval: Constants.tournee.hourInterval,
         agenda: null,
-        rendezvous: null
+        rendezvous: null,
+        currentDate: moment()
       }
     },
     created () {
-      this.fetchData()
+      this.fetchData(moment())
     },
     computed: {
       nbHeures: function () {
@@ -57,9 +59,7 @@
       'dates': DateStrip
     },
     methods: {
-      fetchData: function () {
-        console.log('Fetching rdvs')
-
+      fetchData: function (date) {
         this.error = null
         this.loading = true
         let rdvResource = new RendezVousResource()
@@ -70,7 +70,7 @@
           } else {
             this.rendezvous = result
           }
-        })
+        }, date.format(Constants.rdv.dateFormat))
       }
     }
   }

@@ -6,19 +6,16 @@ Vue.use(VueResource)
 export class ClientResource {
 
   findAllClient (result) {
-    return Vue.http.get(Constants.back.hostname + '/client').then(response => {
+    return Vue.http.get(Constants.back.hostname + '/client').then(function (response) {
       // get body data
-      console.log(response)
       result(null, response.data)
     }, response => {
-      result(response, null)
+      result(response)
     })
   }
 
   createClient (client, result) {
-    console.log(client)
     return Vue.http.post(Constants.back.hostname + '/client', client).then(response => {
-      console.log(response)
       result(null)
     }, response => {
       result(response)
@@ -26,9 +23,7 @@ export class ClientResource {
   }
 
   updateClient (client, result) {
-    console.log(client)
     return Vue.http.put(Constants.back.hostname + '/client', client).then(response => {
-      console.log(response)
       result(null)
     }, response => {
       result(response)

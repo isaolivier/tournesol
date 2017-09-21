@@ -26,6 +26,8 @@
 
 <script>
 import { authService } from './auth-service'
+import Constants from '../../bean/Constants'
+
 export default {
   name: 'Auth',
   data: function (router) {
@@ -50,7 +52,7 @@ export default {
           'remote_script_url': 'https://apis.google.com/js/api:client.js'
         }
         let authserviceprops = {
-          'backendURL': 'http://localhost:8081',
+          'backendURL': Constants.back.hostname,
           'timeout': 2000,
           'authURL': '/auth',
           'aliveURL': '/isSessionAlive'
