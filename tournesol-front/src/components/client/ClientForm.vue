@@ -27,9 +27,10 @@
                 </el-row>
                 <el-row :gutter="20">
                     <el-col  :span="21" :offset="5">
-                        <div class="stars">
-                            <i v-for="i in 5" :class="{'fa  fa-2x': true, 'fa-star':(i <= form.note), 'fa-star-o':(i > form.note)}" @click="setNote(i)"></i>
-                        </div>
+                        <el-rate
+                                v-model="form.note"
+                                :colors="['#99A9BF', '#F7BA2A', '#FF9900']">
+                        </el-rate>
                     </el-col>
                 </el-row>
                 <el-row :gutter="20">
@@ -123,9 +124,6 @@
         }
         return '-o'
       },
-      setNote (note) {
-        this.form.note = note
-      },
       createClient () {
         let clientResource = new ClientResource()
         clientResource.createClient(this.form, (err) => {
@@ -187,10 +185,6 @@
 
     .el-row {
         margin-bottom: 15px;
-    }
-
-    .stars {
-        margin-right: 40px;
     }
 
     .input-icon:after {

@@ -5,7 +5,11 @@
 
         <client-form></client-form>
 
-        <template v-for="(client, index) in elements">
+        <div class="div-recherche">
+            <el-input class="input-search" icon="search" placeholder="Rechercher" v-model="recherche"></el-input>
+        </div>
+
+        <template v-for="(client, index) in filteredClients">
             <template v-if="client.nom">
                 <client :rang="index" :client="client" :key="client.id"></client>
             </template>
@@ -28,6 +32,7 @@
     name: 'annuaire',
     data () {
       return {
+        recherche: null,
         clients: [],
         elements: [],
         loading: false,
@@ -46,6 +51,18 @@
 
         this.currentLetter = letters[0]
         return letters
+      },
+      filteredClients: function () {
+        if (this.recherche) {
+          let search = this.recherche.toUpperCase()
+          return this.clients.filter(client => {
+            return client.nom.toUpperCase().includes(search) ||
+              (client.telephone && client.telephone.toUpperCase().includes(search)) ||
+              (client.portable && client.portable.toUpperCase().includes(search))
+          })
+        } else {
+          return this.elements
+        }
       }
     },
     components: {
@@ -84,5 +101,12 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
+    .input-search {
+        width: 300px;
+    }
+    .div-recherche {
+        width: 100%;
+        text-align: center;
+        margin: 15px 0 15px 0;
+    }
 </style>
