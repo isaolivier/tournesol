@@ -12,7 +12,7 @@ class AuthService {
     // The Auth status for listeners
     // plugged onto user profile regarding state as this one is available the last
     this.isServiceInitialized = false
-    this.isSignedIn = false
+    this.isSignedInStatus = false
     // The current user profile
     this.user = null
     // The AuthInfo used in exchanges with the backend
@@ -98,7 +98,7 @@ class AuthService {
   getAuthInfo () { return this.authInfo }
   getUser () { return this.user }
   isServiceInitialized () { return this.isServiceInitialized }
-  isSignedIn () { return this.isSignedIn }
+  isSignedIn () { return this.isSignedInStatus }
   // Internal functions
   // Auth component init
   _loadRemoteScript () {
@@ -141,7 +141,7 @@ class AuthService {
     })
   }
   _onOAuth2ModuleLoaded () {
-    // console.log('OAuth2 component loaded')
+    console.log('OAuth2 component loaded')
     this.authInfo = {}
     let self = this
     // Listen currentUser changes & trigger first event
@@ -168,7 +168,7 @@ class AuthService {
     this._checkState()
   }
   _checkState () {
-    // console.log('_checkState authInfo', JSON.stringify(this.authInfo))
+    console.log('_checkState authInfo', JSON.stringify(this.authInfo))
     if (this.authInfo['authcode']) {
       // console.log('authcode share step')
       if (this.authInfo['email']) {
@@ -231,18 +231,20 @@ class AuthService {
           }
         }, function (error) { console.error('An error occured while prompting backend for session status ', error) }
       )
+    } else {
+      this._setSignedOut()
     }
     return alive
   }
   _setSignedIn () {
-    this.isSignedIn = true
+    this.isSignedInStatus = true
     // Launch external signed in callback
-    if (this.signedinchangedcallback) { this.signedinchangedcallback(this.isSignedIn) }
+    if (this.signedinchangedcallback) { this.signedinchangedcallback(this.isSignedInStatus) }
   }
   _setSignedOut () {
-    this.isSignedIn = false
+    this.isSignedInStatus = false
     // Launch external signed in callback
-    if (this.signedinchangedcallback) { this.signedinchangedcallback(this.isSignedIn) }
+    if (this.signedinchangedcallback) { this.signedinchangedcallback(this.isSignedInStatus) }
   }
   // Storage management
   _clearLocalStorage () {

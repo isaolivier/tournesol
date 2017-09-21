@@ -4,7 +4,7 @@
       <h1>Tournesol</h1>
       <auth></auth>
     </header>
-    <div class="content">
+    <div class="content" v-if="store.initialized && store.signedIn">
       <el-tabs type="border-card" v-if="this.store && this.store.initialized && this.store.signedIn">
         <el-tab-pane>
           <span slot="label"><i class="el-icon-edit"></i> Client</span>
@@ -27,7 +27,7 @@
 
   export default {
     name: 'main',
-    data () {
+    data: function (router) {
       return {
         store: this.$root.$data
       }
