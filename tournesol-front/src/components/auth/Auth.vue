@@ -5,25 +5,13 @@
             <el-alert v-if="showError" type="error" title="" :closable="false">{{error}}</el-alert>
             <el-alert v-if="showSuccess" type="success" title="" :closable="false">{{success}}</el-alert>
         </div>
-        <el-row>
-            <el-col :span="6">
-                <div class="grid-content">
-                    &nbsp;
-                    <el-alert v-if="debug" type="warning" title="Store " :closable="false">
-                        <small>{{store}}</small>
-                    </el-alert>
-                </div>
-            </el-col>
-            <el-col :span="1" :push="17">
-                <div class="grid-content">
-                    &nbsp;
-                    <div v-if="store.initialized && store.signedIn" @click="signOut"><i
-                            class="fa fa-sign-out fa-2x signOut"></i></div>
-                    <div v-if="store.initialized && !store.signedIn" @click="promptUserConsent"><i
-                            class="fa fa-sign-in fa-2x signOut"></i></div>
-                </div>
-            </el-col>
-        </el-row>
+        <div class="grid-content">
+            &nbsp;
+            <div v-if="store.initialized && store.signedIn" @click="signOut"><i
+                    class="fa fa-sign-out fa-2x signOut"></i><span class="fa-2x">Logout</span></div>
+            <div v-if="store.initialized && !store.signedIn" @click="promptUserConsent"><i
+                    class="fa fa-sign-in fa-2x signOut"></i><span class="fa-2x">Login</span></div>
+        </div>
     </div>
 </template>
 
@@ -123,15 +111,6 @@
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-    .fa-icon {
-        width: auto;
-        height: 1em; /* or any other relative font sizes */
-
-        /* You would have to include the following two lines to make this work in Safari */
-        max-width: 100%;
-        max-height: 100%;
-    }
-
     .alerts {
         position: absolute;
         top: 0;

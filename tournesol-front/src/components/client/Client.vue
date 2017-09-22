@@ -88,12 +88,14 @@
     }
 
     .client .client-nom:before {
+        font-family: 'FontAwesome';
         content: '\f054';
         justify-self: flex-start;
         padding: 0 1em;
     }
 
     .client.collapsed .client-nom:before {
+        font-family: 'FontAwesome';
         content: '\f078';
         justify-self: flex-start;
         padding: 0 1em;

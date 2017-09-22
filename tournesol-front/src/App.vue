@@ -13,8 +13,9 @@ export default {
 </script>
 
 <style>
+
 #app {
-  font-family: 'FontAwesome', Helvetica, Arial, sans-serif;
+  font-family: Arial;
   color: #2c3e50;
 }
 

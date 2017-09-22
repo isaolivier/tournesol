@@ -2,7 +2,9 @@
   <div class="hello">
     <header>
       <h1>Tournesol</h1>
-      <auth></auth>
+      <div class="auth">
+        <auth></auth>
+      </div>
     </header>
     <div class="content" v-if="store.initialized && store.signedIn">
       <el-tabs type="border-card" v-if="this.store && this.store.initialized && this.store.signedIn">
@@ -66,15 +68,22 @@
   }
 
   header{
-    height: 150px;
-    overflow:auto
+    height: 100px;
+    overflow:hidden
   }
 
   .content{
-    height: calc(100vh - 150px);
+    height: calc(100vh - 100px);
   }
 
   .content .el-tabs{
     height: 100%;
+  }
+
+  .auth {
+    width: 200px;
+    position: absolute;
+    right: 0px;
+    top: 0px;
   }
 </style>
