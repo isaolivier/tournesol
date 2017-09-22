@@ -1,11 +1,12 @@
 <template>
-    <div :class="{'client': true,'collapsed':isCollapsed}" @click="collapse">
-        <span class="client-nom">{{client.civilite}} <strong>{{client.nom}}</strong></span>
+    <div :class="{'client': true,'collapsed':isCollapsed}" >
+        <span class="client-nom" @click="collapse">{{client.civilite}} <strong>{{client.nom}}<span v-if="client.societe"> - {{client.societe}}</span> </strong></span>
         <span class="adresse">{{client.adresse.numero}} {{client.adresse.voie}}, {{client.adresse.codePostal}} {{client.adresse.commune}}</span>
-        <span v-if="client.telephone" class="telephone"><span class="clickable"><i class="fa fa-phone"></i> {{client.telephone}}</span></span>
+        <span v-if="client.telephone" class="telephone"><span class="clickable"><i class="fa fa-phone"></i> {{client.telephone}}</span>
         <span v-if="client.portable" class="portable">
             <span class="clickable"><i class="fa fa-mobile"></i> {{client.portable}}</span>
-                <i class="fa fa-comment-o clickable"></i>
+            <i class="fa fa-comment-o clickable"></i>
+        </span>
         </span>
         <span v-if="client.email" class="mail"><span class="clickable"><i class="fa fa-envelope-o"></i> {{client.email}}</span></span>
         <span class="note">
@@ -13,7 +14,7 @@
             <i v-for="nb in (5 - client.note)" class="fa fa-star-o"></i>
         </span>
         <rdv-form class="ajouter-rdv" :client="client"></rdv-form>
-        <client-form class="edit clickable" :client="client"></client-form>
+        <client-form :client="client"></client-form>
     </div>
 </template>
 
@@ -57,24 +58,39 @@
         display: grid;
         grid-template-rows: repeat(5, minmax(0px, max-content));
         grid-template-columns: 2fr 2fr 3em 3em 3em 5fr 50px;
-        grid-template-areas: "nomclient nomclient icone-chat . . . edit" "adresse adresse adresse adresse adresse adresse edit" "telephone telephone portable portable portable portable ." "mail mail mail mail . . ajouter-rdv" "etoiles etoiles . . . . ajouter-rdv";
+        grid-template-areas: "nomclient nomclient nomclient nomclient nomclient nomclient edit"
+        "adresse adresse adresse adresse adresse adresse edit"
+        "telephone telephone telephone telephone telephone telephone ."
+        "mail mail mail mail . . ajouter-rdv"
+        "etoiles etoiles . . . . ajouter-rdv";
         padding: 10px;
         width: 70%;
         margin: 10px auto;
         border: solid 1px #D1DBE5;
         border-radius: 0px;
         background-color: #EEF1F6;
-        align-items: center
+        align-items: center;
+        line-height: 1.5em;
+    }
+
+    .fa-comment-o{
+        line-height: 1.5em;
     }
 
     .client.collapsed {
         grid-template-rows: repeat(1, minmax(0px, max-content));
-        grid-template-areas: "nomclient nomclient icone-chat . . ajouter-rdv edit";
+        grid-template-areas: "nomclient nomclient nomclient nomclient nomclient edit ajouter-rdv";
 
     }
 
-    .client.collapsed .client-nom {
+    .client.collapsed .client-nom, .client .client-nom {
         padding-left: 0em;
+    }
+
+    .client .client-nom:before {
+        content: '\f054';
+        justify-self: flex-start;
+        padding: 0 1em;
     }
 
     .client.collapsed .client-nom:before {
@@ -83,9 +99,7 @@
         padding: 0 1em;
     }
 
-    .client.collapsed .ajouter-rdv {
-        justify-self: flex-end;
-    }
+
 
     .client.collapsed .adresse,
     .client.collapsed .mail,
@@ -107,6 +121,10 @@
         grid-area: telephone;
     }
 
+    .portable {
+        margin-left: 1em;
+    }
+
     .mail {
         grid-area: mail;
     }
@@ -116,32 +134,14 @@
         padding: 4px 6px 0px 6px;
     }
 
-    .portable {
-        grid-area: portable;
-    }
-
     .adresse {
         grid-area: adresse;
         padding: 2px 6px;
-    }
-
-    .icone-chat {
-        grid-area: icone-chat;
-    }
-
-    .edit {
-        grid-area: edit;
     }
 
     .ajouter-rdv {
         grid-area: ajouter-rdv;
     }
 
-    .clickable {
-        display: inline-block;
-        border: solid 1px grey;
-        border-radius: 5px;
-        padding: 2px 6px;
-        margin: 4px 0;
-    }
+
 </style>

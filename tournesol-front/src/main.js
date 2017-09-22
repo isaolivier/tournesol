@@ -6,6 +6,8 @@ import ElementUI from 'element-ui'
 import router from './router'
 import VueResource from 'vue-resource'
 import 'font-awesome/css/font-awesome.css'
+import moment from 'moment'
+import initMoment from './i18n/moment_init.js'
 import locale from 'element-ui/lib/locale/lang/fr'
 
 Vue.config.productionTip = false
@@ -14,6 +16,7 @@ Vue.use(ElementUI, { locale })
 Vue.use(VueResource)
 
 import 'element-ui/lib/theme-default/index.css'
+
 const AuthStatus = {
   initialized: false,
   signedIn: false
@@ -24,5 +27,8 @@ new Vue({
   router,
   template: '<App/>',
   components: { App },
-  data: AuthStatus
+  data: AuthStatus,
+  created () {
+    initMoment(moment)
+  }
 })

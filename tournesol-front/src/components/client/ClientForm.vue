@@ -1,12 +1,14 @@
 <template>
     <div>
-        <span @click="showDialog">
-            <i v-if="client" class="fa fa-pencil fa-2x"></i>
+            <div v-if="client" class="edit"  @click="showDialog">
+                <span class="clickable">
+                    <i class="fa fa-pencil fa-2x"></i>
+                </span>
+            </div>
             <span v-else class="fa-stack fa-3x add-button">
               <i class="fa fa-circle fa-stack-2x"></i>
               <i class="fa fa-plus fa-stack-1x fa-inverse"></i>
             </span>
-        </span>
 
         <el-dialog :title="this.title" :visible.sync="dialogFormVisible">
             <el-form :model="form">
@@ -20,16 +22,20 @@
                         </el-select>
                     </el-col>
 
-                    <el-col :span="19"><el-input placeholder="NOM Prénom" v-model="form.nom"></el-input></el-col>
+                    <el-col :span="19">
+                        <el-input placeholder="NOM Prénom" v-model="form.nom"></el-input>
+                    </el-col>
                 </el-row>
                 <el-row :gutter="20">
-                    <el-col :offset="5" :span="19"><el-input placeholder="Société" v-model="form.societe"></el-input></el-col>
+                    <el-col :offset="5" :span="19">
+                        <el-input placeholder="Société" v-model="form.societe"></el-input>
+                    </el-col>
                 </el-row>
                 <el-row :gutter="20">
                     <el-col  :span="21" :offset="5">
                         <el-rate
-                                v-model="form.note"
-                                :colors="['#99A9BF', '#F7BA2A', '#FF9900']">
+                             v-model= "form.note"
+                        :colors="['#99A9BF', '#F7BA2A', '#FF9900']">
                         </el-rate>
                     </el-col>
                 </el-row>
@@ -45,17 +51,23 @@
                 </el-row>
 
                 <el-row :gutter="20">
-                    <el-col :span="12"><el-input class="input-icon tel" placeholder="Téléphone" v-model="form.telephone"></el-input></el-col>
-                    <el-col :span="12"><el-input class="input-icon mobile" placeholder="Portable" v-model="form.portable"></el-input></el-col>
+                    <el-col :span="12">
+                        <el-input class="input-icon tel" placeholder="Téléphone" v-model="form.telephone"></el-input>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-input class="input-icon mobile" placeholder="Portable" v-model="form.portable"></el-input>
+                    </el-col>
                 </el-row>
 
                 <el-row :gutter="20">
-                    <el-col :span="24"><el-input class="input-icon mail" placeholder="Mail" v-model="form.email"></el-input></el-col>
+                    <el-col :span="24">
+                        <el-input class="input-icon mail" placeholder="Mail" v-model="form.email"></el-input>
+                    </el-col>
                 </el-row>
             </el-form>
             <span slot="footer" class="dialog-footer">
-                <el-button v-if="client" type="primary" @click="updateClient"  size="large">Enregistrer</el-button>
-                <el-button v-else type="primary" @click="createClient"  size="large">Créer</el-button>
+                <el-button v-if="client" type="primary" @click="updateClient" size="large">Enregistrer</el-button>
+                <el-button v-else type="primary" @click="createClient" size="large">Créer</el-button>
                 <el-button @click="dialogFormVisible = false" size="large">Annuler</el-button>
             </span>
         </el-dialog>
@@ -215,9 +227,14 @@
         width: 100%;
     }
 
-    .add-button{
+    .add-button {
         position: fixed;
         right: 50px;
         bottom: 40px;
+    }
+
+    .edit {
+        float: right;
+        margin-right: 10px;
     }
 </style>

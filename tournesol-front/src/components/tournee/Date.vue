@@ -46,9 +46,11 @@
         width: 80px;
         display: block;
         flex-shrink: 0;
-        border: solid 1px black;
+        border: solid 1px #2c3e50;
         margin: 0px 2px;
-        padding : 0 0 4px 0
+        padding : 0 0 4px 0;
+        text-align: center;
+
     }
 
     .highlight {

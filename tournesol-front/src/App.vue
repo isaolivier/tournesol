@@ -32,4 +32,12 @@ body{
   height: calc(100% - 74px);
   overflow-y: scroll;
 }
+
+.clickable {
+  display: inline-block;
+  border: solid 1px grey;
+  border-radius: 5px;
+  padding: 2px 6px;
+  margin: 4px 0;
+}
 </style>
