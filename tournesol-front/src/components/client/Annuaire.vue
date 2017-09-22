@@ -4,10 +4,11 @@
         <div v-if="error" x="50" :y="100">{{error}}</div>
 
         <client-form></client-form>
-
-        <div class="div-recherche">
-            <el-input class="input-search" icon="search" placeholder="Rechercher" v-model="recherche"></el-input>
-        </div>
+        <el-row :gutter="20">
+            <el-col :span="12" :offset="6">
+                <el-input  class="input-search" icon="search" placeholder="Rechercher" v-model="recherche"></el-input>
+            </el-col>
+        </el-row>
 
         <template v-for="(client, index) in filteredClients">
             <template v-if="client.nom">
@@ -101,12 +102,4 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-    .input-search {
-        width: 300px;
-    }
-    .div-recherche {
-        width: 100%;
-        text-align: center;
-        margin: 15px 0 15px 0;
-    }
 </style>
