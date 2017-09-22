@@ -15,7 +15,7 @@
                 <client :rang="index" :client="client" :key="client.id"></client>
             </template>
             <template v-else>
-                <letter :letter="client"/>
+                <letter :letter="client" :separator="true"/>
             </template>
         </template>
         <letters :model="letters"/>
