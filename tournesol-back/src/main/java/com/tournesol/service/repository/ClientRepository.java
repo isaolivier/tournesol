@@ -1,6 +1,9 @@
 package com.tournesol.service.repository;
 
 import com.tournesol.service.entity.ClientEntity;
+
+import java.util.List;
+
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
@@ -12,5 +15,5 @@ import org.springframework.stereotype.Repository;
 public interface ClientRepository extends PagingAndSortingRepository<ClientEntity, Long> {
 
     @Query("select c from ClientEntity c order by c.nom")
-    public Iterable<ClientEntity> findAll();
+    public List<ClientEntity> findAll();
 }
