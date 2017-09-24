@@ -1,6 +1,6 @@
 <template>
     <div :class="{'client': true,'collapsed':isCollapsed}" >
-        <span class="client-nom" @click="collapse">{{client.civilite}} <strong>{{client.nom}}<span v-if="client.societe"> - {{client.societe}}</span> </strong></span>
+        <span class="client-nom" @click="collapse">{{civilite()}} <strong>{{client.nom}}<span v-if="client.societe"> - {{client.societe}}</span> </strong></span>
         <span class="adresse">{{client.adresse.numero}} {{client.adresse.voie}}, {{client.adresse.codePostal}} {{client.adresse.commune}}</span>
         <span v-if="client.telephone" class="telephone"><span class="clickable"><i class="fa fa-phone"></i> {{client.telephone}}</span>
         <span v-if="client.portable" class="portable">
@@ -47,6 +47,12 @@
       collapse () {
         console.log('collpase ', this.isCollapsed)
         this.isCollapsed = !this.isCollapsed
+      },
+      civilite () {
+        if (this.client.civilite === 'MrMme') {
+          return 'Mr & Mme'
+        }
+        return this.client.civilite
       }
     }
   }

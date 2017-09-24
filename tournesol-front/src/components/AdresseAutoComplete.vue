@@ -16,14 +16,17 @@
     },
     data () {
       return {
-        fullAddress: null
+        fullAddress: ''
       }
     },
     created () {
-      this.fullAddress = this.adresse.numero + ' ' +
-        this.adresse.voie + ', ' +
-        this.adresse.codePostal + ' ' +
-        this.adresse.commune
+      if (this.adresse) {
+        this.fullAddress = this.adresse.numero + ' ' +
+          this.adresse.voie + ', ' +
+          this.adresse.codePostal + ' ' +
+          this.adresse.commune
+        this.$emit('fullAddress', this.fullAddress)
+      }
     },
     methods: {
       searchPlaces (queryString, cb) {
@@ -60,5 +63,18 @@
 <style scoped>
     .el-autocomplete {
         width: 100%;
+    }
+
+    .input-icon.address:after {
+        content: '\f041';
+    }
+
+    .input-icon:after {
+        font-family: 'FontAwesome';
+        position: absolute;
+        right: 10px;
+        top: 5px;
+        font-size: 1.8em;
+        color: #CCC
     }
 </style>

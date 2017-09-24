@@ -6,46 +6,58 @@
         </span>
 
         <el-dialog summary="Création d'un rendez-vous" :visible.sync="dialogFormVisible">
-            <el-form :model="form">
+            <el-form>
 
-                <el-form-item>
-                    <el-checkbox-group v-model="form.appareils">
-                        <el-checkbox v-for="appareil in appareils" :key="appareil.id" :label="appareil.id">
-                            {{getAppareilLabel(appareil)}}
-                        </el-checkbox>
-                    </el-checkbox-group>
-                </el-form-item>
+                <el-row :gutter="20">
+                    <el-col :span="8">
+                        <el-date-picker v-model="date" type="date" placeholder="Date"
+                                :picker-options="{
+                                  disabledDate: disabledDate
+                                }"></el-date-picker>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-time-select v-model="form.event.startTime" placeholder="Heure Début"
+                                :picker-options="{
+                                  start: this.heureOuverture,
+                                  step: this.step,
+                                  end: this.heureFermeture
+                                }"></el-time-select>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-time-select v-model="form.event.endTime" placeholder="Heure Fin"
+                                :picker-options="{
+                                  start: this.heureOuverture,
+                                  step: this.step,
+                                  end: this.heureFermeture,
+                                  minTime: this.form.startTime
+                                }"></el-time-select>
+                    </el-col>
+                </el-row>
 
-                <el-date-picker
-                        v-model="date"
-                        type="date"
-                        placeholder="Date"
-                        :picker-options="{
-                          disabledDate: disabledDate
-                        }">
-                </el-date-picker>
-
-                <el-time-select
-                        placeholder="Heure Début"
-                        v-model="form.event.startTime"
-                        :picker-options="{
-                          start: this.heureOuverture,
-                          step: this.step,
-                          end: this.heureFermeture
-                        }">
-
-                </el-time-select>
-                <el-time-select
-                        placeholder="Heure Fin"
-                        v-model="form.event.endTime"
-                        :picker-options="{
-                          start: this.heureOuverture,
-                          step: this.step,
-                          end: this.heureFermeture,
-                          minTime: this.form.startTime
-                        }">
-
-                </el-time-select>
+                <el-row :gutter="20">
+                    <el-col :span="24">
+                        <el-input placeholder="Intitulé du rendez-vous" v-model="form.event.summary"></el-input>
+                    </el-col>
+                </el-row>
+                <el-row :gutter="20">
+                    <el-col :span="24">
+                        <el-input type="textarea" placeholder="Détails" v-model="form.event.description"></el-input>
+                    </el-col>
+                </el-row>
+                <el-row :gutter="20">
+                    <el-col :span="24">
+                        <adresse-autocomplete :adresse="adresse" @select="updateLocation" @fullAddress="initLocation"></adresse-autocomplete>
+                    </el-col>
+                </el-row>
+                <el-row :gutter="20">
+                    <el-col :span="24">
+                        <el-checkbox-group v-model="form.appareils">
+                            <el-checkbox v-for="appareil in appareils" :key="appareil.id" :label="appareil.id">
+                                {{getAppareilLabel(appareil)}}
+                            </el-checkbox>
+                        </el-checkbox-group>
+                    </el-col>
+                </el-row>
 
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -59,11 +71,15 @@
 <script>
   import moment from 'moment'
   import Constants from '../../bean/Constants'
+  import AdresseAutoComplete from '../AdresseAutoComplete.vue'
   import {AppareilResource} from '../../resource/AppareilResource'
   import {RendezVousResource} from '../../resource/RendezVousResource'
 
   export default {
     name: 'rdvForm',
+    components: {
+      'adresse-autocomplete': AdresseAutoComplete
+    },
     props: {
       formLabelWidth: '120px',
       client: {
@@ -73,6 +89,7 @@
     },
     data () {
       return {
+        adresse: this.client.adresse,
         error: null,
         dialogFormVisible: false,
         heureOuverture: Constants.rdv.heuresOuverture[0] + ':00',
@@ -97,6 +114,11 @@
         }
       }
     },
+    created () {
+      if (!this.form.event.id) {
+        this.form.event.summary = this.client.civilite + ' ' + this.client.nom
+      }
+    },
     watch: {
       // Ajout du temps de rdv par défaut lors du choix de l'heure de début
       'form.event.startTime': function (newStartTime) {
@@ -118,9 +140,16 @@
         this.fetchData()
       },
 
+      updateLocation (selected) {
+        // console.log('Place selected ' + selected.value)
+        this.form.event.location = selected.value
+      },
+      initLocation (location) {
+        this.form.event.location = location
+      },
       // Chargement des appareils
       fetchData: function () {
-        console.log('Fetching appareils')
+        // console.log('Fetching appareils')
 
         let appareilResource = new AppareilResource()
         appareilResource.findAppareils(this.client, (err, result) => {
@@ -156,6 +185,10 @@
     .fa-circle {
         color: #f25f5c;
         text-shadow: 1px 1px 3px black;
+    }
+
+    .el-row {
+        margin-bottom: 15px;
     }
 
 </style>

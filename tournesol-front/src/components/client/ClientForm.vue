@@ -1,14 +1,16 @@
 <template>
     <div>
-            <div v-if="client" class="edit"  @click="showDialog">
+            <div v-if="client" class="edit" @click="showDialog">
                 <span class="clickable">
                     <i class="fa fa-pencil fa-2x"></i>
                 </span>
             </div>
-            <span v-else class="fa-stack fa-3x add-button">
-              <i class="fa fa-circle fa-stack-2x"></i>
-              <i class="fa fa-plus fa-stack-1x fa-inverse"></i>
-            </span>
+            <div v-else @click="showDialog">
+                <span class="fa-stack fa-3x add-button">
+                  <i class="fa fa-circle fa-stack-2x"></i>
+                  <i class="fa fa-plus fa-stack-1x fa-inverse"></i>
+                </span>
+            </div>
 
         <el-dialog :summary="this.summary" :visible.sync="dialogFormVisible">
             <el-form>
@@ -75,15 +77,15 @@
 
   export default {
     name: 'clientForm',
+    components: {
+      'adresse-autocomplete': AdresseAutoComplete
+    },
     props: {
       formLabelWidth: '120px',
       client: {
         type: Object,
         required: false
       }
-    },
-    components: {
-      'adresse-autocomplete': AdresseAutoComplete
     },
     data () {
       return {
@@ -188,10 +190,6 @@
 
     .input-icon.mobile:after {
         content: '\f10b';
-    }
-
-    .input-icon.address:after {
-        content: '\f041';
     }
 
     .input-icon.mail:after {
