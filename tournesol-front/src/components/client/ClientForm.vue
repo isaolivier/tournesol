@@ -10,8 +10,8 @@
               <i class="fa fa-plus fa-stack-1x fa-inverse"></i>
             </span>
 
-        <el-dialog :title="this.title" :visible.sync="dialogFormVisible">
-            <el-form :model="form">
+        <el-dialog :summary="this.summary" :visible.sync="dialogFormVisible">
+            <el-form>
                 <el-row :gutter="20">
                     <el-col :span="5">
                         <el-select v-model="form.civilite" placeholder="Choisir">
@@ -41,12 +41,7 @@
                 </el-row>
                 <el-row :gutter="20">
                     <el-col :span="24">
-                        <el-autocomplete
-                                class="input-icon address"
-                                v-model="fullAdresse"
-                                :fetch-suggestions="searchPlaces"
-                                placeholder="Saisir une adresse"
-                                @select="handlePlaceSelect"></el-autocomplete>
+                        <adresse-autocomplete :adresse="adresse" @select="updatePlaceId"></adresse-autocomplete>
                     </el-col>
                 </el-row>
 
@@ -76,6 +71,7 @@
 
 <script>
   import {ClientResource} from '../../resource/ClientResource'
+  import AdresseAutoComplete from '../AdresseAutoComplete.vue'
 
   export default {
     name: 'clientForm',
@@ -86,17 +82,21 @@
         required: false
       }
     },
+    components: {
+      'adresse-autocomplete': AdresseAutoComplete
+    },
     data () {
       return {
-        title: '',
+        adresse: null,
+        summary: '',
         error: null,
         dialogFormVisible: false,
-        fullAdresse: '',
         form: {
           civilite: '',
           nom: '',
           societe: '',
           placeId: null,
+          adresseId: null,
           telephone: '',
           portable: '',
           email: '',
@@ -106,29 +106,30 @@
     },
     created () {
       if (this.client) {
+        this.adresse = this.client.adresse
         this.form = {
+          id: this.client.id,
           civilite: this.client.civilite,
           nom: this.client.nom,
           societe: this.client.societe,
           placeId: this.client.adresse.placeId,
+          adressId: this.client.adresse.id,
           telephone: this.client.telephone,
           portable: this.client.portable,
           email: this.client.email,
           note: this.client.note
         }
-
-        this.fullAdresse = this.client.adresse.numero + ' ' +
-          this.client.adresse.voie + ', ' +
-          this.client.adresse.commune + ' ' + this.client.adresse.codePostal
-
-        this.title = ''
       } else {
-        this.title = 'Création d\'un client'
+        this.summary = 'Création d\'un client'
       }
     },
     methods: {
       showDialog () {
         this.dialogFormVisible = true
+      },
+      updatePlaceId (selected) {
+        console.log('PlaceId selected ' + selected.place)
+        this.form.placeId = selected.place
       },
       iconStarOff (index) {
         if (index <= this.form.note) {
@@ -155,33 +156,6 @@
             this.dialogFormVisible = false
           }
         })
-      },
-      searchPlaces (queryString, cb) {
-        let google = window.google || {}
-
-        let displaySuggestions = function (predictions, status) {
-          var results = []
-          if (status !== google.maps.places.PlacesServiceStatus.OK) {
-            cb(status)
-            return
-          }
-          predictions.forEach(function (prediction) {
-            results.push({'value': prediction.description, 'placeId': prediction.place_id})
-          })
-          cb(results)
-        }
-
-        if (queryString && queryString.length > 3) {
-          console.log('Search places for \'' + queryString + '\'')
-          let service = new google.maps.places.AutocompleteService()
-          service.getPlacePredictions({input: queryString, componentRestrictions: {country: 'fr'}}, displaySuggestions)
-        } else {
-          cb([])
-        }
-      },
-      handlePlaceSelect (placeId) {
-        console.log(placeId)
-        this.form.placeId = placeId.placeId
       }
     }
   }
@@ -222,10 +196,6 @@
 
     .input-icon.mail:after {
         content: '\f003';
-    }
-
-    .el-autocomplete {
-        width: 100%;
     }
 
     .add-button {

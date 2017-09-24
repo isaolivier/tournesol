@@ -8,15 +8,11 @@ import java.util.List;
 
 public class RendezVousInputBean implements Serializable {
 
-    private LocalDate date;
-
-    private LocalTime startTime;
-
-    private LocalTime endTime;
-
     private List<Long> appareils = new ArrayList<>();
 
     private Long client;
+
+    private EventInputBean event;
 
     public List<Long> getAppareils() {
         return appareils;
@@ -34,27 +30,12 @@ public class RendezVousInputBean implements Serializable {
         this.client = client;
     }
 
-    public LocalDate getDate() {
-        return date;
+
+    public EventInputBean getEvent() {
+        return event;
     }
 
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
-
-    public LocalTime getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(LocalTime startTime) {
-        this.startTime = startTime;
-    }
-
-    public LocalTime getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(LocalTime endTime) {
-        this.endTime = endTime;
+    public void setEvent(EventInputBean event) {
+        this.event = event;
     }
 }

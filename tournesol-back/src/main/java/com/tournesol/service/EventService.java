@@ -9,14 +9,11 @@ import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.Events;
 import com.tournesol.bean.AuthInfo;
 import com.tournesol.mapper.DateMapper;
-import com.tournesol.mapper.EventGoogleMapper;
-import com.tournesol.service.entity.EventEntity;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,15 +27,17 @@ import org.springframework.stereotype.Component;
 public class EventService {
 
     @Autowired
-    AuthService authService;
+    private AuthService authService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EventService.class);
 
     /**
      * Recherche des évènements correspondant au jour spécifié.
      */
-    public List<EventEntity> getEvents(AuthInfo authInfo, LocalDate day) {
-        final List<EventEntity> events = new ArrayList<>();
+    public List<Event> getEvents(AuthInfo authInfo, LocalDate day) {
+
+        final List<Event> events = new ArrayList<>();
+
         Credential creds = authService.getCreds(authInfo);
 
         if (creds != null) {
@@ -53,11 +52,7 @@ public class EventService {
                         .setTimeMax(timeMax)
                         .execute();
 
-                final List<Event> googleEventList = googleEvents.getItems();
-                final List<EventEntity> googlEvents = googleEventList.stream()
-                        .map(e -> EventGoogleMapper.INSTANCE.googleEventToEventEntity(e))
-                        .collect(Collectors.toList());
-                events.addAll(googlEvents);
+                events.addAll(googleEvents.getItems());
 
             } catch (IOException e) {
                 LOGGER.error("Could not fetch calendars", e);
@@ -72,24 +67,21 @@ public class EventService {
     /**
      * Création d'un évènement dans le calendrier google par défaut de l'utilisateur.
      */
-    public EventEntity createEvent(AuthInfo authInfo, EventEntity eventEntity) {
+    public Event createEvent(AuthInfo authInfo, Event event) {
 
         Credential creds = authService.getCreds(authInfo);
 
-        EventEntity result = null;
+        Event result = null;
 
         if (creds != null) {
 
-            Calendar calendar = new Calendar.Builder(new NetHttpTransport(), JacksonFactory.getDefaultInstance(), creds).setApplicationName("TOURNESOL")
+            Calendar calendar = new Calendar.Builder(new NetHttpTransport(), JacksonFactory.getDefaultInstance(), creds)
+                    .setApplicationName("TOURNESOL")
                     .build();
 
             try {
 
-                Event googleEvent = EventGoogleMapper.INSTANCE.eventEntityToGoogleEvent(eventEntity);
-
-                Event resultGoogleEvent = calendar.events().insert("primary", googleEvent).execute();
-
-                result = EventGoogleMapper.INSTANCE.googleEventToEventEntity(resultGoogleEvent);
+                result = calendar.events().insert("primary", event).execute();
 
             } catch (IOException e) {
                 LOGGER.error("Could not create event", e);

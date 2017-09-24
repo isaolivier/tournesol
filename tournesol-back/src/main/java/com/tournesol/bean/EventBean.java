@@ -7,19 +7,13 @@ public class EventBean implements Serializable {
 
     private String id;
 
-    private ZonedDateTime created;
-
-    private ZonedDateTime updated;
-
     private String summary;
 
     private String description;
 
     private String location;
 
-    private ZonedDateTime start;
-
-    private ZonedDateTime end;
+    private String status;
 
     public String getId() {
         return id;
@@ -27,22 +21,6 @@ public class EventBean implements Serializable {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public ZonedDateTime getCreated() {
-        return created;
-    }
-
-    public void setCreated(ZonedDateTime created) {
-        this.created = created;
-    }
-
-    public ZonedDateTime getUpdated() {
-        return updated;
-    }
-
-    public void setUpdated(ZonedDateTime updated) {
-        this.updated = updated;
     }
 
     public String getSummary() {
@@ -69,20 +47,11 @@ public class EventBean implements Serializable {
         this.location = location;
     }
 
-    public ZonedDateTime getStart() {
-        return start;
+    public String getStatus() {
+        return status;
     }
 
-    public void setStart(ZonedDateTime start) {
-        this.start = start;
+    public void setStatus(String status) {
+        this.status = status;
     }
-
-    public ZonedDateTime getEnd() {
-        return end;
-    }
-
-    public void setEnd(ZonedDateTime end) {
-        this.end = end;
-    }
-
 }

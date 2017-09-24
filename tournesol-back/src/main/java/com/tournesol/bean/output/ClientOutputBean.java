@@ -1,4 +1,7 @@
-package com.tournesol.bean;
+package com.tournesol.bean.output;
+
+import com.tournesol.bean.AdresseBean;
+import com.tournesol.bean.ClientBean;
 
 /**
  * Created by iolivier on 25/04/2017.

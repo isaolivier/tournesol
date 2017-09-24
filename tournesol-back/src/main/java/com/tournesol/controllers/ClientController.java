@@ -1,11 +1,10 @@
 package com.tournesol.controllers;
 
 import com.google.maps.model.PlaceDetails;
-import com.tournesol.bean.ClientOutputBean;
+import com.tournesol.bean.output.ClientOutputBean;
 import com.tournesol.bean.input.ClientInputBean;
 import com.tournesol.mapper.AdresseMapper;
-import com.tournesol.mapper.ClientInputMapper;
-import com.tournesol.mapper.ClientOutputMapper;
+import com.tournesol.mapper.ClientMapper;
 import com.tournesol.service.MapService;
 import com.tournesol.service.entity.AdresseEntity;
 import com.tournesol.service.entity.ClientEntity;
@@ -47,7 +46,7 @@ public class ClientController {
         Iterable<ClientEntity> clientEntities = clientRepository.findAll();
 
         return StreamSupport.stream(clientEntities.spliterator(), false)
-                .map(c -> ClientOutputMapper.INSTANCE.map(c))
+                .map(c -> ClientMapper.INSTANCE.clientEntityToClientOutpuBean(c))
                 .collect(Collectors.toList());
     }
 
@@ -55,18 +54,20 @@ public class ClientController {
     @PutMapping("/client")
     public void updateClient(@RequestBody ClientInputBean client) throws Exception {
 
+        final ClientEntity clientEntity = ClientMapper.INSTANCE.clientInputeBeanToClientEntity(client);
+
         ClientEntity existingClient = clientRepository.findById(client.getId()).orElse(null);
 
-        if(existingClient != null) {
+        if (existingClient != null) {
             if (!StringUtils.equals(client.getPlaceId(), existingClient.getAdresse().getPlaceId())) {
                 final PlaceDetails placeDetails = mapService.getPlaceDetails(client.getPlaceId());
 
                 AdresseEntity adresseEntity = AdresseMapper.map(placeDetails);
                 adresseEntity.setPlaceId(client.getPlaceId());
                 adresseEntity.setId(existingClient.getAdresse().getId());
-            }
 
-            final ClientEntity clientEntity = ClientInputMapper.INSTANCE.map(client);
+                clientEntity.setAdresse(adresseEntity);
+            }
 
             clientRepository.save(clientEntity);
         }
@@ -74,7 +75,8 @@ public class ClientController {
 
     @PostMapping("/client")
     public void createClient(@RequestBody ClientInputBean client) throws Exception {
-        final ClientEntity clientEntity = ClientInputMapper.INSTANCE.map(client);
+
+        final ClientEntity clientEntity = ClientMapper.INSTANCE.clientInputeBeanToClientEntity(client);
 
         final PlaceDetails placeDetails = mapService.getPlaceDetails(client.getPlaceId());
 

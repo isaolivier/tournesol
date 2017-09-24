@@ -2,8 +2,8 @@
     <div>
         <div class="alerts">
             &nbsp;
-            <el-alert v-if="showError" type="error" title="" :closable="false">{{error}}</el-alert>
-            <el-alert v-if="showSuccess" type="success" title="" :closable="false">{{success}}</el-alert>
+            <el-alert v-if="showError" type="error" summary="" :closable="false" title="Erreur">{{error}}</el-alert>
+            <el-alert v-if="showSuccess" type="success" summary="" :closable="false" title="">{{success}}</el-alert>
         </div>
         <div class="grid-content">
             &nbsp;

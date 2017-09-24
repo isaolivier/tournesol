@@ -1,21 +1,19 @@
 package com.tournesol.controllers;
 
+import com.google.api.services.calendar.model.Event;
 import com.tournesol.bean.AuthInfo;
 import com.tournesol.bean.RendezVousBean;
 import com.tournesol.bean.input.RendezVousInputBean;
 import com.tournesol.mapper.AppareilMapper;
-import com.tournesol.mapper.ClientOutputMapper;
-import com.tournesol.mapper.EventBeanMapper;
+import com.tournesol.mapper.ClientMapper;
+import com.tournesol.mapper.EventMapper;
 import com.tournesol.service.EventService;
 import com.tournesol.service.entity.AppareilEntity;
 import com.tournesol.service.entity.ClientEntity;
-import com.tournesol.service.entity.EventEntity;
 import com.tournesol.service.entity.RendezVousEntity;
 import com.tournesol.service.repository.RendezVousRepository;
 
 import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -62,7 +60,7 @@ public class RendezVousController {
          */
         LocalDate dateRecherche = date == null ? LocalDate.now() : date;
 
-        final Map<String, EventEntity> eventMap = eventService.getEvents(authInfo, dateRecherche).stream()
+        final Map<String, Event> eventMap = eventService.getEvents(authInfo, dateRecherche).stream()
                 .collect(Collectors.toMap(e -> e.getICalUID(), e -> e));
 
         /*
@@ -93,17 +91,18 @@ public class RendezVousController {
             Création de l'évenement dans le calendrier distant
          */
 
-        EventEntity eventEntity = new EventEntity();
-        eventEntity.setStart(ZonedDateTime.of(rdv.getDate(), rdv.getStartTime(), ZoneId.of("Europe/Paris")));
-        eventEntity.setEnd(ZonedDateTime.of(rdv.getDate(), rdv.getEndTime(), ZoneId.of("Europe/Paris")));
 
-        final EventEntity event = eventService.createEvent(authInfo, eventEntity);
+
+        // TODO gérer la couleur en fonction du status
+
+        final Event event = eventService.createEvent(authInfo,
+                EventMapper.INSTANCE.eventInputBeanToEvent(rdv.getEvent()));
 
         /*
             Création du rdv en local
          */
         if (event != null) {
-            saveRendezVous(rdv, event);
+            saveRendezVous(rdv, event.getICalUID());
         }
     }
 
@@ -111,12 +110,12 @@ public class RendezVousController {
      * Sauvegarde du rendez-vous en local.
      * Un rdv pour chaque appareil, si aucun appareil est précisé, seul le client est précisé.
      */
-    private void saveRendezVous(RendezVousInputBean rdv, EventEntity event) {
+    private void saveRendezVous(RendezVousInputBean rdv, String eventId) {
 
         if (rdv.getAppareils().isEmpty()) {
 
             RendezVousEntity rdvEntity = new RendezVousEntity();
-            rdvEntity.setEventId(event.getICalUID());
+            rdvEntity.setEventId(eventId);
 
             rdvEntity.setClient(new ClientEntity());
             rdvEntity.getClient().setId(rdv.getClient());
@@ -129,7 +128,7 @@ public class RendezVousController {
                   Création d'un rendez-vous pour chacun des appareils
                  */
                 RendezVousEntity rdvEntity = new RendezVousEntity();
-                rdvEntity.setEventId(event.getICalUID());
+                rdvEntity.setEventId(eventId);
 
                 rdvEntity.setAppareil(new AppareilEntity());
                 rdvEntity.getAppareil().setId(a);
@@ -145,17 +144,17 @@ public class RendezVousController {
     /**
      * Construction de l'objet rendez-vous.
      */
-    private RendezVousBean buildRendezVousBean(List<RendezVousEntity> rdvEntities, EventEntity eventEntity) {
+    private RendezVousBean buildRendezVousBean(List<RendezVousEntity> rdvEntities, Event event) {
 
         RendezVousBean rdv = new RendezVousBean();
 
         rdvEntities.stream().forEach(r -> {
-                    rdv.getAppareils().add(AppareilMapper.INSTANCE.map(r.getAppareil()));
-                    rdv.setClient(ClientOutputMapper.INSTANCE.map(r.getClient()));
+                    rdv.getAppareils().add(AppareilMapper.INSTANCE.appareilEntityToAppareilBean(r.getAppareil()));
+                    rdv.setClient(ClientMapper.INSTANCE.clientEntityToClientOutpuBean(r.getClient()));
                 }
         );
 
-        rdv.setEvent(EventBeanMapper.INSTANCE.map(eventEntity));
+        rdv.setEvent(EventMapper.INSTANCE.eventToEventOutputBean(event));
 
         return rdv;
     }

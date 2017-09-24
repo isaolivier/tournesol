@@ -1,5 +1,7 @@
 package com.tournesol.bean;
 
+import com.tournesol.bean.output.EventOutputBean;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +12,7 @@ public class RendezVousBean implements Serializable {
 
     private List<AppareilBean> appareils = new ArrayList<>();
 
-    private EventBean event;
+    private EventOutputBean event;
 
     public ClientBean getClient() {
         return client;
@@ -28,11 +30,11 @@ public class RendezVousBean implements Serializable {
         this.appareils = appareils;
     }
 
-    public EventBean getEvent() {
+    public EventOutputBean getEvent() {
         return event;
     }
 
-    public void setEvent(EventBean event) {
+    public void setEvent(EventOutputBean event) {
         this.event = event;
     }
 }

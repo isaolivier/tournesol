@@ -5,12 +5,14 @@
           <i class="fa fa-calendar-plus-o fa-stack-1x fa-inverse"></i>
         </span>
 
-        <el-dialog title="Création d'un rendez-vous" :visible.sync="dialogFormVisible">
+        <el-dialog summary="Création d'un rendez-vous" :visible.sync="dialogFormVisible">
             <el-form :model="form">
 
                 <el-form-item>
                     <el-checkbox-group v-model="form.appareils">
-                        <el-checkbox v-for="appareil in appareils" :key="appareil.id" :label="appareil.id">{{getAppareilLabel(appareil)}}</el-checkbox>
+                        <el-checkbox v-for="appareil in appareils" :key="appareil.id" :label="appareil.id">
+                            {{getAppareilLabel(appareil)}}
+                        </el-checkbox>
                     </el-checkbox-group>
                 </el-form-item>
 
@@ -25,7 +27,7 @@
 
                 <el-time-select
                         placeholder="Heure Début"
-                        v-model="form.startTime"
+                        v-model="form.event.startTime"
                         :picker-options="{
                           start: this.heureOuverture,
                           step: this.step,
@@ -35,7 +37,7 @@
                 </el-time-select>
                 <el-time-select
                         placeholder="Heure Fin"
-                        v-model="form.endTime"
+                        v-model="form.event.endTime"
                         :picker-options="{
                           start: this.heureOuverture,
                           step: this.step,
@@ -82,20 +84,27 @@
         form: {
           appareils: [],
           client: this.client.id,
-          date: '',
-          startTime: this.heureOuverture,
-          endTime: ''
+          event: {
+            id: '',
+            date: '',
+            startTime: this.heureOuverture,
+            endTime: '',
+            summary: '',
+            description: '',
+            location: '',
+            status: null
+          }
         }
       }
     },
     watch: {
       // Ajout du temps de rdv par défaut lors du choix de l'heure de début
-      'form.startTime': function (newStartTime) {
+      'form.event.startTime': function (newStartTime) {
         let m = moment(newStartTime, 'HH:mm').add(Constants.rdv.tempsRdv, 'm')
-        this.form.endTime = m.format('HH:mm')
+        this.form.event.endTime = m.format('HH:mm')
       },
       date: function (newDate) {
-        this.form.date = moment(newDate).format(Constants.rdv.dateFormat)
+        this.form.event.date = moment(newDate).format(Constants.rdv.dateFormat)
       }
     },
     methods: {
