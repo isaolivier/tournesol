@@ -11,7 +11,7 @@
         </el-row>
 
         <template v-for="(client, index) in filteredClients">
-            <template v-if="client.nom">
+            <template v-if="client.id">
                 <client :rang="index" :client="client" :key="client.id"></client>
             </template>
             <template v-else>
@@ -47,8 +47,12 @@
     computed: {
       letters: function () {
         let letters = []
-        this.clients.map(client => client.nom[0]
-        ).forEach(letter => letters.push(letter))
+        this.clients.map(client => client.nom ? client.nom[0] : '?'
+        ).forEach(letter => {
+          if (letter && !letters.includes(letter)) {
+            letters.push(letter)
+          }
+        })
 
         this.currentLetter = letters[0]
         return letters
@@ -86,8 +90,9 @@
             let letters = this.letters
             let curIndexLetter = 0
             for (let client of this.clients) {
-              if (letters[curIndexLetter] === client.nom.charAt(0)) {
-                this.elements.push(letters[curIndexLetter])
+              let clientLetter = client.nom ? client.nom.charAt(0) : '?'
+              if (letters[curIndexLetter] === clientLetter) {
+                this.elements.push(clientLetter)
                 curIndexLetter++
               }
               this.elements.push(client)
