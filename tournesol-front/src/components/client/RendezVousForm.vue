@@ -8,14 +8,14 @@
         <el-dialog summary="Création d'un rendez-vous" :visible.sync="dialogFormVisible">
             <el-form :model="form" label-position="top" label-width="120px">
                 <el-form-item label="Date" prop="event.date">
-                        <el-date-picker v-model="form.event.date" type="date" placeholder="Date"
+                        <el-date-picker v-model="date" type="date" placeholder="Date"
                                 :picker-options="{
                                   disabledDate: disabledDate
                                 }" style="width: 100%;"></el-date-picker>
                 </el-form-item>
                 <el-form-item label="Heure">
                     <el-col :span="11">
-                        <el-time-select v-model="form.event.startTime" placeholder="Heure Début"
+                        <el-time-select v-model="form.event.startTime" placeholder="Heure Début" @change="updateEndTime"
                                 :picker-options="{
                                   start: this.heureOuverture,
                                   step: this.step,
@@ -106,6 +106,8 @@
             summary: '',
             description: '',
             location: '',
+            latitude: null,
+            longitude: null,
             status: null
           }
         }
@@ -113,25 +115,27 @@
     },
     created () {
       if (!this.form.event.id) {
-        if (this.client.nom && this.client.civilite) {
-          this.form.event.summary = this.client.civilite + ' ' + this.client.nom
-        }
+        let civilite = this.client.civilite ? this.client.civilite + ' ' : ''
+        let nom = this.client.nom ? this.client.nom : ''
+        this.form.event.summary = civilite + nom
       }
-    },
-    watch: {
-      // Ajout du temps de rdv par défaut lors du choix de l'heure de début
-      'form.event.startTime': function (newStartTime) {
-        let m = moment(newStartTime, 'HH:mm').add(Constants.rdv.tempsRdv, 'm')
-        this.form.event.endTime = m.format('HH:mm')
-      },
-      date: function (newDate) {
-        this.form.event.date = moment(newDate).format(Constants.rdv.dateFormat)
-      }
+      this.form.event.latitude = this.client.adresse.latitude
+      this.form.event.longitude = this.client.adresse.longitude
     },
     methods: {
       // Calcul des dates désactivées lors du choix des dates
       disabledDate (date) {
         return this.now > moment(date)
+      },
+
+      // Ajout du temps de rdv par défaut lors du choix de l'heure de début
+      updateEndTime () {
+        if (this.form.event.startTime) {
+          let m = moment(this.form.event.startTime, 'HH:mm').add(Constants.rdv.tempsRdv, 'm')
+          this.form.event.endTime = m.format('HH:mm')
+        } else {
+          this.form.event.endTime = null
+        }
       },
 
       showDialog () {
@@ -160,6 +164,8 @@
         })
       },
       createRendezVous () {
+        this.form.event.date = moment(this.date).format(Constants.rdv.dateFormat)
+
         let rdvResource = new RendezVousResource()
         rdvResource.createRendezVous(this.form, (err) => {
           if (err) {

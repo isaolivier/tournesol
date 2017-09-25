@@ -21,10 +21,11 @@
     },
     created () {
       if (this.adresse) {
-        this.fullAddress = this.adresse.numero + ' ' +
-          this.adresse.voie + ', ' +
-          this.adresse.codePostal + ' ' +
-          this.adresse.commune
+        let numero = this.adresse.numero ? this.adresse.numero + ' ' : ''
+        let voie = this.adresse.voie ? this.adresse.voie + ', ' : ''
+        let codePostal = this.adresse.codePostal ? this.adresse.codePostal + ' ' : ''
+        let commune = this.adresse.commune ? this.adresse.commune : ''
+        this.fullAddress = numero + voie + codePostal + commune
         this.$emit('fullAddress', this.fullAddress)
       }
     },
