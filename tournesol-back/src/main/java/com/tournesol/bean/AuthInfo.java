@@ -3,8 +3,19 @@ package com.tournesol.bean;
 public class AuthInfo {
 
 	String authcode;
+
 	String email;
+
 	String uid;
+
+	public AuthInfo() {
+	}
+
+	public AuthInfo(String authcode, String email, String uid) {
+		this.authcode = authcode;
+		this.email = email;
+		this.uid = uid;
+	}
 
 	/**
 	 * @return the authcode

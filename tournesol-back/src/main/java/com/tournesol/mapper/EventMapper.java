@@ -9,20 +9,18 @@ import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventDateTime;
 import com.tournesol.bean.input.EventInputBean;
 import com.tournesol.bean.output.EventOutputBean;
+
+import java.time.ZonedDateTime;
+
 import org.mapstruct.DecoratedWith;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 
 @Mapper
 @DecoratedWith(EventMapperDecorator.class)
 public interface EventMapper {
 
-    EventMapper INSTANCE = Mappers.getMapper( EventMapper.class );
+    EventMapper INSTANCE = Mappers.getMapper(EventMapper.class);
 
     EventInputBean eventToEventInputBean(Event event);
 
@@ -35,11 +33,15 @@ public interface EventMapper {
     default EventDateTime zonedDateTimeToEventDateTime(ZonedDateTime value) {
         EventDateTime eventDateTime = new EventDateTime().setDateTime(DateMapper.map(value));
         return eventDateTime;
-    };
+    }
+
+    ;
 
     default ZonedDateTime eventDateTimeToZonedDateTime(EventDateTime value) {
-        return DateMapper.map (value.getDateTime());
-    };
+        return DateMapper.map(value.getDateTime());
+    }
+
+    ;
 
 }
 

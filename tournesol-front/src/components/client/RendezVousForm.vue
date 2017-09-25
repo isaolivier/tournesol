@@ -109,6 +109,7 @@
         date: '',
         step: Constants.rdv.timeStep,
         appareils: [],
+        propositions: [],
         now: moment().startOf('day'),
         form: {
           appareils: [],
@@ -134,8 +135,6 @@
         let nom = this.client.nom ? this.client.nom : ''
         this.form.event.summary = civilite + nom
       }
-      this.form.event.latitude = this.client.adresse.latitude
-      this.form.event.longitude = this.client.adresse.longitude
     },
     methods: {
       // Calcul des dates désactivées lors du choix des dates
@@ -156,6 +155,7 @@
       showDialog () {
         this.dialogFormVisible = true
         this.fetchData()
+        this.findPropositionsRdv()
       },
 
       updateLocation (selected) {
@@ -184,8 +184,22 @@
           }
         })
       },
+
+      findPropositionsRdv: function () {
+        let rdvResource = new RendezVousResource()
+        rdvResource.findPropositionRendezVous(Constants.rdv.searchDays, Constants.rdv.searchDistance, this.client.adresse.id, (err, result) => {
+          if (err) {
+            this.error = err.toString()
+          } else {
+            this.propositions = result
+          }
+        })
+      },
+
       createRendezVous () {
         this.form.event.date = moment(this.date).format(Constants.rdv.dateFormat)
+        this.form.event.latitude = this.client.adresse.latitude
+        this.form.event.longitude = this.client.adresse.longitude
 
         let rdvResource = new RendezVousResource()
         rdvResource.createRendezVous(this.form, (err) => {

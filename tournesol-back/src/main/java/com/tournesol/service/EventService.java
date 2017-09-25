@@ -36,6 +36,14 @@ public class EventService {
      */
     public List<Event> getEvents(AuthInfo authInfo, LocalDate day) {
 
+        return getEvents(authInfo, day, 1);
+    }
+
+    /**
+     * Recherche des évènements correspondant à partir du jour spécifié, et sur une plage de jours donnée.
+     */
+    public List<Event> getEvents(AuthInfo authInfo, LocalDate day, int dayRange) {
+
         final List<Event> events = new ArrayList<>();
 
         Credential creds = authService.getCreds(authInfo);
@@ -45,7 +53,7 @@ public class EventService {
                     .build();
             try {
                 final DateTime timeMin = DateMapper.map(day);
-                final DateTime timeMax = DateMapper.map(day.plusDays(1));
+                final DateTime timeMax = DateMapper.map(day.plusDays(dayRange));
 
                 final Events googleEvents = calendar.events().list("primary")
                         .setTimeMin(timeMin)

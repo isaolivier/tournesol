@@ -4,17 +4,23 @@ import com.google.api.services.calendar.model.Event;
 import com.tournesol.bean.AuthInfo;
 import com.tournesol.bean.RendezVousBean;
 import com.tournesol.bean.input.RendezVousInputBean;
+import com.tournesol.bean.JourBean;
 import com.tournesol.mapper.AppareilMapper;
 import com.tournesol.mapper.ClientMapper;
+import com.tournesol.mapper.DateMapper;
 import com.tournesol.mapper.EventMapper;
 import com.tournesol.service.EventService;
+import com.tournesol.service.entity.AdresseEntity;
 import com.tournesol.service.entity.AppareilEntity;
 import com.tournesol.service.entity.ClientEntity;
 import com.tournesol.service.entity.RendezVousEntity;
+import com.tournesol.service.repository.AdresseRepository;
 import com.tournesol.service.repository.RendezVousRepository;
+import com.tournesol.util.DistanceCalculator;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -38,6 +44,9 @@ public class RendezVousController {
     private RendezVousRepository rdvRepository;
 
     @Autowired
+    private AdresseRepository adresseRepository;
+
+    @Autowired
     private EventService eventService;
 
     /**
@@ -51,9 +60,7 @@ public class RendezVousController {
                                              @RequestHeader(value = "email", required = true) String email,
                                              @RequestParam(value = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
 
-        AuthInfo authInfo = new AuthInfo();
-        authInfo.setUID(uid);
-        authInfo.setEmail(email);
+        AuthInfo authInfo = new AuthInfo(null, email, uid);
 
         /*
             Recherche des évenements dans le calendrier distant (google)
@@ -73,9 +80,53 @@ public class RendezVousController {
         /*
             Aggrégation des données
          */
-        return rendezVousEntities.entrySet().stream()
-                .map(e -> buildRendezVousBean(e.getValue(), eventMap.get(e.getKey())))
+        return eventMap.entrySet().stream()
+                .map(e -> buildRendezVousBean(rendezVousEntities.get(e.getKey()), e.getValue()))
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Recherche des dates optimales par rapport à un client donné.
+     *
+     * @param dayRange Nombre de jours sur lesquels on effectue une recherche des rdvs existants.
+     * @param distanceRange Distance en max en km entre l'adresse et les adresses recharchées.
+     * @param adresseId Identifiant de l'adresse à partir de laquelle effectuer une recherche.
+     * @return la liste des rendez-vous du jour, aggrégeant l'ensemble des infos relatives au rdv (client, appareil ...)
+     */
+    @GetMapping("/rdv/search")
+    public Iterable<JourBean> search(@RequestHeader(value = "uid", required = true) String uid,
+                                     @RequestHeader(value = "email", required = true) String email,
+                                     @RequestParam(value = "dayRange", required = true) int dayRange,
+                                     @RequestParam(value = "distanceRange", required = true) int distanceRange,
+                                     @RequestParam(value = "adresseId", required = true) Long adresseId) {
+
+        final Map<LocalDate, JourBean> result = new HashMap<>();
+
+        AuthInfo authInfo = new AuthInfo(null, email, uid);
+
+        AdresseEntity adresseEntity = adresseRepository.findById(adresseId).get();
+
+        /*
+            Recherche des évenements dans le calendrier distant (google)
+         */
+        final Map<String, Event> eventMap = eventService.getEvents(authInfo, LocalDate.now(), distanceRange).stream()
+                .collect(Collectors.toMap(e -> e.getICalUID(), e -> e));
+
+        eventMap.values().stream()
+                .filter(e -> e.getExtendedProperties() != null && e.getExtendedProperties().getShared().containsKey("latitude"))
+                .filter(e -> DistanceCalculator.distance(adresseEntity.getLatitude(), adresseEntity.getLongitude(),
+                        Double.valueOf(e.getExtendedProperties().getShared().get("latitude")),
+                        Double.valueOf(e.getExtendedProperties().getShared().get("longitude")), "K") <= distanceRange)
+                .forEach(e -> {
+                    final LocalDate date = DateMapper.mapDayToLacalDate(e.getStart().getDateTime());
+                    if(result.get(date) == null) {
+                        result.put(date, new JourBean(date, EventMapper.INSTANCE.eventToEventOutputBean(e)));
+                    } else {
+                        result.get(date).getEvents().add(EventMapper.INSTANCE.eventToEventOutputBean(e));
+                    }
+                });
+
+        return result.values();
     }
 
     @PostMapping("/rdv")
@@ -83,16 +134,11 @@ public class RendezVousController {
                        @RequestHeader(value = "email", required = true) String email,
                        @RequestBody RendezVousInputBean rdv) {
 
-        AuthInfo authInfo = new AuthInfo();
-        authInfo.setUID(uid);
-        authInfo.setEmail(email);
+        AuthInfo authInfo = new AuthInfo(null, email, uid);
 
         /*
             Création de l'évenement dans le calendrier distant
          */
-
-
-
         // TODO gérer la couleur en fonction du status
 
         final Event event = eventService.createEvent(authInfo,
@@ -148,11 +194,13 @@ public class RendezVousController {
 
         RendezVousBean rdv = new RendezVousBean();
 
-        rdvEntities.stream().forEach(r -> {
-                    rdv.getAppareils().add(AppareilMapper.INSTANCE.appareilEntityToAppareilBean(r.getAppareil()));
-                    rdv.setClient(ClientMapper.INSTANCE.clientEntityToClientOutpuBean(r.getClient()));
-                }
-        );
+        if(rdvEntities != null) {
+            rdvEntities.stream().forEach(r -> {
+                        rdv.getAppareils().add(AppareilMapper.INSTANCE.appareilEntityToAppareilBean(r.getAppareil()));
+                        rdv.setClient(ClientMapper.INSTANCE.clientEntityToClientOutpuBean(r.getClient()));
+                    }
+            );
+        }
 
         rdv.setEvent(EventMapper.INSTANCE.eventToEventOutputBean(event));
 

@@ -19,6 +19,10 @@ public class AdresseBean implements Serializable {
 
     private String placeId;
 
+    private String latitude;
+
+    private String longitude;
+
     public Long getId() {
         return id;
     }
@@ -65,5 +69,21 @@ public class AdresseBean implements Serializable {
 
     public void setPlaceId(String placeId) {
         this.placeId = placeId;
+    }
+
+    public String getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
+
+    public String getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
     }
 }

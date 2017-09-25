@@ -34,4 +34,8 @@ public class DateMapper {
         final ZonedDateTime zdt = ZonedDateTime.of(day, LocalTime.MIN, ZoneId.systemDefault());
         return new DateTime(zdt.format(DateTimeFormatter.ISO_INSTANT));
     }
+
+    public static LocalDate mapDayToLacalDate(final DateTime day) {
+        return LocalDate.ofEpochDay(day.getValue()/86400000);
+    }
 }
