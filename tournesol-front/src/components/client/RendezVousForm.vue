@@ -58,7 +58,6 @@
 
             </el-form>
             <span slot="footer" class="dialog-footer">
-                <el-button type="danger" icon="delete" class="trashbin"></el-button>
                 <el-button @click="dialogFormVisible = false">Annuler</el-button>
                 <el-button type="primary" @click="createRendezVous">Créer</el-button>
             </span>
@@ -182,7 +181,5 @@
         text-shadow: 1px 1px 3px black;
     }
 
-    .trashbin{
-        float: left;
-    }
+
 </style>

@@ -63,9 +63,10 @@
                 </el-row>
             </el-form>
             <span slot="footer" class="dialog-footer">
-                <el-button v-if="client" type="primary" @click="updateClient" size="large">Enregistrer</el-button>
-                <el-button v-else type="primary" @click="createClient" size="large">Créer</el-button>
-                <el-button @click="dialogFormVisible = false" size="large">Annuler</el-button>
+                <el-button type="danger" icon="delete" class="trashbin"></el-button>
+                <el-button v-if="client" type="primary" @click="updateClient">Enregistrer</el-button>
+                <el-button v-else type="primary" @click="createClient">Créer</el-button>
+                <el-button @click="dialogFormVisible = false">Annuler</el-button>
             </span>
         </el-dialog>
     </div>
@@ -196,5 +197,9 @@
     .edit {
         float: right;
         margin-right: 10px;
+    }
+
+    .trashbin{
+        float: left;
     }
 </style>
