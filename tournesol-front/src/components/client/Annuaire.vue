@@ -4,8 +4,8 @@
         <div v-if="error" x="50" :y="100">{{error}}</div>
 
         <client-form></client-form>
-        <el-row :gutter="20">
-            <el-col :span="12" :offset="6">
+        <el-row id="search" :gutter="20">
+            <el-col :span="12" :offset="12">
                 <el-input  class="input-search" icon="search" placeholder="Rechercher" v-model="recherche"></el-input>
             </el-col>
         </el-row>
@@ -107,4 +107,14 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+    #search {
+        position: fixed;
+        top: 2px;
+        right:2px;
+        left: 200px
+    }
+
+    .el-tabs {
+        transform: translateZ(0);
+    }
 </style>
