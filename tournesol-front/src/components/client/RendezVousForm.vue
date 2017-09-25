@@ -6,61 +6,59 @@
         </span>
 
         <el-dialog summary="Création d'un rendez-vous" :visible.sync="dialogFormVisible">
-            <el-form>
-
-                <el-row :gutter="20">
-                    <el-col :span="8">
-                        <el-date-picker v-model="date" type="date" placeholder="Date"
+            <el-form :model="form" label-position="top" label-width="120px">
+                <el-form-item label="Date" prop="event.date">
+                        <el-date-picker v-model="form.event.date" type="date" placeholder="Date"
                                 :picker-options="{
                                   disabledDate: disabledDate
-                                }"></el-date-picker>
-                    </el-col>
-                    <el-col :span="8">
+                                }" style="width: 100%;"></el-date-picker>
+                </el-form-item>
+                <el-form-item label="Heure">
+                    <el-col :span="11">
                         <el-time-select v-model="form.event.startTime" placeholder="Heure Début"
                                 :picker-options="{
                                   start: this.heureOuverture,
                                   step: this.step,
                                   end: this.heureFermeture
-                                }"></el-time-select>
+                                }" style="width: 100%;"></el-time-select>
                     </el-col>
-                    <el-col :span="8">
+                    <el-col class="line" :span="2">&nbsp;</el-col>
+                    <el-col :span="11">
                         <el-time-select v-model="form.event.endTime" placeholder="Heure Fin"
                                 :picker-options="{
                                   start: this.heureOuverture,
                                   step: this.step,
                                   end: this.heureFermeture,
                                   minTime: this.form.startTime
-                                }"></el-time-select>
+                                }" style="width: 100%;"></el-time-select>
                     </el-col>
-                </el-row>
-
-                <el-row :gutter="20">
-                    <el-col :span="24">
-                        <el-input placeholder="Intitulé du rendez-vous" v-model="form.event.summary"></el-input>
-                    </el-col>
-                </el-row>
-                <el-row :gutter="20">
-                    <el-col :span="24">
-                        <el-input type="textarea" placeholder="Détails" v-model="form.event.description"></el-input>
-                    </el-col>
-                </el-row>
-                <el-row :gutter="20">
-                    <el-col :span="24">
-                        <adresse-autocomplete :adresse="adresse" @select="updateLocation" @fullAddress="initLocation"></adresse-autocomplete>
-                    </el-col>
-                </el-row>
-                <el-row :gutter="20">
-                    <el-col :span="24">
-                        <el-checkbox-group v-model="form.appareils">
-                            <el-checkbox v-for="appareil in appareils" :key="appareil.id" :label="appareil.id">
-                                {{getAppareilLabel(appareil)}}
-                            </el-checkbox>
-                        </el-checkbox-group>
-                    </el-col>
-                </el-row>
+                </el-form-item>
+                <el-form-item
+                        label="Titre"
+                        prop="event.summary">
+                    <el-input placeholder="Intitulé du rendez-vous" v-model="form.event.summary"></el-input>
+                </el-form-item>
+                <el-form-item
+                        label="Détail"
+                        prop="event.description">
+                    <el-input type="textarea" placeholder="Détails" v-model="form.event.description"></el-input>
+                </el-form-item>
+                <el-form-item
+                        label="Adresse"
+                        prop="form.event.description">
+                    <adresse-autocomplete :adresse="adresse" @select="updateLocation" @fullAddress="initLocation"></adresse-autocomplete>
+                </el-form-item>
+                <el-form-item v-if="appareils.length > 0" label="Appareil" prop="appareils">
+                    <el-checkbox-group v-model="form.appareils">
+                        <el-checkbox v-for="appareil in appareils" :key="appareil.id" :label="appareil.id">
+                            {{appareil.denomination + ' [' + appareil.marque + ']'}}
+                        </el-checkbox>
+                    </el-checkbox-group>
+                </el-form-item>
 
             </el-form>
             <span slot="footer" class="dialog-footer">
+                <el-button type="danger" icon="delete" class="trashbin"></el-button>
                 <el-button @click="dialogFormVisible = false">Annuler</el-button>
                 <el-button type="primary" @click="createRendezVous">Créer</el-button>
             </span>
@@ -116,7 +114,9 @@
     },
     created () {
       if (!this.form.event.id) {
-        this.form.event.summary = this.client.civilite + ' ' + this.client.nom
+        if (this.client.nom && this.client.civilite) {
+          this.form.event.summary = this.client.civilite + ' ' + this.client.nom
+        }
       }
     },
     watch: {
@@ -160,11 +160,6 @@
           }
         })
       },
-
-      // Calcul du label affiché pour un appreil
-      getAppareilLabel (appareil) {
-        return appareil.denomination + ' [' + appareil.marque + ']'
-      },
       createRendezVous () {
         let rdvResource = new RendezVousResource()
         rdvResource.createRendezVous(this.form, (err) => {
@@ -187,8 +182,7 @@
         text-shadow: 1px 1px 3px black;
     }
 
-    .el-row {
-        margin-bottom: 15px;
+    .trashbin{
+        float: left;
     }
-
 </style>

@@ -4,7 +4,7 @@
             v-model="fullAddress"
             :fetch-suggestions="searchPlaces"
             placeholder="Saisir une adresse"
-            @select="handlePlaceSelect"></el-autocomplete>
+            @select="handlePlaceSelect" style="width:100%"></el-autocomplete>
 </template>
 
 <script>
@@ -60,21 +60,9 @@
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-    .el-autocomplete {
-        width: 100%;
-    }
-
+<style>
     .input-icon.address:after {
         content: '\f041';
-    }
-
-    .input-icon:after {
-        font-family: 'FontAwesome';
-        position: absolute;
-        right: 10px;
-        top: 5px;
-        font-size: 1.8em;
-        color: #CCC
+        top: 1px
     }
 </style>

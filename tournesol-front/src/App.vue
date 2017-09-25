@@ -41,4 +41,13 @@ body{
   padding: 2px 6px;
   margin: 4px 0;
 }
+
+.input-icon:after {
+    font-family: 'FontAwesome';
+    position: absolute;
+    right: 10px;
+    top: 5px;
+    font-size: 1.8em;
+    color: #CCC
+}
 </style>

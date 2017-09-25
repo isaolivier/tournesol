@@ -61,9 +61,9 @@
         if (this.recherche) {
           let search = this.recherche.toUpperCase()
           return this.clients.filter(client => {
-            return client.nom.toUpperCase().includes(search) ||
+            return client.nom && (client.nom.toUpperCase().includes(search) ||
               (client.telephone && client.telephone.toUpperCase().includes(search)) ||
-              (client.portable && client.portable.toUpperCase().includes(search))
+              (client.portable && client.portable.toUpperCase().includes(search)))
           })
         } else {
           return this.elements
@@ -106,15 +106,11 @@
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style>
     #search {
         position: fixed;
-        top: 2px;
+        top: 103px;
         right:2px;
-        left: 200px
-    }
-
-    .el-tabs {
-        transform: translateZ(0);
+        left: 200px;
     }
 </style>

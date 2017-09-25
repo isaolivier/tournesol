@@ -175,15 +175,6 @@
         margin-bottom: 15px;
     }
 
-    .input-icon:after {
-        font-family: 'FontAwesome';
-        position: absolute;
-        right: 10px;
-        top: 5px;
-        font-size: 1.8em;
-        color: #CCC
-    }
-
     .input-icon.tel:after {
         content: '\f095';
     }
