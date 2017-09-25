@@ -77,6 +77,7 @@
         background-color: #EEF1F6;
         align-items: center;
         line-height: 1.5em;
+        transition: all 0.15s ease-out;
     }
 
     .fa-comment-o{
@@ -87,6 +88,7 @@
         grid-template-rows: repeat(1, minmax(0px, max-content));
         grid-template-areas: "nomclient nomclient nomclient nomclient nomclient edit ajouter-rdv";
         padding: 0px 10px;
+        transition: all 0.15s cubic-bezier(.08,.82,.17,1);
     }
 
     .client.collapsed .client-nom, .client .client-nom {
