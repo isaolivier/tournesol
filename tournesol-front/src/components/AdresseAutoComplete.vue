@@ -63,7 +63,6 @@
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style>
     .input-icon.address:after {
-        content: '\f041';
-        top: 1px
+        content: '\f041'
     }
 </style>

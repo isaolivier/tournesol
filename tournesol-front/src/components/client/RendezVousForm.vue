@@ -5,18 +5,27 @@
           <i class="fa fa-calendar-plus-o fa-stack-1x fa-inverse"></i>
         </span>
 
-        <el-dialog summary="Création d'un rendez-vous" :visible.sync="dialogFormVisible">
+        <el-dialog summary="Création d'un rendez-vous" :visible.sync="dialogFormVisible" v-on:close="rdvClose">
+            <el-row>
+                <el-col :offset="6" :span="12">
+                    <el-steps space="100%" :active="etape" finish-status="success">
+                        <el-step title="Choix d'une date"></el-step>
+                        <el-step title="Détails"></el-step>
+                    </el-steps>
+                </el-col>
+            </el-row>
+
             <el-form :model="form" label-position="top" label-width="120px">
-                <el-form-item label="Date" prop="event.date">
-                        <el-date-picker v-model="date" type="date" placeholder="Date"
-                                :picker-options="{
+                <el-form-item v-if="etape === 1" label="Date" prop="event.date">
+                    <el-date-picker v-model="date" type="date" placeholder="Date"
+                                    :picker-options="{
                                   disabledDate: disabledDate
                                 }" style="width: 100%;"></el-date-picker>
                 </el-form-item>
-                <el-form-item label="Heure">
+                <el-form-item  v-if="etape > 1" label="Heure"  prop="event.startTime">
                     <el-col :span="11">
                         <el-time-select v-model="form.event.startTime" placeholder="Heure Début" @change="updateEndTime"
-                                :picker-options="{
+                                        :picker-options="{
                                   start: this.heureOuverture,
                                   step: this.step,
                                   end: this.heureFermeture
@@ -25,7 +34,7 @@
                     <el-col class="line" :span="2">&nbsp;</el-col>
                     <el-col :span="11">
                         <el-time-select v-model="form.event.endTime" placeholder="Heure Fin"
-                                :picker-options="{
+                                        :picker-options="{
                                   start: this.heureOuverture,
                                   step: this.step,
                                   end: this.heureFermeture,
@@ -33,20 +42,21 @@
                                 }" style="width: 100%;"></el-time-select>
                     </el-col>
                 </el-form-item>
-                <el-form-item
+                <el-form-item  v-if="etape > 1"
                         label="Titre"
                         prop="event.summary">
                     <el-input placeholder="Intitulé du rendez-vous" v-model="form.event.summary"></el-input>
                 </el-form-item>
-                <el-form-item
+                <el-form-item v-if="etape > 1"
                         label="Détail"
                         prop="event.description">
                     <el-input type="textarea" placeholder="Détails" v-model="form.event.description"></el-input>
                 </el-form-item>
-                <el-form-item
+                <el-form-item  v-if="etape > 1"
                         label="Adresse"
-                        prop="form.event.description">
-                    <adresse-autocomplete :adresse="adresse" @select="updateLocation" @fullAddress="initLocation"></adresse-autocomplete>
+                        prop="event.description">
+                    <adresse-autocomplete :adresse="adresse" @select="updateLocation"
+                                          @fullAddress="initLocation"></adresse-autocomplete>
                 </el-form-item>
                 <el-form-item v-if="appareils.length > 0" label="Appareil" prop="appareils">
                     <el-checkbox-group v-model="form.appareils">
@@ -55,11 +65,15 @@
                         </el-checkbox>
                     </el-checkbox-group>
                 </el-form-item>
-
             </el-form>
             <span slot="footer" class="dialog-footer">
-                <el-button @click="dialogFormVisible = false">Annuler</el-button>
-                <el-button type="primary" @click="createRendezVous">Créer</el-button>
+                <template v-if="etape === 2">
+                    <el-button @click="dialogFormVisible = false">Annuler</el-button>
+                    <el-button type="primary" @click="createRendezVous">Créer</el-button>
+                </template>
+                <template v-else>
+                    <el-button @click="etapeSuivante" type="primary" icon="arrow-right">Suivant</el-button>
+                </template>
             </span>
         </el-dialog>
     </div>
@@ -86,6 +100,7 @@
     },
     data () {
       return {
+        etape: 1,
         adresse: this.client.adresse,
         error: null,
         dialogFormVisible: false,
@@ -149,6 +164,12 @@
       },
       initLocation (location) {
         this.form.event.location = location
+      },
+      etapeSuivante () {
+        this.etape++
+      },
+      rdvClose () {
+        this.etape = 1
       },
       // Chargement des appareils
       fetchData: function () {
