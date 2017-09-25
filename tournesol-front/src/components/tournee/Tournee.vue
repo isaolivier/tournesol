@@ -1,6 +1,5 @@
 <template>
     <div>
-        Slider des dates<br/>
         <dates @dayChanged="fetchData"></dates>
 
         <svg id="agenda" :height="nbHeures * hourInterval + 20">

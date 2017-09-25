@@ -1,6 +1,6 @@
 <template>
     <svg>
-        <rect x="90" :y="yDebut" rx="15" ry="15" width="80%" :height="height" style="fill:white;stroke:lightblue;stroke-width:2;opacity:0.9"/>
+        <rect x="90" :y="yDebut" width="80%" :height="height" style="fill:#EEF1F6;stroke:#D1DBE5;stroke-width:1"/>
         <text x="100" :y="yDebut + 25">{{rdv.client.civilite}} {{rdv.client.nom}}</text>
         <text x="100" :y="yDebut + 50">{{rdv.event.description}}</text>
 
@@ -16,7 +16,7 @@
             <icon name="waze" scale="1.7" x="550px" :y="yDebut + 5"/>
         </a>
 
-        <text x="100" :y="yDebut + 50">{{rdv.event.location}}</text>
+        <text x="100" :y="yDebut + 75">{{rdv.event.location}}</text>
     </svg>
 </template>
 

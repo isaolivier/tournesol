@@ -86,7 +86,7 @@
     .client.collapsed {
         grid-template-rows: repeat(1, minmax(0px, max-content));
         grid-template-areas: "nomclient nomclient nomclient nomclient nomclient edit ajouter-rdv";
-
+        padding: 0px 10px;
     }
 
     .client.collapsed .client-nom, .client .client-nom {
