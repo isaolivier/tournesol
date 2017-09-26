@@ -1,4 +1,4 @@
-package com.tournesol.controllers;
+package com.tournesol.controller;
 
 import java.security.Principal;
 

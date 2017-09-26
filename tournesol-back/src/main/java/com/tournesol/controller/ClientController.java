@@ -1,4 +1,4 @@
-package com.tournesol.controllers;
+package com.tournesol.controller;
 
 import com.google.maps.model.PlaceDetails;
 import com.tournesol.bean.output.ClientOutputBean;
@@ -54,9 +54,9 @@ public class ClientController {
     @PutMapping("/client")
     public void updateClient(@RequestBody ClientInputBean client) throws Exception {
 
-        final ClientEntity clientEntity = ClientMapper.INSTANCE.clientInputeBeanToClientEntity(client);
-
         ClientEntity existingClient = clientRepository.findById(client.getId()).orElse(null);
+
+        ClientMapper.INSTANCE.updateClientEntityFromInputBean(client, existingClient);
 
         if (existingClient != null) {
             if (!StringUtils.equals(client.getPlaceId(), existingClient.getAdresse().getPlaceId())) {
@@ -66,10 +66,10 @@ public class ClientController {
                 adresseEntity.setPlaceId(client.getPlaceId());
                 adresseEntity.setId(existingClient.getAdresse().getId());
 
-                clientEntity.setAdresse(adresseEntity);
+                existingClient.setAdresse(adresseEntity);
             }
 
-            clientRepository.save(clientEntity);
+            clientRepository.save(existingClient);
         }
     }
 

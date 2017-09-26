@@ -1,4 +1,4 @@
-package com.tournesol.controllers;
+package com.tournesol.controller;
 
 import com.google.maps.model.PlaceDetails;
 import com.tournesol.mapper.AdresseMapper;

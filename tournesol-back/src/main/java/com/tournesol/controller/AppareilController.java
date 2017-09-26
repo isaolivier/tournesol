@@ -1,4 +1,4 @@
-package com.tournesol.controllers;
+package com.tournesol.controller;
 
 import com.tournesol.bean.AppareilBean;
 import com.tournesol.mapper.AppareilMapper;

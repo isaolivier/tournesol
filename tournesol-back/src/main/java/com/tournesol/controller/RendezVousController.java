@@ -1,4 +1,4 @@
-package com.tournesol.controllers;
+package com.tournesol.controller;
 
 import com.google.api.services.calendar.model.Event;
 import com.tournesol.bean.AuthInfo;

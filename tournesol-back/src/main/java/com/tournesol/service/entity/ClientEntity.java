@@ -72,20 +72,6 @@ public class ClientEntity implements Serializable {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private AdresseEntity adresse;
 
-    public ClientEntity() {
-    }
-
-    public ClientEntity(String civilite, String nom, String telephone, String portable, String email, Integer note, List<AppareilEntity> appareils, AdresseEntity adresse) {
-        this.civilite = civilite;
-        this.nom = nom;
-        this.telephone = telephone;
-        this.portable = portable;
-        this.email = email;
-        this.note = note;
-        this.appareils = appareils;
-        this.adresse = adresse;
-    }
-
     public Long getId() {
         return id;
     }

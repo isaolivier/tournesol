@@ -12,6 +12,7 @@ import com.tournesol.service.entity.AdresseEntity;
 import com.tournesol.service.entity.ClientEntity;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
 
 @Mapper
@@ -24,6 +25,8 @@ public interface ClientMapper {
     AdresseBean adresseEntityToAdresseOutputBean(AdresseEntity adresseEntity);
 
     ClientEntity clientInputeBeanToClientEntity(ClientInputBean clientBean);
+
+    void updateClientEntityFromInputBean(ClientInputBean clientInputBean, @MappingTarget ClientEntity entity);
 
     ClientInputBean clientEntityToClientInputBean(ClientEntity clientEntity);
 }
