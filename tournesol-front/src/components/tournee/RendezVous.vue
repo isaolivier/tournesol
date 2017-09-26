@@ -1,14 +1,14 @@
 <template>
     <svg>
         <rect x="90" :y="yDebut" width="80%" :height="height" style="fill:#EEF1F6;stroke:#D1DBE5;stroke-width:1"/>
-        <text x="100" :y="yDebut + 25">{{rdv.client.civilite}} {{rdv.client.nom}}</text>
+        <text x="100" :y="yDebut + 25" v-if="rdv.client">{{rdv.client.civilite}} {{rdv.client.nom}}</text>
         <text x="100" :y="yDebut + 50">{{rdv.event.description}}</text>
 
-        <a v-if="rdv.client.telephone" :href="'tel:' + rdv.client.telephone">
+        <a v-if="rdv.client && rdv.client.telephone" :href="'tel:' + rdv.client.telephone">
             <icon name="phone" scale="1.7" x="450px" :y="yDebut + 5"/>
         </a>
 
-        <a v-if="rdv.client.portable" :href="'tel:' + rdv.client.portable">
+        <a v-if="rdv.client && rdv.client.portable" :href="'tel:' + rdv.client.portable">
             <icon name="phone" scale="1.7" x="500px" :y="yDebut + 5"/>
         </a>
 

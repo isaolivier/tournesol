@@ -1,7 +1,7 @@
 <template>
     <div :class="{'client': true,'collapsed':isCollapsed}" >
         <span class="client-nom" @click="collapse">{{civilite()}} <strong>{{client.nom}}<span v-if="client.societe"> - {{client.societe}}</span> </strong></span>
-        <span class="adresse">{{client.adresse.numero}} {{client.adresse.voie}}, {{client.adresse.codePostal}} {{client.adresse.commune}}</span>
+        <span class="adresse" v-if="client.adresse">{{client.adresse.numero}} {{client.adresse.voie}}, {{client.adresse.codePostal}} {{client.adresse.commune}}</span>
         <span v-if="client.telephone" class="telephone"><span class="clickable"><i class="fa fa-phone"></i> {{client.telephone}}</span>
         <span v-if="client.portable" class="portable">
             <span class="clickable"><i class="fa fa-mobile"></i> {{client.portable}}</span>
@@ -9,10 +9,7 @@
         </span>
         </span>
         <span v-if="client.email" class="mail"><span class="clickable"><i class="fa fa-envelope-o"></i> {{client.email}}</span></span>
-        <span class="note">
-            <i v-for="nb in client.note" class="fa fa-star"></i>
-            <i v-for="nb in (5 - client.note)" class="fa fa-star-o"></i>
-        </span>
+        <el-rate class="note" v-model="client.note" disabled disabled-void-color="#CCCCCC"></el-rate>
         <rdv-form class="ajouter-rdv" :client="client"></rdv-form>
         <client-form :client="client"></client-form>
     </div>
@@ -45,7 +42,6 @@
     },
     methods: {
       collapse () {
-        console.log('collpase ', this.isCollapsed)
         this.isCollapsed = !this.isCollapsed
       },
       civilite () {

@@ -6,6 +6,7 @@
         </span>
 
         <el-dialog summary="Création d'un rendez-vous" :visible.sync="dialogFormVisible" v-on:close="rdvClose">
+
             <el-row>
                 <el-col :offset="6" :span="12">
                     <el-steps space="100%" :active="etape" finish-status="success">
@@ -16,13 +17,18 @@
             </el-row>
 
             <el-form :model="form" label-position="top" label-width="120px">
-                <el-form-item v-if="etape === 1" label="Date" prop="event.date">
+                Nom: {{this.client.nom}}
+                <el-rate class="note" v-model="client.note" disabled disabled-void-color="#CCCCCC"></el-rate>
+                <div v-if="etape === 1">
+                <el-form-item label="Date" prop="event.date">
                     <el-date-picker v-model="date" type="date" placeholder="Date"
                                     :picker-options="{
                                   disabledDate: disabledDate
                                 }" style="width: 100%;"></el-date-picker>
                 </el-form-item>
-                <el-form-item  v-if="etape > 1" label="Heure"  prop="event.startTime">
+                </div>
+                <div v-if="etape === 2">
+                <el-form-item  label="Heure"  prop="event.startTime">
                     <el-col :span="11">
                         <el-time-select v-model="form.event.startTime" placeholder="Heure Début" @change="updateEndTime"
                                         :picker-options="{
@@ -42,17 +48,17 @@
                                 }" style="width: 100%;"></el-time-select>
                     </el-col>
                 </el-form-item>
-                <el-form-item  v-if="etape > 1"
+                <el-form-item
                         label="Titre"
                         prop="event.summary">
                     <el-input placeholder="Intitulé du rendez-vous" v-model="form.event.summary"></el-input>
                 </el-form-item>
-                <el-form-item v-if="etape > 1"
+                <el-form-item
                         label="Détail"
                         prop="event.description">
                     <el-input type="textarea" placeholder="Détails" v-model="form.event.description"></el-input>
                 </el-form-item>
-                <el-form-item  v-if="etape > 1"
+                <el-form-item
                         label="Adresse"
                         prop="event.description">
                     <adresse-autocomplete :adresse="adresse" @select="updateLocation"
@@ -65,6 +71,7 @@
                         </el-checkbox>
                     </el-checkbox-group>
                 </el-form-item>
+                </div>
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <template v-if="etape === 2">
