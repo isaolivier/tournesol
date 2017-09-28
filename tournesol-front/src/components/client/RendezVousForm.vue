@@ -19,14 +19,22 @@
             <el-form :model="form" label-position="top" label-width="120px">
                 Nom: {{this.client.nom}}
                 <el-rate class="note" v-model="client.note" disabled disabled-void-color="#CCCCCC"></el-rate>
+
                 <div v-if="etape === 1">
-                <el-form-item label="Date" prop="event.date">
-                    <el-date-picker v-model="date" type="date" placeholder="Date"
-                                    :picker-options="{
-                                  disabledDate: disabledDate
-                                }" style="width: 100%;"></el-date-picker>
-                </el-form-item>
+                    <el-form-item label="Adresse" prop="">
+                        <adresse-autocomplete :adresse="adresse" @select="updateLocation"
+                                              @fullAddress="initLocation"></adresse-autocomplete>
+                    </el-form-item>
+                    <el-form-item label="Date" prop="event.date">
+                        <el-date-picker v-model="date" type="date" placeholder="Date"
+                                        :picker-options="{
+                                            disabledDate: disabledDate
+                                        }" style="width: 100%;"></el-date-picker>
+                    </el-form-item>
+
+                    {{propositions}}
                 </div>
+
                 <div v-if="etape === 2">
                 <el-form-item  label="Heure"  prop="event.startTime">
                     <el-col :span="11">
@@ -57,12 +65,6 @@
                         label="Détail"
                         prop="event.description">
                     <el-input type="textarea" placeholder="Détails" v-model="form.event.description"></el-input>
-                </el-form-item>
-                <el-form-item
-                        label="Adresse"
-                        prop="event.description">
-                    <adresse-autocomplete :adresse="adresse" @select="updateLocation"
-                                          @fullAddress="initLocation"></adresse-autocomplete>
                 </el-form-item>
                 <el-form-item v-if="appareils.length > 0" label="Appareil" prop="appareils">
                     <el-checkbox-group v-model="form.appareils">
@@ -119,6 +121,8 @@
         propositions: [],
         now: moment().startOf('day'),
         form: {
+          placeId: this.client.adresse.placeId,
+          adresseId: this.client.adresse.id,
           appareils: [],
           client: this.client.id,
           event: {
@@ -129,8 +133,6 @@
             summary: '',
             description: '',
             location: '',
-            latitude: null,
-            longitude: null,
             status: null
           }
         }
@@ -168,6 +170,10 @@
       updateLocation (selected) {
         // console.log('Place selected ' + selected.value)
         this.form.event.location = selected.value
+        if (selected.place !== this.form.placeId) {
+          this.form.placeId = selected.place
+          this.findPropositionsRdv()
+        }
       },
       initLocation (location) {
         this.form.event.location = location
@@ -194,7 +200,7 @@
 
       findPropositionsRdv: function () {
         let rdvResource = new RendezVousResource()
-        rdvResource.findPropositionRendezVous(Constants.rdv.searchDays, Constants.rdv.searchDistance, this.client.adresse.id, (err, result) => {
+        rdvResource.findPropositionRendezVous(Constants.rdv.searchDays, Constants.rdv.searchDistance, this.form.placeId, this.client.adresse.id, (err, result) => {
           if (err) {
             this.error = err.toString()
           } else {
@@ -205,8 +211,6 @@
 
       createRendezVous () {
         this.form.event.date = moment(this.date).format(Constants.rdv.dateFormat)
-        this.form.event.latitude = this.client.adresse.latitude
-        this.form.event.longitude = this.client.adresse.longitude
 
         let rdvResource = new RendezVousResource()
         rdvResource.createRendezVous(this.form, (err) => {

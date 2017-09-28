@@ -89,6 +89,7 @@ public class EventService {
 
             try {
 
+                LOGGER.info("Rdv créé " + event);
                 result = calendar.events().insert("primary", event).execute();
 
             } catch (IOException e) {

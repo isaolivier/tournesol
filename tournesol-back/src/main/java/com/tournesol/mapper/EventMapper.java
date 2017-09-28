@@ -11,6 +11,8 @@ import com.tournesol.bean.input.EventInputBean;
 import com.tournesol.bean.output.EventOutputBean;
 
 import java.time.ZonedDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.mapstruct.DecoratedWith;
 import org.mapstruct.Mapper;
@@ -35,13 +37,19 @@ public interface EventMapper {
         return eventDateTime;
     }
 
-    ;
-
     default ZonedDateTime eventDateTimeToZonedDateTime(EventDateTime value) {
         return DateMapper.map(value.getDateTime());
     }
 
-    ;
+    default void completeLatitudeLongitude(Event event, Double latitude, Double longitude) {
 
+        Map<String, String> extendedPropertiesMap = new HashMap<>();
+        extendedPropertiesMap.put("latitude", String.valueOf(latitude));
+        extendedPropertiesMap.put("longitude", String.valueOf(longitude));
+
+        final Event.ExtendedProperties extendedProperties = new Event.ExtendedProperties();
+        extendedProperties.setShared(extendedPropertiesMap);
+        event.setExtendedProperties(extendedProperties);
+    }
 }
 

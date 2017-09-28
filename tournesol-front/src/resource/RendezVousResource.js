@@ -23,8 +23,8 @@ export class RendezVousResource {
   }
 
   // Recherche des dates possédant des rdvs existants pour une adresse donnée
-  findPropositionRendezVous (days, distance, adresseId, result) {
-    return Vue.http.get(Constants.back.hostname + '/rdv/search?dayRange=' + days + '&distanceRange=' + distance + '&adresseId=' + adresseId,
+  findPropositionRendezVous (days, distance, placeId, adresseId, result) {
+    return Vue.http.get(Constants.back.hostname + '/rdv/search?dayRange=' + days + '&distanceRange=' + distance + '&placeId=' + placeId + '&adresseId=' + adresseId,
       {
         headers: {
           'uid': authService.getAuthInfo().uid,

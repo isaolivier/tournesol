@@ -16,10 +16,6 @@ public class EventInputBean extends EventBean {
 
     private LocalTime endTime;
 
-    private String latitude;
-
-    private String longitude;
-
     public LocalDate getDate() {
         return date;
     }
@@ -42,21 +38,5 @@ public class EventInputBean extends EventBean {
 
     public void setEndTime(LocalTime endTime) {
         this.endTime = endTime;
-    }
-
-    public String getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(String latitude) {
-        this.latitude = latitude;
-    }
-
-    public String getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(String longitude) {
-        this.longitude = longitude;
     }
 }
