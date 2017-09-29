@@ -46,7 +46,7 @@ body{
     font-family: 'FontAwesome';
     position: absolute;
     right: 10px;
-    top: 5px;
+    top: 0px;
     font-size: 1.8em;
     color: #CCC
 }

@@ -8,6 +8,7 @@
 </template>
 
 <script>
+  import {PlaceBean} from '../bean/PlaceBean'
 
   export default {
     name: 'adresse-autocomplete',
@@ -34,26 +35,33 @@
         let google = window.google || {}
 
         let displaySuggestions = function (predictions, status) {
-          var results = []
-          if (status !== google.maps.places.PlacesServiceStatus.OK) {
-            cb(status)
-            return
+          let results = []
+          if (status === google.maps.places.PlacesServiceStatus.OK) {
+            predictions.forEach(function (prediction) {
+              results.push(new PlaceBean(prediction.description, prediction.place_id))
+            })
           }
-          predictions.forEach(function (prediction) {
-            results.push({'value': prediction.description, 'place': prediction.place_id})
-          })
+
+          if (results.length === 0) {
+            this.$emit('select', new PlaceBean(queryString, null))
+          }
+          if (results.length === 1) {
+            this.$emit('select', results[0])
+          }
           cb(results)
-        }
+        }.bind(this)
 
         if (queryString && queryString.length > 3) {
-          console.log('Search places for \'' + queryString + '\'')
+          // console.log('Search places for \'' + queryString + '\'')
           let service = new google.maps.places.AutocompleteService()
           service.getPlacePredictions({input: queryString, componentRestrictions: {country: 'fr'}}, displaySuggestions)
         } else {
+          this.$emit('select', {'value': queryString, 'place': null})
           cb([])
         }
       },
       handlePlaceSelect (place) {
+        // console.log('selected')
         this.$emit('select', place)
       }
     }
