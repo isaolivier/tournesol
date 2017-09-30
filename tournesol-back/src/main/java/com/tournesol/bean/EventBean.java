@@ -15,6 +15,8 @@ public class EventBean implements Serializable {
 
     private String status;
 
+    private String colorId;
+
     public String getId() {
         return id;
     }
@@ -53,5 +55,13 @@ public class EventBean implements Serializable {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getColorId() {
+        return colorId;
+    }
+
+    public void setColorId(String colorId) {
+        this.colorId = colorId;
     }
 }

@@ -13,8 +13,6 @@ public class EventOutputBean extends EventBean {
 
     private ZonedDateTime end;
 
-    private String colorId;
-
     public ZonedDateTime getStart() {
         return start;
     }
@@ -31,11 +29,4 @@ public class EventOutputBean extends EventBean {
         this.end = end;
     }
 
-    public String getColorId() {
-        return colorId;
-    }
-
-    public void setColorId(String colorId) {
-        this.colorId = colorId;
-    }
 }

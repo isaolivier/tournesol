@@ -5,8 +5,8 @@
         <svg id="agenda" :height="nbHeures * hourInterval + 20">
 
             <!-- Heures -->
-            <text v-for="h in (nbHeures + 1)" x="0" :y="(h - 1) * hourInterval + 15">{{h
-            + heuresOuverture[0] - 1}}:00
+            <text v-for="h in (nbHeures + 1)" x="0" :y="(h - 1) * hourInterval + 15">
+                {{parseInt(h) + parseInt(heureOuverture) - 1}}:00
             </text>
 
             <line v-for="h in (nbHeures + 1)" x1="50" x2="100%"
@@ -38,7 +38,6 @@
       return {
         loading: false,
         error: null,
-        heuresOuverture: Constants.rdv.heuresOuverture,
         hourInterval: Constants.tournee.hourInterval,
         agenda: null,
         rendezvous: null,
@@ -49,8 +48,15 @@
       this.fetchData(moment())
     },
     computed: {
+      heureOuverture: function () {
+        return Constants.rdv.heureOuverture.substring(0, Constants.rdv.heureOuverture.indexOf(':'))
+      },
+      heureFermeture: function () {
+        return Constants.rdv.heureFermeture.substring(0, Constants.rdv.heureFermeture.indexOf(':'))
+      },
       nbHeures: function () {
-        return this.heuresOuverture[1] - this.heuresOuverture[0]
+        // console.log(heureFermeture - heureOuverture)
+        return this.heureFermeture - this.heureOuverture
       }
     },
     components: {

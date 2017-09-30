@@ -27,7 +27,6 @@
         let codePostal = this.adresse.codePostal ? this.adresse.codePostal + ' ' : ''
         let commune = this.adresse.commune ? this.adresse.commune : ''
         this.fullAddress = numero + voie + codePostal + commune
-        this.$emit('fullAddress', this.fullAddress)
       }
     },
     methods: {

@@ -66,7 +66,7 @@
                 <el-form-item>
                     <el-col :span="24">
                         <el-form-item label="Adresse" prop="adresse">
-                            <adresse-autocomplete :adresse="getClientAdresse"
+                            <adresse-autocomplete :adresse="getClientAdresse()"
                                                   @select="updatePlaceId"></adresse-autocomplete>
                         </el-form-item>
                     </el-col>
@@ -181,6 +181,7 @@
     },
     methods: {
       getClientAdresse () {
+        // console.log('Init client adresse ' + this.client ? this.client.adresse : null)
         return this.client ? this.client.adresse : null
       },
 
@@ -209,7 +210,7 @@
               }
             })
           } else {
-            console.log('Formulaire non validé')
+            // console.log('Formulaire non validé')
           }
         })
       },
@@ -225,7 +226,7 @@
               }
             })
           } else {
-            console.log('Formulaire non validé')
+            // console.log('Formulaire non validé')
           }
         })
       }

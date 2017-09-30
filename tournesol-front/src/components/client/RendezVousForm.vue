@@ -7,6 +7,9 @@
 
         <el-dialog summary="Création d'un rendez-vous" :visible.sync="dialogFormVisible" v-on:close="rdvClose">
 
+            <!-- ************************************************************* -->
+            <!--                             ETAPES                            -->
+            <!-- ************************************************************* -->
             <el-row>
                 <el-col :offset="6" :span="12">
                     <el-steps space="100%" :active="etape" finish-status="success">
@@ -16,63 +19,88 @@
                 </el-col>
             </el-row>
 
+            <!-- ************************************************************* -->
+            <!--                             ENTETE                            -->
+            <!-- ************************************************************* -->
+            Nom: {{this.client.nom}}
+            <el-rate class="note" v-model="client.note" disabled disabled-void-color="#CCCCCC"></el-rate>
+
+
             <el-form :model="form" label-position="top" label-width="120px">
-                Nom: {{this.client.nom}}
-                <el-rate class="note" v-model="client.note" disabled disabled-void-color="#CCCCCC"></el-rate>
 
                 <div v-if="etape === 1">
+
+                    <!-- ************************************************************* -->
+                    <!--                             ADRESSE                           -->
+                    <!-- ************************************************************* -->
                     <el-form-item label="Adresse" prop="">
-                        <adresse-autocomplete :adresse="adresse" @select="updateLocation"
-                                              @fullAddress="initLocation"></adresse-autocomplete>
+                        <adresse-autocomplete :adresse="client.adresse" @select="updateLocation"></adresse-autocomplete>
                     </el-form-item>
+
+                    <!-- ************************************************************* -->
+                    <!--                              DATE                             -->
+                    <!-- ************************************************************* -->
                     <el-form-item label="Date" prop="event.date">
-                        <el-date-picker v-model="date" type="date" placeholder="Date"
+                        <el-date-picker v-model="form.date" type="date" placeholder="Date"
                                         :picker-options="{
                                             disabledDate: disabledDate
                                         }" style="width: 100%;"></el-date-picker>
                     </el-form-item>
 
-                    {{propositions}}
+                    {{model.propositions}}
                 </div>
 
+
+                <!-- ************************************************************* -->
+                <!--                       HEURES DEBUT / FIN                      -->
+                <!-- ************************************************************* -->
                 <div v-if="etape === 2">
-                <el-form-item  label="Heure"  prop="event.startTime">
-                    <el-col :span="11">
-                        <el-time-select v-model="form.event.startTime" placeholder="Heure Début" @change="updateEndTime"
-                                        :picker-options="{
-                                  start: this.heureOuverture,
-                                  step: this.step,
-                                  end: this.heureFermeture
+                    <el-form-item label="Heure" prop="event.startTime">
+                        <el-col :span="11">
+                            <el-time-select v-model="form.event.startTime" placeholder="Heure Début"
+                                            @change="updateEndTime"
+                                            :picker-options="{
+                                  start: heureOuverture,
+                                  step: step,
+                                  end: heureFermeture
                                 }" style="width: 100%;"></el-time-select>
-                    </el-col>
-                    <el-col class="line" :span="2">&nbsp;</el-col>
-                    <el-col :span="11">
-                        <el-time-select v-model="form.event.endTime" placeholder="Heure Fin"
-                                        :picker-options="{
-                                  start: this.heureOuverture,
-                                  step: this.step,
-                                  end: this.heureFermeture,
+                        </el-col>
+                        <el-col class="line" :span="2">&nbsp;</el-col>
+                        <el-col :span="11">
+                            <el-time-select v-model="form.event.endTime" placeholder="Heure Fin"
+                                            :picker-options="{
+                                  start: heureOuverture,
+                                  step: step,
+                                  end: heureFermeture,
                                   minTime: this.form.startTime
                                 }" style="width: 100%;"></el-time-select>
-                    </el-col>
-                </el-form-item>
-                <el-form-item
-                        label="Titre"
-                        prop="event.summary">
-                    <el-input placeholder="Intitulé du rendez-vous" v-model="form.event.summary"></el-input>
-                </el-form-item>
-                <el-form-item
-                        label="Détail"
-                        prop="event.description">
-                    <el-input type="textarea" placeholder="Détails" v-model="form.event.description"></el-input>
-                </el-form-item>
-                <el-form-item v-if="appareils.length > 0" label="Appareil" prop="appareils">
-                    <el-checkbox-group v-model="form.appareils">
-                        <el-checkbox v-for="appareil in appareils" :key="appareil.id" :label="appareil.id">
-                            {{appareil.denomination + ' [' + appareil.marque + ']'}}
-                        </el-checkbox>
-                    </el-checkbox-group>
-                </el-form-item>
+                        </el-col>
+                    </el-form-item>
+
+                    <!-- ************************************************************* -->
+                    <!--                       INTITULE RDV                            -->
+                    <!-- ************************************************************* -->
+                    <el-form-item
+                            label="Titre"
+                            prop="event.summary">
+                        <el-input placeholder="Intitulé du rendez-vous" v-model="form.event.summary"></el-input>
+                    </el-form-item>
+
+                    <!-- ************************************************************* -->
+                    <!--                        DETAILS RDV                            -->
+                    <!-- ************************************************************* -->
+                    <el-form-item
+                            label="Détail"
+                            prop="event.description">
+                        <el-input type="textarea" placeholder="Détails" v-model="form.event.description"></el-input>
+                    </el-form-item>
+                    <el-form-item v-if="appareils.length > 0" label="Appareil" prop="appareils">
+                        <el-checkbox-group v-model="form.appareils">
+                            <el-checkbox v-for="appareil in model.appareils" :key="appareil.id" :label="appareil.id">
+                                {{appareil.denomination + ' [' + appareil.marque + ']'}}
+                            </el-checkbox>
+                        </el-checkbox-group>
+                    </el-form-item>
                 </div>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -110,16 +138,12 @@
     data () {
       return {
         etape: 1,
-        adresse: this.client.adresse,
         error: null,
         dialogFormVisible: false,
-        heureOuverture: Constants.rdv.heuresOuverture[0] + ':00',
-        heureFermeture: Constants.rdv.heuresOuverture[1] + ':00',
-        date: '',
-        step: Constants.rdv.timeStep,
-        appareils: [],
-        propositions: [],
-        now: moment().startOf('day'),
+        model: {
+          appareils: [],
+          propositions: []
+        },
         form: {
           placeId: this.client.adresse.placeId,
           adresseId: this.client.adresse.id,
@@ -132,7 +156,6 @@
             endTime: '',
             summary: '',
             description: '',
-            location: '',
             status: null
           }
         }
@@ -143,6 +166,20 @@
         let civilite = this.client.civilite ? this.client.civilite + ' ' : ''
         let nom = this.client.nom ? this.client.nom : ''
         this.form.event.summary = civilite + nom
+      }
+    },
+    computed: {
+      now: function () {
+        return moment().startOf('day')
+      },
+      heureOuverture: function () {
+        return Constants.rdv.heureOuverture
+      },
+      heureFermeture: function () {
+        return Constants.rdv.heureFermeture
+      },
+      step: function () {
+        return Constants.rdv.timeStep
       }
     },
     methods: {
@@ -175,9 +212,6 @@
           this.findPropositionsRdv()
         }
       },
-      initLocation (location) {
-        this.form.event.location = location
-      },
       etapeSuivante () {
         this.etape++
       },
@@ -193,25 +227,27 @@
           if (err) {
             this.error = err.toString()
           } else {
-            this.appareils = result
+            this.model.appareils = result
           }
         })
       },
 
       findPropositionsRdv: function () {
-        let rdvResource = new RendezVousResource()
-        rdvResource.findPropositionRendezVous(Constants.rdv.searchDays, Constants.rdv.searchDistance, this.form.placeId, this.client.adresse.id, (err, result) => {
-          if (err) {
-            this.error = err.toString()
-          } else {
-            this.propositions = result
-          }
-        })
+        if (this.form.placeId === null) {
+          this.model.propositions = []
+        } else {
+          let rdvResource = new RendezVousResource()
+          rdvResource.findPropositionRendezVous(Constants.rdv.searchDays, Constants.rdv.searchDistance, this.form.placeId, this.client.adresse.id, (err, result) => {
+            if (err) {
+              this.error = err.toString()
+            } else {
+              this.model.propositions = result
+            }
+          })
+        }
       },
 
       createRendezVous () {
-        this.form.event.date = moment(this.date).format(Constants.rdv.dateFormat)
-
         let rdvResource = new RendezVousResource()
         rdvResource.createRendezVous(this.form, (err) => {
           if (err) {

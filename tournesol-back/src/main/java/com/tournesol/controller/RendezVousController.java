@@ -167,7 +167,7 @@ public class RendezVousController {
         Double targetLatitude = null;
         Double targetLongitude = null;
 
-        if(googleEvent.getExtendedProperties() == null
+        if (googleEvent.getExtendedProperties() == null
                 || googleEvent.getExtendedProperties().getShared().isEmpty()
                 || !googleEvent.getExtendedProperties().getShared().containsKey("latitude")
                 || !googleEvent.getExtendedProperties().getShared().containsKey("longitude")) {
@@ -190,7 +190,7 @@ public class RendezVousController {
             targetLongitude = Double.valueOf(googleEvent.getExtendedProperties().getShared().get("longitude"));
         }
 
-        if(targetLatitude != null && targetLongitude != null) {
+        if (targetLatitude != null && targetLongitude != null) {
             result = DistanceCalculator.distance(latitude, longitude, targetLatitude, targetLongitude, "K");
         }
 
@@ -209,8 +209,6 @@ public class RendezVousController {
         /*
             Création de l'évenement dans le calendrier distant
          */
-        // TODO gérer la couleur en fonction du status
-
         Event event = EventMapper.INSTANCE.eventInputBeanToEvent(rdv.getEvent());
 
         EventMapper.INSTANCE.completeLatitudeLongitude(event, adresseEntity.getLatitude(), adresseEntity.getLongitude());

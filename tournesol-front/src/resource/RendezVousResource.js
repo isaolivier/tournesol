@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import moment from 'moment'
 import VueResource from 'vue-resource'
 import Constants from '../bean/Constants'
 import {authService} from '../components/auth/auth-service'
@@ -38,6 +39,8 @@ export class RendezVousResource {
   }
 
   createRendezVous (rdv, result) {
+    rdv.date = moment(rdv.date).format(Constants.rdv.dateFormat)
+
     return Vue.http.post(Constants.back.hostname + '/rdv', rdv,
       {
         headers: {
