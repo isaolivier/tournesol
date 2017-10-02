@@ -14,7 +14,18 @@
 
         <el-dialog :summary="this.summary" :visible.sync="dialogFormVisible">
 
-            <el-form :model="form" :rules="rules" ref="form">
+            <el-form :model="form" :rules="rules" label-position="top" ref="form">
+
+                <!-- ************************************************************* -->
+                <!--                            SOCIETE                            -->
+                <!-- ************************************************************* -->
+                <el-form-item>
+                    <el-col :offset="5" :span="19">
+                        <el-form-item label="Société" prop="societe">
+                            <el-input placeholder="Société" v-model="form.societe"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-form-item>
 
                 <!-- ************************************************************* -->
                 <!--                        CIVLITE - NOM                          -->
@@ -40,16 +51,6 @@
                 </el-form-item>
 
 
-                <!-- ************************************************************* -->
-                <!--                            SOCIETE                            -->
-                <!-- ************************************************************* -->
-                <el-form-item>
-                    <el-col :offset="5" :span="19">
-                        <el-form-item label="Société" prop="societe">
-                            <el-input placeholder="Société" v-model="form.societe"></el-input>
-                        </el-form-item>
-                    </el-col>
-                </el-form-item>
                 <!-- ************************************************************* -->
                 <!--                              NOTE                             -->
                 <!-- ************************************************************* -->
@@ -77,7 +78,7 @@
                 <!-- ************************************************************* -->
                 <el-form-item>
                     <el-col :span="11">
-                        <el-form-item label="Téléphone" prop="telephone">
+                        <el-form-item label="Téléphone" prop="telephone" class="el-form-item-label">
                             <el-input class="input-icon tel" placeholder="Téléphone"
                                       v-model="form.telephone"></el-input>
                         </el-form-item>
@@ -137,6 +138,14 @@
         }
       }
 
+      let validateSteNom = (rule, value, callback) => {
+        if ((this.form.societe && this.form.societe !== '') || (this.form.nom && this.form.nom !== '')) {
+          callback()
+        } else {
+          callback(new Error('Veuillez saisir un nom de société et/ou un nom de client'))
+        }
+      }
+
       return {
         gutter: 20,
         adresse: null,
@@ -155,7 +164,7 @@
           note: 0
         },
         rules: {
-          nom: [{required: true, message: 'Veuillez saisir un nom'}],
+          nom: [{validator: validateSteNom, trigger: 'blur'}],
           adresse: [{validator: validateAdresse, trigger: 'blur'}],
           mail: [{type: 'email', message: 'Veuillez saisir une adresse mail valide'}]
         }
@@ -267,9 +276,5 @@
 
     .trashbin {
         float: left;
-    }
-
-    .el-form-item__label {
-        padding: 0px 12px 8px 0;
     }
 </style>

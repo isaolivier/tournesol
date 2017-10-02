@@ -47,7 +47,7 @@
     computed: {
       letters: function () {
         let letters = []
-        this.clients.map(client => client.nom ? client.nom[0] : '?'
+        this.clients.map(client => client.societe ? client.societe[0] : (client.nom ? client.nom[0] : '?')
         ).forEach(letter => {
           if (letter && !letters.includes(letter)) {
             letters.push(letter)
@@ -62,6 +62,7 @@
           let search = this.recherche.toUpperCase()
           return this.clients.filter(client => {
             return client.nom && (client.nom.toUpperCase().includes(search) ||
+              (client.societe && client.societe.toUpperCase().includes(search)) ||
               (client.telephone && client.telephone.toUpperCase().includes(search)) ||
               (client.portable && client.portable.toUpperCase().includes(search)))
           })
@@ -90,7 +91,7 @@
             let letters = this.letters
             let curIndexLetter = 0
             for (let client of this.clients) {
-              let clientLetter = client.nom ? client.nom.charAt(0) : '?'
+              let clientLetter = client.societe ? client.societe.charAt(0) : (client.nom ? client.nom.charAt(0) : '?')
               if (letters[curIndexLetter] === clientLetter) {
                 this.elements.push(clientLetter)
                 curIndexLetter++

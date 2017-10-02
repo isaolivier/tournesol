@@ -10,6 +10,7 @@ import com.tournesol.service.entity.AdresseEntity;
 import com.tournesol.service.entity.ClientEntity;
 import com.tournesol.service.repository.ClientRepository;
 
+import java.util.Comparator;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -47,6 +48,7 @@ public class ClientController {
 
         return StreamSupport.stream(clientEntities.spliterator(), false)
                 .map(c -> ClientMapper.INSTANCE.clientEntityToClientOutpuBean(c))
+                .sorted(Comparator.comparing(c -> c.getSociete() == null ? (c.getNom() == null ? "" : c.getNom()) : c.getSociete()))
                 .collect(Collectors.toList());
     }
 

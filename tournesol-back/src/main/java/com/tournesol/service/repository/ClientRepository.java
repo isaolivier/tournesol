@@ -14,6 +14,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ClientRepository extends PagingAndSortingRepository<ClientEntity, Long> {
 
-    @Query("select c from ClientEntity c order by c.nom")
+    @Query("select c from ClientEntity c join fetch c.adresse")
     public List<ClientEntity> findAll();
 }

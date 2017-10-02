@@ -23,20 +23,6 @@ public class ClientBean  implements Serializable {
 
     private Integer note;
 
-    public ClientBean() {
-    }
-
-    public ClientBean(Long id, String civilite, String nom, String societe, String telephone, String portable, String email, Integer note) {
-        this.id = id;
-        this.civilite = civilite;
-        this.nom = nom;
-        this.societe = societe;
-        this.telephone = telephone;
-        this.portable = portable;
-        this.email = email;
-        this.note = note;
-    }
-
     public Long getId() {
         return id;
     }
