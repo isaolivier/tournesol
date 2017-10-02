@@ -28,11 +28,7 @@
     methods: {
       scrollToSection (letter) {
         let element = null
-        if (letter === '?') {
-          element = document.getElementById('?')
-        } else {
-          element = document.querySelector('#' + letter)
-        }
+        element = document.getElementById(letter)
 
         let parentRect = document.querySelector('.el-tabs__content')
         parentRect.scrollTop = element.offsetTop

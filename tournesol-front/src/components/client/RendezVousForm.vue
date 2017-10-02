@@ -40,14 +40,43 @@
                     <!-- ************************************************************* -->
                     <!--                              DATE                             -->
                     <!-- ************************************************************* -->
-                    <el-form-item label="Date" prop="event.date">
-                        <el-date-picker v-model="form.date" type="date" placeholder="Date"
+                    <el-form-item label="Durée prévue du rendez-vous" prop="">
+                        <el-time-select v-model="duree"
+                                        :picker-options="{
+                                    start: '00:15',
+                                    step: '00:15',
+                                    end: '8:00'
+                                  }"
+                                        placeholder="Select time">
+                        </el-time-select>
+                    </el-form-item>
+                    <el-form-item v-if="propositions.length > 0">
+                        <el-radio class="radio" v-model="choixDePropositions" label="proposition">Meilleures dates
+                            possibles dans un rayon de
+                        </el-radio>
+                        <el-select :disabled="this.choixDePropositions === 'saisie_libre'" v-model="rayon"
+                                   placeholder="Select" size="small">
+                            <el-option
+                                    v-for="item in [{'value1':'50', 'label':'50km'}]"
+                                    :key="item.value1"
+                                    :label="item.label"
+                                    :value="item.value1"
+                            >
+                            </el-option>
+                        </el-select>
+                        <proposition-date v-for="proposition in propositions" :key="proposition.date"
+                                          :proposition="proposition"></proposition-date>
+                    </el-form-item>
+                    <el-form-item :disabled="true">
+                        <el-radio v-if="propositions.length > 0" class="radio" v-model="choixDePropositions"
+                                  label="saisie_libre">Choisir une date
+                        </el-radio>
+                        <el-date-picker :disabled="this.choixDePropositions === 'proposition'" v-model="form.date"
+                                        type="date" placeholder="Date"
                                         :picker-options="{
                                             disabledDate: disabledDate
                                         }" style="width: 100%;"></el-date-picker>
                     </el-form-item>
-
-                    {{model.propositions}}
                 </div>
 
 
@@ -76,7 +105,6 @@
                                 }" style="width: 100%;"></el-time-select>
                         </el-col>
                     </el-form-item>
-
                     <!-- ************************************************************* -->
                     <!--                       INTITULE RDV                            -->
                     <!-- ************************************************************* -->
@@ -85,7 +113,6 @@
                             prop="event.summary">
                         <el-input placeholder="Intitulé du rendez-vous" v-model="form.event.summary"></el-input>
                     </el-form-item>
-
                     <!-- ************************************************************* -->
                     <!--                        DETAILS RDV                            -->
                     <!-- ************************************************************* -->
@@ -94,7 +121,7 @@
                             prop="event.description">
                         <el-input type="textarea" placeholder="Détails" v-model="form.event.description"></el-input>
                     </el-form-item>
-                    <el-form-item v-if="appareils.length > 0" label="Appareil" prop="appareils">
+                    <el-form-item v-if="form.appareils.length > 0" label="Appareil" prop="appareils">
                         <el-checkbox-group v-model="form.appareils">
                             <el-checkbox v-for="appareil in model.appareils" :key="appareil.id" :label="appareil.id">
                                 {{appareil.denomination + ' [' + appareil.marque + ']'}}
@@ -105,11 +132,13 @@
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <template v-if="etape === 2">
-                    <el-button @click="dialogFormVisible = false">Annuler</el-button>
+                    <el-button @click="etape = 1" icon="arrow-left">Précédent</el-button>
                     <el-button type="primary" @click="createRendezVous">Créer</el-button>
+                    <el-button @click="dialogFormVisible = false">Annuler</el-button>
                 </template>
                 <template v-else>
-                    <el-button @click="etapeSuivante" type="primary" icon="arrow-right">Suivant</el-button>
+                    <el-button @click="etape = 2" type="primary" icon="arrow-right">Suivant</el-button>
+                    <el-button @click="dialogFormVisible = false">Annuler</el-button>
                 </template>
             </span>
         </el-dialog>
@@ -120,13 +149,14 @@
   import moment from 'moment'
   import Constants from '../../bean/Constants'
   import AdresseAutoComplete from '../AdresseAutoComplete.vue'
-  import {AppareilResource} from '../../resource/AppareilResource'
   import {RendezVousResource} from '../../resource/RendezVousResource'
+  import PropositionDate from './PropositionDate.vue'
 
   export default {
     name: 'rdvForm',
     components: {
-      'adresse-autocomplete': AdresseAutoComplete
+      'adresse-autocomplete': AdresseAutoComplete,
+      'proposition-date': PropositionDate
     },
     props: {
       formLabelWidth: '120px',
@@ -140,10 +170,10 @@
         etape: 1,
         error: null,
         dialogFormVisible: false,
-        model: {
-          appareils: [],
-          propositions: []
-        },
+        propositions: [],
+        rayon: '50',
+        duree: '00:15',
+        choixDePropositions: 'proposition',
         form: {
           placeId: this.client.adresse.placeId,
           adresseId: this.client.adresse.id,
@@ -200,7 +230,6 @@
 
       showDialog () {
         this.dialogFormVisible = true
-        this.fetchData()
         this.findPropositionsRdv()
       },
 
@@ -212,41 +241,36 @@
           this.findPropositionsRdv()
         }
       },
+      initLocation (location) {
+        this.form.event.location = location
+      },
       etapeSuivante () {
         this.etape++
       },
       rdvClose () {
         this.etape = 1
       },
-      // Chargement des appareils
-      fetchData: function () {
-        // console.log('Fetching appareils')
-
-        let appareilResource = new AppareilResource()
-        appareilResource.findAppareils(this.client, (err, result) => {
-          if (err) {
-            this.error = err.toString()
-          } else {
-            this.model.appareils = result
-          }
-        })
-      },
-
       findPropositionsRdv: function () {
         if (this.form.placeId === null) {
-          this.model.propositions = []
+          this.propositions = []
         } else {
           let rdvResource = new RendezVousResource()
           rdvResource.findPropositionRendezVous(Constants.rdv.searchDays, Constants.rdv.searchDistance, this.form.placeId, this.client.adresse.id, (err, result) => {
             if (err) {
               this.error = err.toString()
             } else {
-              this.model.propositions = result
+              this.propositions = result
+              this.initDateChoice()
             }
           })
         }
       },
-
+      initDateChoice () {
+        let hasPropositions = this.propositions.length > 0
+        if (!hasPropositions) {
+          this.choixDePropositions = 'saisie_libre'
+        }
+      },
       createRendezVous () {
         let rdvResource = new RendezVousResource()
         rdvResource.createRendezVous(this.form, (err) => {
