@@ -171,9 +171,9 @@
         error: null,
         dialogFormVisible: false,
         propositions: [],
-        rayon: '50',
+        rayon: Constants.rdv.searchDistance,
         duree: '00:15',
-        choixDePropositions: 'proposition',
+        choixDePropositions: 'saisie_libre',
         form: {
           placeId: this.client.adresse.placeId,
           adresseId: this.client.adresse.id,
@@ -255,7 +255,7 @@
           this.propositions = []
         } else {
           let rdvResource = new RendezVousResource()
-          rdvResource.findPropositionRendezVous(Constants.rdv.searchDays, Constants.rdv.searchDistance, this.form.placeId, this.client.adresse.id, (err, result) => {
+          rdvResource.findPropositionRendezVous(Constants.rdv.searchDays, this.rayon, this.form.placeId, this.client.adresse.id, (err, result) => {
             if (err) {
               this.error = err.toString()
             } else {
@@ -267,7 +267,9 @@
       },
       initDateChoice () {
         let hasPropositions = this.propositions.length > 0
-        if (!hasPropositions) {
+        if (hasPropositions) {
+          this.choixDePropositions = 'proposition'
+        } else {
           this.choixDePropositions = 'saisie_libre'
         }
       },

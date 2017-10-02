@@ -105,7 +105,7 @@
             </el-form>
 
             <span slot="footer" class="dialog-footer">
-                <el-button type="danger" icon="delete" class="trashbin"></el-button>
+                <el-button type="danger" icon="delete" class="trashbin" @click="deleteClient"></el-button>
                 <el-button v-if="client" type="primary" @click="updateClient">Enregistrer</el-button>
                 <el-button v-else type="primary" @click="createClient">Créer</el-button>
                 <el-button @click="dialogFormVisible = false">Annuler</el-button>
@@ -201,12 +201,6 @@
         console.log('PlaceId selected ' + selected.place)
         this.form.placeId = selected.place
       },
-      iconStarOff (index) {
-        if (index <= this.form.note) {
-          return ''
-        }
-        return '-o'
-      },
       createClient () {
         this.$refs['form'].validate((valid) => {
           if (valid) {
@@ -236,6 +230,16 @@
             })
           } else {
             // console.log('Formulaire non validé')
+          }
+        })
+      },
+      deleteClient () {
+        let clientResource = new ClientResource()
+        clientResource.deleteClient(this.form.id, (err) => {
+          if (err) {
+            this.error = err.toString()
+          } else {
+            this.dialogFormVisible = false
           }
         })
       }

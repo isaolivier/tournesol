@@ -29,4 +29,12 @@ export class ClientResource {
       result(response)
     })
   }
+
+  deleteClient (client, result) {
+    return Vue.http.delete(Constants.back.hostname + '/client/' + client).then(response => {
+      result(null)
+    }, response => {
+      result(response)
+    })
+  }
 }

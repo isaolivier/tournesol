@@ -1,8 +1,8 @@
 package com.tournesol.controller;
 
 import com.google.maps.model.PlaceDetails;
-import com.tournesol.bean.output.ClientOutputBean;
 import com.tournesol.bean.input.ClientInputBean;
+import com.tournesol.bean.output.ClientOutputBean;
 import com.tournesol.mapper.AdresseMapper;
 import com.tournesol.mapper.ClientMapper;
 import com.tournesol.service.MapService;
@@ -17,17 +17,21 @@ import java.util.stream.StreamSupport;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Created by redeyed on 4/22/17.
  */
-
+@CrossOrigin(origins = "http://localhost:8080", maxAge = 3600)
 @RestController
+@RequestMapping("/client")
 public class ClientController {
 
     @Autowired
@@ -41,7 +45,7 @@ public class ClientController {
      *
      * @return
      */
-    @GetMapping("/client")
+    @GetMapping
     public Iterable<ClientOutputBean> greeting() {
 
         Iterable<ClientEntity> clientEntities = clientRepository.findAll();
@@ -52,8 +56,7 @@ public class ClientController {
                 .collect(Collectors.toList());
     }
 
-    @CrossOrigin(origins = "http://localhost:8080")
-    @PutMapping("/client")
+    @PutMapping
     public void updateClient(@RequestBody ClientInputBean client) throws Exception {
 
         ClientEntity existingClient = clientRepository.findById(client.getId()).orElse(null);
@@ -75,7 +78,7 @@ public class ClientController {
         }
     }
 
-    @PostMapping("/client")
+    @PostMapping
     public void createClient(@RequestBody ClientInputBean client) throws Exception {
 
         final ClientEntity clientEntity = ClientMapper.INSTANCE.clientInputeBeanToClientEntity(client);
@@ -88,6 +91,12 @@ public class ClientController {
         clientEntity.setAdresse(adresseEntity);
 
         clientRepository.save(clientEntity);
+    }
+
+    @DeleteMapping("/{clientId}")
+    public void deleteClient(@PathVariable Long clientId) throws Exception {
+
+        clientRepository.deleteById(clientId);
     }
 
 }
