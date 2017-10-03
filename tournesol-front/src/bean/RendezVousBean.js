@@ -1,13 +1,16 @@
 /**
  * Created by draluy on 03/07/2017.
  */
+import {EventBean} from './EventBean'
 
 export class RendezVousBean {
 
   constructor () {
-    this.client = null
+    this.placeId = null
+    this.adresseId = null
     this.appareils = []
-    this.event = null
+    this.client = null
+    this.event = new EventBean()
   }
 
 }

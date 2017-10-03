@@ -1,6 +1,8 @@
 package com.tournesol.bean.output;
 
+import com.tournesol.bean.Coordonnees;
 import com.tournesol.bean.EventBean;
+import com.tournesol.bean.NextEventBean;
 
 import java.time.ZonedDateTime;
 
@@ -12,6 +14,10 @@ public class EventOutputBean extends EventBean {
     private ZonedDateTime start;
 
     private ZonedDateTime end;
+
+    private Coordonnees coordonnees;
+
+    private NextEventBean nextEvent;
 
     public ZonedDateTime getStart() {
         return start;
@@ -29,4 +35,19 @@ public class EventOutputBean extends EventBean {
         this.end = end;
     }
 
+    public Coordonnees getCoordonnees() {
+        return coordonnees;
+    }
+
+    public void setCoordonnees(Coordonnees coordonnees) {
+        this.coordonnees = coordonnees;
+    }
+
+    public NextEventBean getNextEvent() {
+        return nextEvent;
+    }
+
+    public void setNextEvent(NextEventBean nextEvent) {
+        this.nextEvent = nextEvent;
+    }
 }

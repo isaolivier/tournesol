@@ -18,12 +18,12 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 /**
  * Service de lecture/recherche/enregistrement/modification des évènements dans le calendrier client.
  */
-@Component
+@Service
 public class EventService {
 
     @Autowired

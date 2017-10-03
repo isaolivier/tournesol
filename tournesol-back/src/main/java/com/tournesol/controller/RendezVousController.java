@@ -1,12 +1,13 @@
 package com.tournesol.controller;
 
 import com.google.api.services.calendar.model.Event;
-import com.google.maps.model.PlaceDetails;
+import com.google.maps.model.DistanceMatrix;
 import com.tournesol.bean.AuthInfo;
+import com.tournesol.bean.JourBean;
+import com.tournesol.bean.NextEventBean;
 import com.tournesol.bean.RendezVousBean;
 import com.tournesol.bean.input.RendezVousInputBean;
-import com.tournesol.bean.JourBean;
-import com.tournesol.mapper.AdresseMapper;
+import com.tournesol.bean.output.EventOutputBean;
 import com.tournesol.mapper.AppareilMapper;
 import com.tournesol.mapper.ClientMapper;
 import com.tournesol.mapper.DateMapper;
@@ -14,20 +15,20 @@ import com.tournesol.mapper.EventMapper;
 import com.tournesol.service.AdresseService;
 import com.tournesol.service.FlyDistanceService;
 import com.tournesol.service.RendezVousService;
-import com.tournesol.service.google.DistanceService;
-import com.tournesol.service.google.EventService;
-import com.tournesol.service.google.PlaceService;
 import com.tournesol.service.entity.AdresseEntity;
 import com.tournesol.service.entity.RendezVousEntity;
-import com.tournesol.service.repository.AdresseRepository;
-import com.tournesol.util.DistanceCalculator;
+import com.tournesol.service.google.DistanceService;
+import com.tournesol.service.google.EventService;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,13 +101,24 @@ public class RendezVousController {
         /*
             Complétion des informations de distances entre chaque rendez-vous
          */
-        IntStream.range(0,result.size()-1).forEach(i -> {
-            distanceService.getTimeDistance(result.get(i).getEvent().)
-            doSomething(list.get(i),list.get(i+1));
+        IntStream.range(0, result.size() - 1).forEach(i -> {
+
+            final EventOutputBean currentEvent = result.get(i).getEvent();
+            final EventOutputBean nextEvent = result.get(i + 1).getEvent();
+
+            final DistanceMatrix timeDistance = distanceService.getDurationAndDistance(currentEvent.getEnd(), currentEvent.getCoordonnees(), nextEvent.getCoordonnees());
+
+            String distance = timeDistance.rows[0].elements[0].distance.humanReadable;
+            String duration = timeDistance.rows[0].elements[0].duration.humanReadable;
+            String durationInTrafic = timeDistance.rows[0].elements[0].durationInTraffic.humanReadable;
+
+            currentEvent.setNextEvent(new NextEventBean(distance, duration, durationInTrafic));
         });
 
         return result;
     }
+
+
 
     /**
      * Recherche des dates optimales par rapport à un client donné.

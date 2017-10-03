@@ -5,20 +5,24 @@ import com.tournesol.service.entity.AppareilEntity;
 import com.tournesol.service.entity.ClientEntity;
 import com.tournesol.service.entity.RendezVousEntity;
 import com.tournesol.service.repository.RendezVousRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 @Component
 public class RendezVousService {
 
-    @Autowired
     RendezVousRepository rdvRepository;
+
+    @Autowired
+    public RendezVousService(RendezVousRepository rdvRepository) {
+        this.rdvRepository = rdvRepository;
+    }
 
     /**
      * Sauvegarde du rendez-vous en local.

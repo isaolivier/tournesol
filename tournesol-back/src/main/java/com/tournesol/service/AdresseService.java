@@ -14,13 +14,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class AdresseService {
 
-    @Autowired
     private AdresseRepository adresseRepository;
 
-    @Autowired
     private PlaceService placeService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AdresseService.class);
+
+    @Autowired
+    public AdresseService(AdresseRepository adresseRepository, PlaceService placeService) {
+        this.adresseRepository = adresseRepository;
+        this.placeService = placeService;
+    }
 
     /**
      * Retourne les informations détaillées d'une adresse, en priorité venant de la base locale.

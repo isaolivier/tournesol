@@ -4,12 +4,11 @@ import com.google.maps.GeoApiContext;
 import com.google.maps.PlacesApi;
 import com.google.maps.model.AutocompletePrediction;
 import com.google.maps.model.PlaceDetails;
-
 import com.tournesol.config.GoogleConfiguration;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,12 +16,14 @@ public class PlaceService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PlaceService.class);
 
-    @Autowired
-    private GoogleConfiguration googleConfiguration;
+    private GeoApiContext context;
 
-    GeoApiContext context = new GeoApiContext.Builder()
-            .apiKey(googleConfiguration.getApiKey())
-            .build();
+    @Autowired
+    public PlaceService(GoogleConfiguration googleConfiguration) {
+        this.context = new GeoApiContext.Builder()
+                .apiKey(googleConfiguration.getApiKey())
+                .build();
+    }
 
     /**
      * Recherche des informations détaillées pour un emplacement précis.

@@ -6,8 +6,8 @@ package com.tournesol.controller;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.services.calendar.model.CalendarList;
 import com.tournesol.bean.AuthInfo;
-import com.tournesol.service.AuthService;
-import com.tournesol.service.GoogleCalendarService;
+import com.tournesol.service.google.AuthService;
+import com.tournesol.service.google.GoogleCalendarService;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

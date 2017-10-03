@@ -3,6 +3,7 @@ import moment from 'moment'
 import VueResource from 'vue-resource'
 import Constants from '../bean/Constants'
 import {authService} from '../components/auth/auth-service'
+import {RendezVousBean} from '../bean/RendezVousBean'
 
 Vue.use(VueResource)
 
@@ -38,8 +39,8 @@ export class RendezVousResource {
       })
   }
 
-  createRendezVous (rdv, result) {
-    rdv.date = moment(rdv.date).format(Constants.rdv.dateFormat)
+  createRendezVous (rdvForm, client, result) {
+    let rdv = this.map(rdvForm, client)
 
     return Vue.http.post(Constants.back.hostname + '/rdv', rdv,
       {
@@ -52,5 +53,23 @@ export class RendezVousResource {
       }, response => {
         result(response)
       })
+  }
+
+  map (rdvForm, client) {
+    let rdv = new RendezVousBean()
+    rdv.placeId = rdvForm.placeId
+    rdv.client = client.id
+    rdv.adresseId = client.adresse.id
+    rdv.appareils = rdvForm.appareils
+    rdv.event.id = rdvForm.event.id
+    rdv.event.date = moment(rdvForm.event.date).format(Constants.rdv.dateFormat)
+    rdv.event.startTime = rdvForm.event.startTime
+    rdv.event.endTime = rdvForm.event.endTime
+    rdv.event.summary = rdvForm.event.summary
+    rdv.event.description = rdvForm.event.description
+    rdv.event.location = rdvForm.event.location
+    rdv.event.status = rdvForm.event.status
+
+    return rdv
   }
 }

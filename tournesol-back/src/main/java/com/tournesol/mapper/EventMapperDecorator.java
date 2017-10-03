@@ -2,7 +2,9 @@ package com.tournesol.mapper;
 
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventDateTime;
+import com.tournesol.bean.Coordonnees;
 import com.tournesol.bean.input.EventInputBean;
+import com.tournesol.bean.output.EventOutputBean;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -28,6 +30,20 @@ public abstract class EventMapperDecorator implements EventMapper {
         event.setEnd(dateAndTimeToEventDateTime(eventBean.getDate(), eventBean.getEndTime()));
 
         return event;
+    }
+
+    @Override
+    public EventOutputBean eventToEventOutputBean(Event event) {
+
+        EventOutputBean eventOutputBean = delegate.eventToEventOutputBean(event);
+
+        if(event.getExtendedProperties().getShared() != null && event.getExtendedProperties().getShared().containsKey("latitude") && event.getExtendedProperties().getShared().containsKey("longitude")) {
+            eventOutputBean.setCoordonnees(new Coordonnees(
+                    Double.valueOf(event.getExtendedProperties().getShared().get("latitude")),
+                    Double.valueOf(event.getExtendedProperties().getShared().get("longitude"))));
+        }
+
+        return eventOutputBean;
     }
 
     private EventDateTime dateAndTimeToEventDateTime(LocalDate date, LocalTime time) {

@@ -2,7 +2,7 @@ package com.tournesol.controller;
 
 import com.google.maps.model.PlaceDetails;
 import com.tournesol.mapper.AdresseMapper;
-import com.tournesol.service.MapService;
+import com.tournesol.service.google.PlaceService;
 import com.tournesol.service.entity.AdresseEntity;
 import com.tournesol.service.repository.AdresseRepository;
 
@@ -23,7 +23,7 @@ public class AdresseController {
     private AdresseRepository adresseRepository;
 
     @Autowired
-    private MapService mapService;
+    private PlaceService placeService;
 
     @GetMapping("/adresse")
     public void completeAddresses() {
@@ -43,7 +43,7 @@ public class AdresseController {
         final List<AdresseEntity> adresseEntitiesToSave = new ArrayList<>();
 
         queries.entrySet().stream().forEach(e -> {
-            final PlaceDetails place = mapService.findPlace(e.getValue());
+            final PlaceDetails place = placeService.findPlace(e.getValue());
 
             if(place != null) {
                 AdresseEntity adresseEntity = AdresseMapper.map(place);

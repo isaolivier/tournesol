@@ -71,7 +71,7 @@
                         <el-radio v-if="propositions.length > 0" class="radio" v-model="choixDePropositions"
                                   label="saisie_libre">Choisir une date
                         </el-radio>
-                        <el-date-picker :disabled="this.choixDePropositions === 'proposition'" v-model="form.date"
+                        <el-date-picker :disabled="this.choixDePropositions === 'proposition'" v-model="form.event.date"
                                         type="date" placeholder="Date"
                                         :picker-options="{
                                             disabledDate: disabledDate
@@ -176,9 +176,7 @@
         choixDePropositions: 'saisie_libre',
         form: {
           placeId: this.client.adresse.placeId,
-          adresseId: this.client.adresse.id,
           appareils: [],
-          client: this.client.id,
           event: {
             id: '',
             date: '',
@@ -186,6 +184,7 @@
             endTime: '',
             summary: '',
             description: '',
+            location: '',
             status: null
           }
         }
@@ -275,7 +274,7 @@
       },
       createRendezVous () {
         let rdvResource = new RendezVousResource()
-        rdvResource.createRendezVous(this.form, (err) => {
+        rdvResource.createRendezVous(this.form, this.client, (err) => {
           if (err) {
             this.error = err.toString()
           } else {

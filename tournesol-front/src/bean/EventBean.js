@@ -3,9 +3,15 @@
  */
 
 export class EventBean {
+
   constructor () {
-    this.start = null
-    this.end = null
+    this.id = null
+    this.date = null
+    this.startTime = null
+    this.endTime = null
+    this.summary = null
+    this.description = null
     this.location = null
+    this.status = null
   }
 }
