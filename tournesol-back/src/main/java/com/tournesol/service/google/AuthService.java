@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.tournesol.service;
+package com.tournesol.service.google;
 
 import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
 import com.google.api.client.auth.oauth2.Credential;

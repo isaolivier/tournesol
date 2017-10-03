@@ -1,21 +1,27 @@
-package com.tournesol.service;
+package com.tournesol.service.google;
 
 import com.google.maps.GeoApiContext;
 import com.google.maps.PlacesApi;
 import com.google.maps.model.AutocompletePrediction;
 import com.google.maps.model.PlaceDetails;
 
+import com.tournesol.config.GoogleConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Service;
 
 @Service
-public class MapService {
+public class PlaceService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MapService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PlaceService.class);
+
+    @Autowired
+    private GoogleConfiguration googleConfiguration;
 
     GeoApiContext context = new GeoApiContext.Builder()
-            .apiKey("AIzaSyCXnZKQevQd4NxoQQhoW9QDimUvxk6Z800")
+            .apiKey(googleConfiguration.getApiKey())
             .build();
 
     /**

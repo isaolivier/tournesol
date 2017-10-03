@@ -5,9 +5,9 @@ import com.tournesol.bean.input.ClientInputBean;
 import com.tournesol.bean.output.ClientOutputBean;
 import com.tournesol.mapper.AdresseMapper;
 import com.tournesol.mapper.ClientMapper;
-import com.tournesol.service.MapService;
 import com.tournesol.service.entity.AdresseEntity;
 import com.tournesol.service.entity.ClientEntity;
+import com.tournesol.service.google.PlaceService;
 import com.tournesol.service.repository.ClientRepository;
 
 import java.util.Comparator;
@@ -38,7 +38,7 @@ public class ClientController {
     private ClientRepository clientRepository;
 
     @Autowired
-    private MapService mapService;
+    private PlaceService placeService;
 
     /**
      * Recherche de l'ensemble des clients.
@@ -65,7 +65,7 @@ public class ClientController {
 
         if (existingClient != null) {
             if (!StringUtils.equals(client.getPlaceId(), existingClient.getAdresse().getPlaceId())) {
-                final PlaceDetails placeDetails = mapService.getPlaceDetails(client.getPlaceId());
+                final PlaceDetails placeDetails = placeService.getPlaceDetails(client.getPlaceId());
 
                 AdresseEntity adresseEntity = AdresseMapper.map(placeDetails);
                 adresseEntity.setPlaceId(client.getPlaceId());
@@ -83,7 +83,7 @@ public class ClientController {
 
         final ClientEntity clientEntity = ClientMapper.INSTANCE.clientInputeBeanToClientEntity(client);
 
-        final PlaceDetails placeDetails = mapService.getPlaceDetails(client.getPlaceId());
+        final PlaceDetails placeDetails = placeService.getPlaceDetails(client.getPlaceId());
 
         AdresseEntity adresseEntity = AdresseMapper.map(placeDetails);
         adresseEntity.setPlaceId(client.getPlaceId());

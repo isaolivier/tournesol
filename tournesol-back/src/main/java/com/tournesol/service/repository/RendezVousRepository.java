@@ -2,6 +2,7 @@ package com.tournesol.service.repository;
 
 import com.tournesol.service.entity.RendezVousEntity;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
@@ -16,5 +17,5 @@ import org.springframework.stereotype.Repository;
 public interface RendezVousRepository extends PagingAndSortingRepository<RendezVousEntity, Long> {
 
     @Query("select r from RendezVousEntity r where r.eventId in :eventIds")
-    List<RendezVousEntity> findRendezVousEntities(@Param("eventIds") List<String> eventIds);
+    List<RendezVousEntity> findRendezVousEntities(@Param("eventIds") Collection<String> eventIds);
 }

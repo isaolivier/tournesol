@@ -11,22 +11,21 @@ import com.tournesol.mapper.AppareilMapper;
 import com.tournesol.mapper.ClientMapper;
 import com.tournesol.mapper.DateMapper;
 import com.tournesol.mapper.EventMapper;
-import com.tournesol.service.EventService;
-import com.tournesol.service.MapService;
+import com.tournesol.service.AdresseService;
+import com.tournesol.service.FlyDistanceService;
+import com.tournesol.service.RendezVousService;
+import com.tournesol.service.google.DistanceService;
+import com.tournesol.service.google.EventService;
+import com.tournesol.service.google.PlaceService;
 import com.tournesol.service.entity.AdresseEntity;
-import com.tournesol.service.entity.AppareilEntity;
-import com.tournesol.service.entity.ClientEntity;
 import com.tournesol.service.entity.RendezVousEntity;
 import com.tournesol.service.repository.AdresseRepository;
-import com.tournesol.service.repository.RendezVousRepository;
 import com.tournesol.util.DistanceCalculator;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -47,16 +46,19 @@ import org.springframework.web.bind.annotation.RestController;
 public class RendezVousController {
 
     @Autowired
-    private RendezVousRepository rdvRepository;
-
-    @Autowired
-    private AdresseRepository adresseRepository;
+    private RendezVousService rendezVousService;
 
     @Autowired
     private EventService eventService;
 
     @Autowired
-    private MapService mapService;
+    private AdresseService adresseService;
+
+    @Autowired
+    private FlyDistanceService flyDistanceService;
+
+    @Autowired
+    private DistanceService distanceService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RendezVousController.class);
 
@@ -85,15 +87,25 @@ public class RendezVousController {
             Recherche des rdvs dans la base locale,
             Regroupement par eventId.
          */
-        final Map<String, List<RendezVousEntity>> rendezVousEntities = rdvRepository.findRendezVousEntities(new ArrayList<>(eventMap.keySet())).stream()
-                .collect(Collectors.groupingBy(RendezVousEntity::getEventId, Collectors.toList()));
+        final Map<String, List<RendezVousEntity>> rendezVousEntities = rendezVousService.findRendezVousGroupByEvent(new ArrayList<>(eventMap.keySet()));
 
         /*
             Aggrégation des données
          */
-        return eventMap.entrySet().stream()
+        List<RendezVousBean> result = eventMap.entrySet().stream()
                 .map(e -> buildRendezVousBean(rendezVousEntities.get(e.getKey()), e.getValue()))
+                .sorted(Comparator.comparing(r -> r.getEvent().getStart()))
                 .collect(Collectors.toList());
+
+        /*
+            Complétion des informations de distances entre chaque rendez-vous
+         */
+        IntStream.range(0,result.size()-1).forEach(i -> {
+            distanceService.getTimeDistance(result.get(i).getEvent().)
+            doSomething(list.get(i),list.get(i+1));
+        });
+
+        return result;
     }
 
     /**
@@ -116,7 +128,7 @@ public class RendezVousController {
 
         AuthInfo authInfo = new AuthInfo(null, email, uid);
 
-        AdresseEntity adresseEntity = getAdresseEntity(placeId, adresseId);
+        AdresseEntity adresseEntity = adresseService.findAdresseDetails(placeId, adresseId);
 
         final Double latitude = adresseEntity.getLatitude();
         final Double longitude = adresseEntity.getLongitude();
@@ -128,7 +140,7 @@ public class RendezVousController {
                 .collect(Collectors.toMap(e -> e.getICalUID(), e -> e));
 
         eventMap.values().stream()
-                .filter(e -> calculateDistance(latitude, longitude, e) <= distanceRange)
+                .filter(e -> flyDistanceService.calculateFlyDistance(latitude, longitude, e) <= distanceRange)
                 .forEach(e -> {
                     final LocalDate date = DateMapper.mapDayToLacalDate(e.getStart().getDateTime());
                     if (result.get(date) == null) {
@@ -141,62 +153,6 @@ public class RendezVousController {
         return result.values();
     }
 
-    /**
-     * Retourne l'adresse entity qui contient les informations complètes de localisation.
-     */
-    private AdresseEntity getAdresseEntity(String placeId, Long adresseId) throws Exception {
-        AdresseEntity adresseEntity = null;
-        if (adresseId != null) {
-            adresseEntity = adresseRepository.findById(adresseId).get();
-        }
-
-        if (adresseEntity == null || !StringUtils.equals(placeId, adresseEntity.getPlaceId())) {
-            final PlaceDetails placeDetails = mapService.getPlaceDetails(placeId);
-            adresseEntity = AdresseMapper.map(placeDetails);
-        }
-        return adresseEntity;
-    }
-
-    /**
-     * Calcule la distance entre l'adresse souhaitée du rdv et celle d'un rdv google.
-     */
-    private Double calculateDistance(Double latitude, Double longitude, Event googleEvent) {
-
-        Double result = 10000d;
-
-        Double targetLatitude = null;
-        Double targetLongitude = null;
-
-        if (googleEvent.getExtendedProperties() == null
-                || googleEvent.getExtendedProperties().getShared().isEmpty()
-                || !googleEvent.getExtendedProperties().getShared().containsKey("latitude")
-                || !googleEvent.getExtendedProperties().getShared().containsKey("longitude")) {
-
-            LOGGER.info("Le rendez-vous du " + googleEvent.getStart() + "[ " + googleEvent.getSummary() + " ] ne contient pas les propriétés latitude et longitude, nous effectuons le calcul à partir de location saisie");
-
-            if (StringUtils.isNotEmpty(googleEvent.getLocation())) {
-                final PlaceDetails place = mapService.findPlace(googleEvent.getLocation());
-
-                if (place == null) {
-                    LOGGER.warn("Impossible de caluler la distance pour ce rdv, par rapport à l'adresse qu'il contient (" + googleEvent.getLocation() + ")");
-                } else {
-                    final AdresseEntity targetAdresse = AdresseMapper.map(place);
-                    targetLatitude = targetAdresse.getLatitude();
-                    targetLongitude = targetAdresse.getLongitude();
-                }
-            }
-        } else {
-            targetLatitude = Double.valueOf(googleEvent.getExtendedProperties().getShared().get("latitude"));
-            targetLongitude = Double.valueOf(googleEvent.getExtendedProperties().getShared().get("longitude"));
-        }
-
-        if (targetLatitude != null && targetLongitude != null) {
-            result = DistanceCalculator.distance(latitude, longitude, targetLatitude, targetLongitude, "K");
-        }
-
-        return result;
-    }
-
     @PostMapping("/rdv")
     public void create(@RequestHeader(value = "uid", required = true) String uid,
                        @RequestHeader(value = "email", required = true) String email,
@@ -204,7 +160,7 @@ public class RendezVousController {
 
         AuthInfo authInfo = new AuthInfo(null, email, uid);
 
-        final AdresseEntity adresseEntity = getAdresseEntity(rdv.getPlaceId(), rdv.getAdresseId());
+        final AdresseEntity adresseEntity = adresseService.findAdresseDetails(rdv.getPlaceId(), rdv.getAdresseId());
 
         /*
             Création de l'évenement dans le calendrier distant
@@ -219,42 +175,7 @@ public class RendezVousController {
             Création du rdv en local
          */
         if (event != null) {
-            saveRendezVous(rdv, event.getICalUID());
-        }
-    }
-
-    /**
-     * Sauvegarde du rendez-vous en local.
-     * Un rdv pour chaque appareil, si aucun appareil est précisé, seul le client est précisé.
-     */
-    private void saveRendezVous(RendezVousInputBean rdv, String eventId) {
-
-        if (rdv.getAppareils().isEmpty()) {
-
-            RendezVousEntity rdvEntity = new RendezVousEntity();
-            rdvEntity.setEventId(eventId);
-
-            rdvEntity.setClient(new ClientEntity());
-            rdvEntity.getClient().setId(rdv.getClient());
-
-            rdvRepository.save(rdvEntity);
-
-        } else {
-            rdv.getAppareils().stream().forEach(a -> {
-                /*
-                  Création d'un rendez-vous pour chacun des appareils
-                 */
-                RendezVousEntity rdvEntity = new RendezVousEntity();
-                rdvEntity.setEventId(eventId);
-
-                rdvEntity.setAppareil(new AppareilEntity());
-                rdvEntity.getAppareil().setId(a);
-
-                rdvEntity.setClient(new ClientEntity());
-                rdvEntity.getClient().setId(rdv.getClient());
-
-                rdvRepository.save(rdvEntity);
-            });
+            rendezVousService.saveRendezVous(rdv, event.getICalUID());
         }
     }
 
@@ -266,7 +187,7 @@ public class RendezVousController {
         RendezVousBean rdv = new RendezVousBean();
 
         if (rdvEntities != null) {
-            rdvEntities.stream().forEach(r -> {
+            rdvEntities.forEach(r -> {
                         rdv.getAppareils().add(AppareilMapper.INSTANCE.appareilEntityToAppareilBean(r.getAppareil()));
                         rdv.setClient(ClientMapper.INSTANCE.clientEntityToClientOutpuBean(r.getClient()));
                     }
