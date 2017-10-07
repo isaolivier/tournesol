@@ -17,6 +17,10 @@
         </a>
 
         <text x="100" :y="yDebut + 75">{{rdv.event.location}}</text>
+
+        <text v-if="distance" x="100" :y="yDebut + 100">
+            {{distance.distance}} {{distance.duration}}
+        </text>
     </svg>
 </template>
 
@@ -29,6 +33,10 @@
       rdv: {
         type: Object,
         required: true
+      },
+      distance: {
+        type: Object,
+        required: false
       }
     },
     data () {

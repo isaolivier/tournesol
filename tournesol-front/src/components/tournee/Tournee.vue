@@ -20,7 +20,7 @@
                   style="stroke:rgb(180,180,180);stroke-width:0.5"/>
 
             <!-- Rendez-vous -->
-            <rdv v-for="(rdv, key, index) in rendezvous" :rdv="rdv" :key="key"/>
+            <rdv v-if="distances" v-for="(rdv, key, index) in rendezvous" :rdv="rdv" :distance="getDistance(key)" :key="key"/>
         </svg>
     </div>
 </template>
@@ -36,11 +36,11 @@
     name: 'tournee',
     data () {
       return {
-        loading: false,
         error: null,
         hourInterval: Constants.tournee.hourInterval,
         agenda: null,
         rendezvous: null,
+        distances: null,
         currentDate: moment()
       }
     },
@@ -66,16 +66,27 @@
     methods: {
       fetchData: function (date) {
         this.error = null
-        this.loading = true
         let rdvResource = new RendezVousResource()
+
         rdvResource.findRendezVous((err, result) => {
-          this.loading = false
           if (err) {
             this.error = err.toString()
           } else {
             this.rendezvous = result
           }
         }, date.format(Constants.rdv.dateFormat))
+
+        rdvResource.findDistanceRendezVous((err, result) => {
+          if (err) {
+            this.error = err.toString()
+          } else {
+            this.distances = result
+          }
+        }, date.format(Constants.rdv.dateFormat))
+      },
+
+      getDistance (index) {
+        return this.distances[index]
       }
     }
   }

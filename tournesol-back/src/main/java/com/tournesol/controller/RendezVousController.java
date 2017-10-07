@@ -4,7 +4,7 @@ import com.google.api.services.calendar.model.Event;
 import com.google.maps.model.DistanceMatrix;
 import com.tournesol.bean.AuthInfo;
 import com.tournesol.bean.JourBean;
-import com.tournesol.bean.NextEventBean;
+import com.tournesol.bean.DistanceRendezVousBean;
 import com.tournesol.bean.RendezVousBean;
 import com.tournesol.bean.input.RendezVousInputBean;
 import com.tournesol.bean.output.EventOutputBean;
@@ -21,11 +21,7 @@ import com.tournesol.service.google.DistanceService;
 import com.tournesol.service.google.EventService;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -64,15 +60,52 @@ public class RendezVousController {
     private static final Logger LOGGER = LoggerFactory.getLogger(RendezVousController.class);
 
     /**
+     * Recherche des distances et temps de parcours entre les rdvs d'une journée donnée.
+     */
+    @GetMapping("/rdv/distance")
+    public List<DistanceRendezVousBean> searchDistanceAndTime(@RequestHeader(value = "uid", required = true) String uid,
+                                                              @RequestHeader(value = "email", required = true) String email,
+                                                              @RequestParam(value = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+
+        List<DistanceRendezVousBean> result = new ArrayList<>();
+
+        AuthInfo authInfo = new AuthInfo(null, email, uid);
+
+        LocalDate dateRecherche = date == null ? LocalDate.now() : date;
+
+        final List<EventOutputBean> events = eventService.getEvents(authInfo, dateRecherche).stream()
+                .map(e -> EventMapper.INSTANCE.eventToEventOutputBean(e))
+                .sorted(Comparator.comparing(EventOutputBean::getStart))
+                .collect(Collectors.toList());
+
+
+        IntStream.range(0, events.size() - 1).forEach(i -> {
+
+            final EventOutputBean currentEvent = events.get(i);
+            final EventOutputBean nextEvent = events.get(i + 1);
+
+            final DistanceMatrix timeDistance = distanceService.getDurationAndDistance(currentEvent.getEnd(), currentEvent.getCoordonnees(), nextEvent.getCoordonnees());
+
+            String distance = timeDistance.rows[0].elements[0].distance.humanReadable;
+            String duration = timeDistance.rows[0].elements[0].duration.humanReadable;
+            //String durationInTrafic = timeDistance.rows[0].elements[0].durationInTraffic.humanReadable;
+
+            result.add(new DistanceRendezVousBean(currentEvent.getId(), nextEvent.getId(), distance, duration));
+        });
+
+        return result;
+    }
+
+    /**
      * Recherche de l'ensemble des rendez-vous sur une journée donnée.
      *
      * @param date, date de recherche des rendez-vous, si celle-ci n'est pas précisée c'est la date du jour qui sera utilisée.
      * @return la liste des rendez-vous du jour, aggrégeant l'ensemble des infos relatives au rdv (client, appareil ...)
      */
     @GetMapping("/rdvs")
-    public Iterable<RendezVousBean> greeting(@RequestHeader(value = "uid", required = true) String uid,
-                                             @RequestHeader(value = "email", required = true) String email,
-                                             @RequestParam(value = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+    public List<RendezVousBean> greeting(@RequestHeader(value = "uid", required = true) String uid,
+                                         @RequestHeader(value = "email", required = true) String email,
+                                         @RequestParam(value = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
 
         AuthInfo authInfo = new AuthInfo(null, email, uid);
 
@@ -82,7 +115,7 @@ public class RendezVousController {
         LocalDate dateRecherche = date == null ? LocalDate.now() : date;
 
         final Map<String, Event> eventMap = eventService.getEvents(authInfo, dateRecherche).stream()
-                .collect(Collectors.toMap(e -> e.getICalUID(), e -> e));
+                .collect(Collectors.toMap(Event::getICalUID, e -> e));
 
         /*
             Recherche des rdvs dans la base locale,
@@ -91,31 +124,12 @@ public class RendezVousController {
         final Map<String, List<RendezVousEntity>> rendezVousEntities = rendezVousService.findRendezVousGroupByEvent(new ArrayList<>(eventMap.keySet()));
 
         /*
-            Aggrégation des données
+            Aggrégation des données, et tri sur la date de de début
          */
-        List<RendezVousBean> result = eventMap.entrySet().stream()
+        return eventMap.entrySet().stream()
                 .map(e -> buildRendezVousBean(rendezVousEntities.get(e.getKey()), e.getValue()))
                 .sorted(Comparator.comparing(r -> r.getEvent().getStart()))
                 .collect(Collectors.toList());
-
-        /*
-            Complétion des informations de distances entre chaque rendez-vous
-         */
-        IntStream.range(0, result.size() - 1).forEach(i -> {
-
-            final EventOutputBean currentEvent = result.get(i).getEvent();
-            final EventOutputBean nextEvent = result.get(i + 1).getEvent();
-
-            final DistanceMatrix timeDistance = distanceService.getDurationAndDistance(currentEvent.getEnd(), currentEvent.getCoordonnees(), nextEvent.getCoordonnees());
-
-            String distance = timeDistance.rows[0].elements[0].distance.humanReadable;
-            String duration = timeDistance.rows[0].elements[0].duration.humanReadable;
-            String durationInTrafic = timeDistance.rows[0].elements[0].durationInTraffic.humanReadable;
-
-            currentEvent.setNextEvent(new NextEventBean(distance, duration, durationInTrafic));
-        });
-
-        return result;
     }
 
 
@@ -129,12 +143,12 @@ public class RendezVousController {
      * @return la liste des rendez-vous du jour, aggrégeant l'ensemble des infos relatives au rdv (client, appareil ...)
      */
     @GetMapping("/rdv/search")
-    public Iterable<JourBean> search(@RequestHeader(value = "uid", required = true) String uid,
-                                     @RequestHeader(value = "email", required = true) String email,
-                                     @RequestParam(value = "dayRange", required = true) int dayRange,
-                                     @RequestParam(value = "distanceRange", required = true) int distanceRange,
-                                     @RequestParam(value = "placeId", required = true) String placeId,
-                                     @RequestParam(value = "adresseId", required = false) Long adresseId) throws Exception {
+    public Collection<JourBean> search(@RequestHeader(value = "uid", required = true) String uid,
+                                       @RequestHeader(value = "email", required = true) String email,
+                                       @RequestParam(value = "dayRange", required = true) int dayRange,
+                                       @RequestParam(value = "distanceRange", required = true) int distanceRange,
+                                       @RequestParam(value = "placeId", required = true) String placeId,
+                                       @RequestParam(value = "adresseId", required = false) Long adresseId) throws Exception {
 
         final Map<LocalDate, JourBean> result = new HashMap<>();
 
@@ -149,7 +163,7 @@ public class RendezVousController {
             Recherche des évenements dans le calendrier distant (google)
          */
         final Map<String, Event> eventMap = eventService.getEvents(authInfo, LocalDate.now(), distanceRange).stream()
-                .collect(Collectors.toMap(e -> e.getICalUID(), e -> e));
+                .collect(Collectors.toMap(Event::getICalUID, e -> e));
 
         eventMap.values().stream()
                 .filter(e -> flyDistanceService.calculateFlyDistance(latitude, longitude, e) <= distanceRange)

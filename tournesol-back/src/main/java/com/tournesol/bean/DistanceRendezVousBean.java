@@ -1,17 +1,20 @@
 package com.tournesol.bean;
 
-public class NextEventBean {
+public class DistanceRendezVousBean {
+
+    private String sourceEventId;
+
+    private String targetEventId;
 
     private String distance;
 
     private String duration;
 
-    private String durationInTrafic;
-
-    public NextEventBean(String distance, String duration, String durationInTrafic) {
+    public DistanceRendezVousBean(String sourceEventId, String targetEventId, String distance, String duration) {
+        this.sourceEventId = sourceEventId;
+        this.targetEventId = targetEventId;
         this.distance = distance;
         this.duration = duration;
-        this.durationInTrafic = durationInTrafic;
     }
 
     public String getDistance() {
@@ -30,11 +33,4 @@ public class NextEventBean {
         this.duration = duration;
     }
 
-    public String getDurationInTrafic() {
-        return durationInTrafic;
-    }
-
-    public void setDurationInTrafic(String durationInTrafic) {
-        this.durationInTrafic = durationInTrafic;
-    }
 }
