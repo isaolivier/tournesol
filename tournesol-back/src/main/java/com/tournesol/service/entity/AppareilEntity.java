@@ -1,12 +1,8 @@
 package com.tournesol.service.entity;
 
-import java.io.Serializable;
 import java.sql.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -16,14 +12,9 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "APPAREIL")
-public class AppareilEntity implements Serializable {
+public class AppareilEntity extends BaseEntity {
 	
 	private static final long serialVersionUID = 2138505980112741865L;
-
-	@Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", nullable = false, unique = true)
-    private Long id;
 
     @Column(name = "client_id", insertable = false, updatable = false)
     private String clientId;
@@ -66,14 +57,6 @@ public class AppareilEntity implements Serializable {
 
     @ManyToOne(targetEntity = ClientEntity.class)
     private ClientEntity client;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public AdresseEntity getAdresse() {
         return adresse;

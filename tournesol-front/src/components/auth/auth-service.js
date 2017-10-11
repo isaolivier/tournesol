@@ -1,3 +1,5 @@
+import Constants from '../../bean/Constants'
+
 var axios = require('axios')
 // Please consider that what might appear as dead code is actually debug code :D please don't strip
 class AuthService {
@@ -38,7 +40,7 @@ class AuthService {
   }
   sampleServiceProps () {
     return {
-      'backendURL': 'http://localhost:8081',
+      'backendURL': Constants.back.hostname,
       'timeout': 2000,
       'authURL': '/auth',
       'aliveURL': '/isSessionAlive'

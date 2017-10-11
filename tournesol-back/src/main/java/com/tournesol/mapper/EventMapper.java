@@ -10,7 +10,7 @@ import com.google.api.services.calendar.model.EventDateTime;
 import com.tournesol.bean.input.EventInputBean;
 import com.tournesol.bean.output.EventOutputBean;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,12 +32,12 @@ public interface EventMapper {
 
     Event eventOutBeanToEvent(EventOutputBean eventBean);
 
-    default EventDateTime zonedDateTimeToEventDateTime(ZonedDateTime value) {
+    default EventDateTime zonedDateTimeToEventDateTime(LocalDateTime value) {
         EventDateTime eventDateTime = new EventDateTime().setDateTime(DateMapper.map(value));
         return eventDateTime;
     }
 
-    default ZonedDateTime eventDateTimeToZonedDateTime(EventDateTime value) {
+    default LocalDateTime eventDateTimeToZonedDateTime(EventDateTime value) {
         return DateMapper.map(value.getDateTime());
     }
 

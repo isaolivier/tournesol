@@ -1,3 +1,5 @@
+insert into entreprise(id, nom, siret, heure_ouverture, heure_fermeture, search_distance, search_days, temps_rdv, jours_ouverture, time_step) values (1, 'Samson Multi Services', '54205118000066', '08:00:00', '19:00:00', 50, 45, 90, 124, 30);
+
 insert into adresse(id, numero, voie, code_postal, commune, place_id, latitude, longitude) values (1000, '1', 'Rue du Général Sarrail', '33400', 'Talence', 'ChIJQ9EmEm8nVQ0Reo9XUdeNnQ4', '44.7992055', '-0.590534');
 insert into adresse(id, numero, voie, code_postal, commune, place_id, latitude, longitude) values (1001, '58', 'route de Bordeaux', '33220', 'PORT DE SAINTE FOY', null, null, null);
 insert into adresse(id, numero, voie, code_postal, commune, place_id, latitude, longitude) values (1002, '35', 'lotissement Saussus', '33250', 'PAUILLAC', null, null, null);

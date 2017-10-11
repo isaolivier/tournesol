@@ -9,8 +9,8 @@ import com.google.maps.model.Unit;
 import com.tournesol.bean.Coordonnees;
 import com.tournesol.config.GoogleConfiguration;
 
+import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,12 +37,12 @@ public class DistanceService {
                 .build();
     }
 
-    public DistanceMatrix getDurationAndDistance(ZonedDateTime arrivalTime, Coordonnees origins, Coordonnees destinations) {
+    public DistanceMatrix getDurationAndDistance(LocalDateTime arrivalTime, Coordonnees origins, Coordonnees destinations) {
 
         return getDurationAndDistance(arrivalTime, Lists.newArrayList(origins), Lists.newArrayList(destinations));
     }
 
-    public DistanceMatrix getDurationAndDistance(ZonedDateTime arrivalTime, List<Coordonnees> origins, List<Coordonnees> destinations) {
+    public DistanceMatrix getDurationAndDistance(LocalDateTime arrivalTime, List<Coordonnees> origins, List<Coordonnees> destinations) {
 
         List<String> originsParam = origins.stream()
                 .map(c -> c.getLatitude() + "," + c.getLongitude())
@@ -56,7 +56,7 @@ public class DistanceService {
             DistanceMatrixApiRequest distanceMatrixApiRequest = DistanceMatrixApi.getDistanceMatrix(context,
                     originsParam.toArray(new String[0]),
                     destinationsParam.toArray(new String[0]))
-                    .arrivalTime(new DateTime(arrivalTime.toLocalDateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()))
+                    .arrivalTime(new DateTime(arrivalTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()))
                     .language("fr")
                     .units(Unit.METRIC);
 

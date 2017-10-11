@@ -7,9 +7,8 @@ import com.tournesol.bean.input.EventInputBean;
 import com.tournesol.bean.output.EventOutputBean;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 
 /**
  * Created by iolivier on 23/09/2017.
@@ -47,6 +46,6 @@ public abstract class EventMapperDecorator implements EventMapper {
     }
 
     private EventDateTime dateAndTimeToEventDateTime(LocalDate date, LocalTime time) {
-        return zonedDateTimeToEventDateTime(ZonedDateTime.of(date, time, ZoneId.of("Europe/Paris")));
+        return zonedDateTimeToEventDateTime(LocalDateTime.of(date, time));
     }
 }

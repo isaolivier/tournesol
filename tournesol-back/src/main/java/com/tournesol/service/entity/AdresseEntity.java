@@ -2,9 +2,6 @@ package com.tournesol.service.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
@@ -12,12 +9,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "ADRESSE")
-public class AdresseEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", nullable = false, unique = true)
-    private Long id;
+public class AdresseEntity extends BaseEntity{
 
     @Column(name = "numero")
     private String numero;
@@ -25,7 +17,7 @@ public class AdresseEntity {
     @Column(name = "voie")
     private String voie;
 
-    @Column(name = "codePostal", nullable = false)
+    @Column(name = "codePostal")
     private String codePostal;
 
     @Column(name = "commune")
@@ -94,14 +86,6 @@ public class AdresseEntity {
 
     public void setLongitude(Double longitude) {
         this.longitude = longitude;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
 }

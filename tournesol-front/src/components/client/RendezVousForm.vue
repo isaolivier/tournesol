@@ -135,8 +135,8 @@
 </template>
 
 <script>
+  import {entreprise} from '../../bean/EntrepriseBean'
   import moment from 'moment'
-  import Constants from '../../bean/Constants'
   import AdresseAutoComplete from '../AdresseAutoComplete.vue'
   import {RendezVousResource} from '../../resource/RendezVousResource'
   import PropositionDate from './PropositionDate.vue'
@@ -160,11 +160,11 @@
         error: null,
         dialogFormVisible: false,
         propositions: [],
-        rayon: Constants.rdv.searchDistance,
-        duree: moment('00:00', 'HH:mm').add(Constants.rdv.tempsRdv, 'm').format('HH:mm'),
+        rayon: entreprise.configuration.searchDistance,
+        duree: moment('00:00', 'HH:mm').add(entreprise.configuration.tempsRdv, 'm').format('HH:mm'),
         choixDePropositions: 'saisie_libre',
         form: {
-          placeId: this.client.adresse.placeId,
+          placeId: null,
           appareils: [],
           event: {
             id: '',
@@ -197,13 +197,13 @@
         return moment().startOf('day')
       },
       heureOuverture: function () {
-        return Constants.rdv.heureOuverture
+        return entreprise.configuration.heureOuverture
       },
       heureFermeture: function () {
-        return Constants.rdv.heureFermeture
+        return entreprise.configuration.heureFermeture
       },
       step: function () {
-        return Constants.rdv.timeStep
+        return entreprise.configuration.timeStep
       }
     },
     methods: {
@@ -224,7 +224,6 @@
 
       showDialog () {
         this.dialogFormVisible = true
-        this.findPropositionsRdv()
       },
 
       updateLocation (selected) {
@@ -252,7 +251,7 @@
           this.propositions = []
         } else {
           let rdvResource = new RendezVousResource()
-          rdvResource.findPropositionRendezVous(Constants.rdv.searchDays, this.rayon, this.form.placeId, this.client.adresse.id, (err, result) => {
+          rdvResource.findPropositionRendezVous(entreprise.configuration.searchDays, this.rayon, this.form.placeId, this.client.adresse.id, (err, result) => {
             if (err) {
               this.error = err.toString()
             } else {

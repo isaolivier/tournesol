@@ -2,34 +2,33 @@ package com.tournesol.bean.output;
 
 import com.tournesol.bean.Coordonnees;
 import com.tournesol.bean.EventBean;
-import com.tournesol.bean.DistanceRendezVousBean;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 /**
  * Created by iolivier on 22/09/2017.
  */
 public class EventOutputBean extends EventBean {
 
-    private ZonedDateTime start;
+    private LocalDateTime start;
 
-    private ZonedDateTime end;
+    private LocalDateTime end;
 
     private Coordonnees coordonnees;
 
-    public ZonedDateTime getStart() {
+    public LocalDateTime getStart() {
         return start;
     }
 
-    public void setStart(ZonedDateTime start) {
+    public void setStart(LocalDateTime start) {
         this.start = start;
     }
 
-    public ZonedDateTime getEnd() {
+    public LocalDateTime getEnd() {
         return end;
     }
 
-    public void setEnd(ZonedDateTime end) {
+    public void setEnd(LocalDateTime end) {
         this.end = end;
     }
 

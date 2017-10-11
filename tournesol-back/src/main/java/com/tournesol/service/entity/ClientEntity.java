@@ -1,22 +1,22 @@
 package com.tournesol.service.entity;
 
-import java.io.Serializable;
 import java.util.List;
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 /**
  * Created by iolivier on 10/04/2017.
  */
 @Entity
 @Table(name = "CLIENT")
-public class ClientEntity implements Serializable {
+public class ClientEntity extends BaseEntity {
 	
 	private static final long serialVersionUID = -4413980880542144023L;
-
-	@Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", nullable = false, unique = true)
-    private Long id;
 
     /**
      * Mr/Mme/MrMme
@@ -72,10 +72,6 @@ public class ClientEntity implements Serializable {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private AdresseEntity adresse;
 
-    public Long getId() {
-        return id;
-    }
-
     public String getCivilite() {
         return civilite;
     }
@@ -106,10 +102,6 @@ public class ClientEntity implements Serializable {
 
     public AdresseEntity getAdresse() {
         return adresse;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public void setCivilite(String civilite) {

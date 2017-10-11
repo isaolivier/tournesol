@@ -3,11 +3,12 @@ package com.tournesol.controller;
 import com.google.api.services.calendar.model.Event;
 import com.google.maps.model.DistanceMatrix;
 import com.tournesol.bean.AuthInfo;
-import com.tournesol.bean.JourBean;
 import com.tournesol.bean.DistanceRendezVousBean;
+import com.tournesol.bean.JourBean;
 import com.tournesol.bean.RendezVousBean;
 import com.tournesol.bean.input.RendezVousInputBean;
 import com.tournesol.bean.output.EventOutputBean;
+import com.tournesol.config.EntrepriseConfiguration;
 import com.tournesol.mapper.AppareilMapper;
 import com.tournesol.mapper.ClientMapper;
 import com.tournesol.mapper.DateMapper;
@@ -21,7 +22,13 @@ import com.tournesol.service.google.DistanceService;
 import com.tournesol.service.google.EventService;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -56,6 +63,9 @@ public class RendezVousController {
 
     @Autowired
     private DistanceService distanceService;
+
+    @Autowired
+    private EntrepriseConfiguration entrepriseConfiguration;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RendezVousController.class);
 
@@ -136,10 +146,12 @@ public class RendezVousController {
 
     /**
      * Recherche des dates optimales par rapport à un client donné.
+     * Lorsque le temps de rendez-vous est fourni, on filtre sur les journées qui disposent d'un créneau disponible pour ce temps
      *
      * @param dayRange      Nombre de jours sur lesquels on effectue une recherche des rdvs existants.
      * @param distanceRange Distance en max en km entre l'adresse et les adresses recharchées.
      * @param adresseId     Identifiant de l'adresse à partir de laquelle effectuer une recherche.
+     * @param rdvSize       Temps prévu du rendez-vous en minutes.
      * @return la liste des rendez-vous du jour, aggrégeant l'ensemble des infos relatives au rdv (client, appareil ...)
      */
     @GetMapping("/rdv/search")
@@ -148,9 +160,10 @@ public class RendezVousController {
                                        @RequestParam(value = "dayRange", required = true) int dayRange,
                                        @RequestParam(value = "distanceRange", required = true) int distanceRange,
                                        @RequestParam(value = "placeId", required = true) String placeId,
-                                       @RequestParam(value = "adresseId", required = false) Long adresseId) throws Exception {
+                                       @RequestParam(value = "adresseId", required = false) Long adresseId,
+                                       @RequestParam(value= "rdvSize", required = false) Integer rdvSize) throws Exception {
 
-        final Map<LocalDate, JourBean> result = new HashMap<>();
+        List<JourBean> result = new ArrayList<>();
 
         AuthInfo authInfo = new AuthInfo(null, email, uid);
 
@@ -158,6 +171,8 @@ public class RendezVousController {
 
         final Double latitude = adresseEntity.getLatitude();
         final Double longitude = adresseEntity.getLongitude();
+
+        final Map<LocalDate, JourBean> dayMap = new HashMap<>();
 
         /*
             Recherche des évenements dans le calendrier distant (google)
@@ -169,14 +184,28 @@ public class RendezVousController {
                 .filter(e -> flyDistanceService.calculateFlyDistance(latitude, longitude, e) <= distanceRange)
                 .forEach(e -> {
                     final LocalDate date = DateMapper.mapDayToLacalDate(e.getStart().getDateTime());
-                    if (result.get(date) == null) {
-                        result.put(date, new JourBean(date, EventMapper.INSTANCE.eventToEventOutputBean(e)));
+                    if (dayMap.get(date) == null) {
+                        dayMap.put(date, new JourBean(date, EventMapper.INSTANCE.eventToEventOutputBean(e)));
                     } else {
-                        result.get(date).getEvents().add(EventMapper.INSTANCE.eventToEventOutputBean(e));
+                        dayMap.get(date).getEvents().add(EventMapper.INSTANCE.eventToEventOutputBean(e));
                     }
                 });
 
-        return result.values();
+        result.addAll(dayMap.values());
+
+        /*
+            Filtrage des journées possédant un créneau de n (rdvSize) minutes disponbiles
+         */
+        if(rdvSize != null) {
+            final LocalTime heureOuverture = entrepriseConfiguration.getHeureOuverture();
+            final LocalTime heureFermeture = entrepriseConfiguration.getHeureFermeture();
+
+            result = result.stream()
+                    .filter(j -> j.dayContainsFreePeriod(rdvSize, heureOuverture, heureFermeture))
+                    .collect(Collectors.toList());
+        }
+
+        return result;
     }
 
     @PostMapping("/rdv")

@@ -26,6 +26,7 @@
 </template>
 
 <script>
+  import {entreprise} from '../../bean/EntrepriseBean'
   import RendezVous from './RendezVous.vue'
   import DateStrip from './DateStrip.vue'
   import Constants from '../../bean/Constants'
@@ -49,10 +50,10 @@
     },
     computed: {
       heureOuverture: function () {
-        return Constants.rdv.heureOuverture.substring(0, Constants.rdv.heureOuverture.indexOf(':'))
+        return entreprise.configuration.heureOuverture.substring(0, entreprise.configuration.heureOuverture.indexOf(':'))
       },
       heureFermeture: function () {
-        return Constants.rdv.heureFermeture.substring(0, Constants.rdv.heureFermeture.indexOf(':'))
+        return entreprise.configuration.heureFermeture.substring(0, entreprise.configuration.heureFermeture.indexOf(':'))
       },
       nbHeures: function () {
         // console.log(heureFermeture - heureOuverture)
