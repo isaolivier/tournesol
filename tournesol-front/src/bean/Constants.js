@@ -10,6 +10,7 @@ export default{
     hostname: 'http://localhost:8081'
   },
   rdv: {
-    dateFormat: 'YYYY-MM-DD' // Format de date envoyé au back
+    dateFormat: 'YYYY-MM-DD', // Format de date envoyé au back
+    rayons: [5, 10, 20, 50] // Différents rayons de recherche
   }
 }

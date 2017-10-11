@@ -40,7 +40,7 @@
                 <!-- ************************************************************* -->
                 <el-form-item label="Durée prévue du rendez-vous">
                     <el-time-select v-model="duree"
-                                    :picker-options="{ start: '0:30', step: '00:30', end: '8:00' }"
+                                    :picker-options="{ start: step, step: step, end: '8:00' }"
                                     placeholder="Durée prévue">
                     </el-time-select>
                 </el-form-item>
@@ -48,26 +48,22 @@
                 <!-- ************************************************************* -->
                 <!--                              DATE                             -->
                 <!-- ************************************************************* -->
-                <el-form-item v-if="propositions.length > 0">
-                    <el-radio class="radio" v-model="choixDePropositions" label="proposition">Meilleures dates
-                        possibles dans un rayon de
-                    </el-radio>
+                <el-form-item>
+                    <el-radio class="radio" v-model="choixDePropositions" label="proposition">Meilleures dates possibles dans un rayon de</el-radio>
                     <el-select :disabled="this.choixDePropositions === 'saisie_libre'" v-model="rayon"
-                               placeholder="Select" size="small">
+                               placeholder="Select" @change="findPropositionsRdv">
                         <el-option
-                                v-for="item in [{'value1':'50', 'label':'50km'}]"
-                                :key="item.value1"
-                                :label="item.label"
-                                :value="item.value1">
+                                v-for="item in rayons"
+                                :key="item"
+                                :label="item + ' km'"
+                                :value="item">
                         </el-option>
                     </el-select>
-                    <proposition-date v-for="proposition in propositions" :key="proposition.date"
-                                      :proposition="proposition"></proposition-date>
+                    <div v-if="propositions.length == 0">Aucune proposition trouvée</div>
+                    <proposition-date v-for="proposition in propositions" :key="proposition.date" :proposition="proposition"></proposition-date>
                 </el-form-item>
                 <el-form-item :disabled="true" prop="event.date">
-                    <el-radio v-if="propositions.length > 0" class="radio" v-model="choixDePropositions" label="saisie_libre">
-                        Choisir une date
-                    </el-radio>
+                    <el-radio class="radio" v-model="choixDePropositions" label="saisie_libre">Choisir une date</el-radio>
                     <el-date-picker :disabled="this.choixDePropositions === 'proposition'" v-model="form.event.date"
                                     type="date" placeholder="Date"
                                     :picker-options="{ disabledDate: disabledDate }"
@@ -110,13 +106,6 @@
                 <el-form-item label="Détail" prop="description">
                     <el-input type="textarea" placeholder="Détails" v-model="form.event.description"></el-input>
                 </el-form-item>
-                <el-form-item v-if="form.appareils.length > 0" label="Appareil" prop="appareils">
-                    <el-checkbox-group v-model="form.appareils">
-                        <el-checkbox v-for="appareil in model.appareils" :key="appareil.id" :label="appareil.id">
-                            {{appareil.denomination + ' [' + appareil.marque + ']'}}
-                        </el-checkbox>
-                    </el-checkbox-group>
-                </el-form-item>
             </el-form>
 
             <span slot="footer" class="dialog-footer">
@@ -135,6 +124,7 @@
 </template>
 
 <script>
+  import Constants from '../../bean/Constants'
   import {entreprise} from '../../bean/EntrepriseBean'
   import moment from 'moment'
   import AdresseAutoComplete from '../AdresseAutoComplete.vue'
@@ -165,7 +155,6 @@
         choixDePropositions: 'saisie_libre',
         form: {
           placeId: null,
-          appareils: [],
           event: {
             id: '',
             date: '',
@@ -204,6 +193,9 @@
       },
       step: function () {
         return entreprise.configuration.timeStep
+      },
+      rayons: function () {
+        return Constants.rdv.rayons
       }
     },
     methods: {
@@ -249,6 +241,7 @@
       findPropositionsRdv: function () {
         if (this.form.placeId === null) {
           this.propositions = []
+          this.choixDePropositions = 'saisie_libre'
         } else {
           let rdvResource = new RendezVousResource()
           rdvResource.findPropositionRendezVous(entreprise.configuration.searchDays, this.rayon, this.form.placeId, this.client.adresse.id, (err, result) => {
@@ -256,6 +249,7 @@
               this.error = err.toString()
             } else {
               this.propositions = result
+              this.choixDePropositions = 'proposition'
               this.initDateChoice()
             }
           })
