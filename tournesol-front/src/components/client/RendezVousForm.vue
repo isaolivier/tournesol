@@ -46,28 +46,38 @@
                 </el-form-item>
 
                 <!-- ************************************************************* -->
-                <!--                              DATE                             -->
+                <!--                     PROPOSITIONS DATE                         -->
                 <!-- ************************************************************* -->
                 <el-form-item>
                     <el-radio class="radio" v-model="choixDePropositions" label="proposition">Meilleures dates possibles dans un rayon de</el-radio>
+
                     <el-select :disabled="this.choixDePropositions === 'saisie_libre'" v-model="rayon"
                                placeholder="Select" @change="findPropositionsRdv">
-                        <el-option
-                                v-for="item in rayons"
-                                :key="item"
-                                :label="item + ' km'"
-                                :value="item">
-                        </el-option>
+                        <el-option v-for="item in rayons" :key="item" :label="item + ' km'" :value="item"></el-option>
                     </el-select>
+
                     <div v-if="propositions.length == 0">Aucune proposition trouvée</div>
-                    <proposition-date v-for="proposition in propositions" :key="proposition.date" :proposition="proposition"></proposition-date>
+                    <div v-else class="propositions">
+                        <proposition-date v-for="proposition in propositions"
+                                          :disabled="choixDePropositions != 'proposition'"
+                                          :key="proposition.date+form.event.date+choixDePropositions"
+                                          :dateSelected="form.event.date" :proposition="proposition" @change="updateDate">
+                        </proposition-date>
+                    </div>
+
                 </el-form-item>
+
+                <!-- ************************************************************* -->
+                <!--                     CHOIX DATE                         -->
+                <!-- ************************************************************* -->
                 <el-form-item :disabled="true" prop="event.date">
                     <el-radio class="radio" v-model="choixDePropositions" label="saisie_libre">Choisir une date</el-radio>
-                    <el-date-picker :disabled="this.choixDePropositions === 'proposition'" v-model="form.event.date"
+                    <el-col :offset="1" :span="23">
+                        <el-date-picker :disabled="this.choixDePropositions === 'proposition'" v-model="form.event.date"
                                     type="date" placeholder="Date"
                                     :picker-options="{ disabledDate: disabledDate }"
                                     style="width: 100%;"></el-date-picker>
+                    </el-col>
                 </el-form-item>
             </el-form>
 
@@ -89,7 +99,7 @@
                     <el-col :span="11">
                         <el-form-item prop="event.endTime" label="Heure de fin" required>
                             <el-time-select v-model="form.event.endTime" placeholder="Heure Fin"
-                                            :picker-options="{ start: heureOuverture, step: step, end: heureFermeture, minTime: this.form.startTime }"
+                                            :picker-options="{ start: heureOuverture, step: step, end: heureFermeture, minTime: form.event.startTime }"
                                             style="width: 100%;"></el-time-select>
                         </el-form-item>
                     </el-col>
@@ -168,7 +178,7 @@
         },
         rules: {
           placeId: [{required: true, message: 'Veuillez saisir une adresse valide', trigger: 'change'}],
-          'event.date': [{type: 'date', required: true, message: 'Veuillez saisir une date', trigger: 'change'}],
+          'event.date': [{required: true, message: 'Veuillez saisir une date', trigger: 'change'}],
           'event.startTime': [{required: true, message: 'Veuillez saisir une heure de début', trigger: 'change'}],
           'event.endTime': [{required: true, message: 'Veuillez saisir une heure de fin', trigger: 'change'}]
         }
@@ -186,10 +196,10 @@
         return moment().startOf('day')
       },
       heureOuverture: function () {
-        return entreprise.configuration.heureOuverture
+        return moment(entreprise.configuration.heureOuverture).format('HH:mm')
       },
       heureFermeture: function () {
-        return entreprise.configuration.heureFermeture
+        return moment(entreprise.configuration.heureFermeture).format('HH:mm')
       },
       step: function () {
         return entreprise.configuration.timeStep
@@ -226,6 +236,12 @@
           this.findPropositionsRdv()
         }
       },
+
+      updateDate (date) {
+        console.log('Receiving date', date)
+        this.form.event.date = date
+      },
+
       etapeSuivante () {
         this.$refs['form1'].validate((valid) => {
           if (valid) {
@@ -289,5 +305,9 @@
         text-shadow: 1px 1px 3px black;
     }
 
+    .propositions {
+        overflow-y: scroll;
+        height: 15em;
+    }
 
 </style>

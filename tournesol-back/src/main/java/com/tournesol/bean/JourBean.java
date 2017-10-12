@@ -13,7 +13,7 @@ import java.util.List;
  * Propostions de rendez-vous pour une date donnée.
  * Les events sont les évènements déjà programmés lors de cette journée.
  */
-public class JourBean {
+public class JourBean implements Comparable<JourBean> {
 
     private LocalDate date;
 
@@ -69,5 +69,10 @@ public class JourBean {
 
     private boolean hasFreeTime(Integer rdvSize, LocalDateTime date1, LocalDateTime date2) {
         return Duration.between(date1, date2).toMinutes() >= rdvSize;
+    }
+
+    @Override
+    public int compareTo(JourBean j) {
+        return this.getDate().compareTo(j.getDate());
     }
 }

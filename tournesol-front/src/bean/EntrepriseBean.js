@@ -29,8 +29,8 @@ class EntrepriseBean {
           self.nom = response.data.nom
           self.siret = response.data.siret
           let conf = response.data.configuration
-          self.configuration.heureOuverture = conf.heureOuverture.substr(0, conf.heureOuverture.lastIndexOf(':'))
-          self.configuration.heureFermeture = conf.heureFermeture.substr(0, conf.heureFermeture.lastIndexOf(':'))
+          self.configuration.heureOuverture = moment(conf.heureOuverture, 'HH:mm')
+          self.configuration.heureFermeture = moment(conf.heureFermeture, 'HH:mm')
           self.configuration.searchDistance = conf.searchDistance
           self.configuration.searchDays = conf.searchDays
           self.configuration.tempsRdv = conf.tempsRdv

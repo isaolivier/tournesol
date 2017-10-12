@@ -50,14 +50,14 @@
     },
     computed: {
       heureOuverture: function () {
-        return entreprise.configuration.heureOuverture.substring(0, entreprise.configuration.heureOuverture.indexOf(':'))
+        return moment.duration(entreprise.configuration.heureOuverture).hours()
       },
       heureFermeture: function () {
-        return entreprise.configuration.heureFermeture.substring(0, entreprise.configuration.heureFermeture.indexOf(':'))
+        return moment.duration(entreprise.configuration.heureFermeture).hours()
       },
       nbHeures: function () {
         // console.log(heureFermeture - heureOuverture)
-        return this.heureFermeture - this.heureOuverture
+        return moment.duration(entreprise.configuration.heureFermeture.diff(entreprise.configuration.heureOuverture)).hours()
       }
     },
     components: {

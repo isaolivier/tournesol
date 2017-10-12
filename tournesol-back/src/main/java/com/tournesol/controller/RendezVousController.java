@@ -25,6 +25,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -203,6 +204,8 @@ public class RendezVousController {
                     .filter(j -> j.dayContainsFreePeriod(rdvSize, heureOuverture, heureFermeture))
                     .collect(Collectors.toList());
         }
+
+        Collections.sort(result);
 
         return result;
     }

@@ -2,7 +2,7 @@
     <el-row>
         <el-col :span="23" :offset="1">
             <div class="proposition greybox">
-                <el-radio class="radio" v-model="radio" label="1">{{proposition.date}}</el-radio>
+                <el-radio class="radio" v-model="date" :label="this.proposition.date" :disabled="disabled">{{proposition.date}}</el-radio>
                 <div class="events">
                     <div :class="'event '+ e.class" :style="'flex-basis:'+e.duration+'%'" v-for="e in allEvents">
                         {{labelFromMinutes(e.duration)}}
@@ -18,23 +18,33 @@
   import moment from 'moment'
 
   class Creneau {
-    constructor () {
-      this.class = ''
-      this.duration = 0
-      this.percentage = 0
+    constructor (clazz, duration) {
+      this.class = clazz
+      this.duration = duration
     }
   }
 
   export default {
     name: 'proposition-date',
     props: {
+      disabled: false,
+      dateSelected: null,
       proposition: {
         type: Object,
         required: true
       }
     },
     data () {
-      return {}
+      return {
+        date: this.dateSelected
+      }
+    },
+    watch: {
+      // à chaque fois que la question change, cette fonction s'exécutera
+      date: function (newDate) {
+        // console.log('Emit proposition date', newDate)
+        this.$emit('change', newDate)
+      }
     },
     methods: {
       labelFromMinutes (minutes) {
@@ -43,60 +53,43 @@
         if (duration.get('hours') > 0) {
           label = duration.get('hours') + 'h'
         }
-
-        label = label + duration.get('minutes') + 'm'
-
+        if (duration.get('minutes') > 0) {
+          label = label + duration.get('minutes')
+        }
         return label
       }
     },
     computed: {
       allEvents () {
-        let getPercentageFromMinutes = function (minutes) {
-          let heureDebut = moment.duration(entreprise.configuration.heureOuverture)
-          let heureFin = moment.duration(entreprise.configuration.heureFermeture)
+        let heureOuverture = moment(entreprise.configuration.heureOuverture).format('HH:mm')
+        let heureFermeture = moment(entreprise.configuration.heureFermeture).format('HH:mm')
 
-          let dureeOuvree = heureDebut.subtract(heureFin)
-          console.log('dureeOuvree', dureeOuvree)
-          return (minutes * 100 / Math.abs(dureeOuvree.asMinutes()))
+        let getDuration = function (start, end) {
+          let dureeEvent = moment.duration(end).asMinutes() - moment.duration(start).asMinutes()
+          return dureeEvent
         }
 
-        let cursorHour = moment(this.proposition.date + ' ' + entreprise.configuration.heureOuverture)
+        let cursorHour = heureOuverture
         let events = []
-        for (let event of this.proposition.events) {
-          let minutesOfDay = cursorHour.hour() * 60 + cursorHour.minutes()
-          let minutesOfEventStart = moment(event.start).hour() * 60 + moment(event.start).minutes()
-          let minutesFromBeginningOfPreviousRdv = minutesOfEventStart - minutesOfDay
 
-          if (minutesFromBeginningOfPreviousRdv > 0) {
-            let creneau = new Creneau()
-            creneau.class = 'vide'
-            creneau.percentage = getPercentageFromMinutes(minutesFromBeginningOfPreviousRdv)
-            creneau.duration = minutesFromBeginningOfPreviousRdv
+        for (let event of this.proposition.events) {
+          let eventStart = moment(event.start).format('HH:mm')
+          let eventEnd = moment(event.end).format('HH:mm')
+
+          if (moment.duration(cursorHour).asMinutes() < moment.duration(eventStart).asMinutes()) {
+            let creneau = new Creneau('vide', getDuration(cursorHour, eventStart))
             events.push(creneau)
           }
 
-          let creneau = new Creneau()
-          creneau.class = event.status
-          let minutesOfEventEnd = moment(event.end).hour() * 60 + moment(event.end).minutes()
-          let dureeCreneau = minutesOfEventEnd - minutesOfEventStart
-          creneau.percentage = getPercentageFromMinutes(dureeCreneau)
-          creneau.duration = dureeCreneau
+          let creneau = new Creneau(event.status, getDuration(eventStart, eventEnd))
           events.push(creneau)
 
-          cursorHour = moment(event.end)
+          cursorHour = eventEnd
         }
 
-        cursorHour = moment(this.proposition.date + ' ' + entreprise.configuration.heureFermeture)
-        let minutesOfDay = cursorHour.hour() * 60 + cursorHour.minutes()
-        let lastEvent = this.proposition.events[this.proposition.events.length - 1]
-        let minutesOfEventEnd = moment(lastEvent.end).hour() * 60 + moment(lastEvent.end).minutes()
-        let minutesFromEndOfPreviousRdv = minutesOfDay - minutesOfEventEnd
-
-        if (minutesFromEndOfPreviousRdv > 0) {
-          let creneau = new Creneau()
-          creneau.class = 'vide'
-          creneau.percentage = getPercentageFromMinutes(minutesFromEndOfPreviousRdv)
-          creneau.duration = minutesFromEndOfPreviousRdv
+        let lastEventEnd = cursorHour
+        if (moment.duration(lastEventEnd).asMinutes() < moment.duration(heureFermeture).asMinutes()) {
+          let creneau = new Creneau('vide', getDuration(lastEventEnd, heureFermeture))
           events.push(creneau)
         }
 
@@ -108,7 +101,6 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
     .proposition {
         margin: 10px 0 0 0;
     }
@@ -123,7 +115,7 @@
         height: 20px;
         padding: 0;
         line-height: 20px;
-        text-align:center;
+        text-align: center;
     }
 
     .events div {
