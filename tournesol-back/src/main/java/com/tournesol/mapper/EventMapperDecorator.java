@@ -46,6 +46,6 @@ public abstract class EventMapperDecorator implements EventMapper {
     }
 
     private EventDateTime dateAndTimeToEventDateTime(LocalDate date, LocalTime time) {
-        return zonedDateTimeToEventDateTime(LocalDateTime.of(date, time));
+        return localDateTimeToEventDateTime(LocalDateTime.of(date, time));
     }
 }

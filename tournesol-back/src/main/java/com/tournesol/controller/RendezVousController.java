@@ -177,10 +177,9 @@ public class RendezVousController {
         /*
             Recherche des évenements dans le calendrier distant (google)
          */
-        final Map<String, Event> eventMap = eventService.getEvents(authInfo, LocalDate.now(), distanceRange).stream()
-                .collect(Collectors.toMap(Event::getICalUID, e -> e));
+        final List<Event> events = eventService.getEvents(authInfo, LocalDate.now(), distanceRange);
 
-        eventMap.values().stream()
+        events.stream()
                 .filter(e -> flyDistanceService.calculateFlyDistance(latitude, longitude, e) <= distanceRange)
                 .forEach(e -> {
                     final LocalDate date = DateMapper.mapDayToLacalDate(e.getStart().getDateTime());

@@ -9,10 +9,13 @@ import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.Events;
 import com.tournesol.bean.AuthInfo;
 import com.tournesol.mapper.DateMapper;
+import com.tournesol.mapper.EventMapper;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -68,8 +71,10 @@ public class EventService {
         } else {
             LOGGER.error("Could not fetch calendars as user is not logged in");
         }
-        return events;
 
+        Collections.sort(events, Comparator.comparing(e -> EventMapper.INSTANCE.eventDateTimeToLocalDateTime(e.getStart())));
+
+        return events;
     }
 
     /**

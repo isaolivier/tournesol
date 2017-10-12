@@ -32,12 +32,12 @@ public interface EventMapper {
 
     Event eventOutBeanToEvent(EventOutputBean eventBean);
 
-    default EventDateTime zonedDateTimeToEventDateTime(LocalDateTime value) {
+    default EventDateTime localDateTimeToEventDateTime(LocalDateTime value) {
         EventDateTime eventDateTime = new EventDateTime().setDateTime(DateMapper.map(value));
         return eventDateTime;
     }
 
-    default LocalDateTime eventDateTimeToZonedDateTime(EventDateTime value) {
+    default LocalDateTime eventDateTimeToLocalDateTime(EventDateTime value) {
         return DateMapper.map(value.getDateTime());
     }
 

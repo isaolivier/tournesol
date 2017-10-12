@@ -241,7 +241,6 @@
       findPropositionsRdv: function () {
         if (this.form.placeId === null) {
           this.propositions = []
-          this.choixDePropositions = 'saisie_libre'
         } else {
           let rdvResource = new RendezVousResource()
           rdvResource.findPropositionRendezVous(entreprise.configuration.searchDays, this.rayon, this.form.placeId, this.client.adresse.id, (err, result) => {
@@ -249,7 +248,6 @@
               this.error = err.toString()
             } else {
               this.propositions = result
-              this.choixDePropositions = 'proposition'
               this.initDateChoice()
             }
           })
