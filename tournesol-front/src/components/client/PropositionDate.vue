@@ -2,7 +2,9 @@
     <el-row>
         <el-col :span="23" :offset="1">
             <div class="proposition greybox">
-                <el-radio class="radio" v-model="date" :label="this.proposition.date" :disabled="disabled">{{proposition.date}}</el-radio>
+                <el-radio class="radio" v-model="date" :label="this.proposition.date" :disabled="disabled">
+                    {{proposition.date | formatDate}}
+                </el-radio>
                 <div class="events">
                     <div :class="'event '+ e.class" :style="'flex-basis:'+e.duration+'%'" v-for="e in allEvents">
                         {{labelFromMinutes(e.duration)}}
@@ -13,7 +15,7 @@
     </el-row>
 </template>
 <script>
-
+  import Constants from '../../bean/Constants'
   import {entreprise} from '../../bean/EntrepriseBean'
   import moment from 'moment'
 
@@ -44,6 +46,14 @@
       date: function (newDate) {
         // console.log('Emit proposition date', newDate)
         this.$emit('change', newDate)
+      }
+    },
+    filters: {
+      formatDate: function (value) {
+        if (!value) {
+          return ''
+        }
+        return moment(value).format(Constants.rdv.fullDateFormat)
       }
     },
     methods: {
@@ -121,7 +131,9 @@
     .events div {
         padding: 0
     }
-
+    .radio {
+        text-transform: capitalize;
+    }
     .event {
         border-left: #D1DBE5 1px solid;
     }
