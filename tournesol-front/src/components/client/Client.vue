@@ -1,5 +1,5 @@
 <template>
-    <div :class="{'client': true,'collapsed':isCollapsed}" >
+    <div :class="{'client greybox': true,'collapsed':isCollapsed}" >
         <span class="client-nom" @click="collapse">
             <span v-if="client.societe">Sté <strong>{{client.societe}}</strong> - </span>{{civilite()}} <strong>{{client.nom}}</strong>
             <span v-if="!client.adresse || !client.adresse.placeId" class="client-warning"><i class="fa fa-exclamation-triangle"></i></span>
@@ -72,9 +72,6 @@
         padding: 10px;
         width: 70%;
         margin: 10px auto;
-        border: solid 1px #D1DBE5;
-        border-radius: 0px;
-        background-color: #EEF1F6;
         align-items: center;
         line-height: 1.5em;
         transition: all 0.15s ease-out;

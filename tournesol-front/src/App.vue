@@ -50,4 +50,9 @@ body{
     font-size: 1.8em;
     color: #CCC
 }
+
+.greybox{
+  border: solid 1px #D1DBE5;
+  background-color: #EEF1F6;
+}
 </style>

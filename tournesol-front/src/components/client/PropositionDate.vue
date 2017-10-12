@@ -1,13 +1,16 @@
 <template>
-    <div >
-        <!--
-        {"date":"2017-10-02","events":[{"id":"6aejdi6h2kir0npmekrflo6p2k","summary":"Mme BIDEGARAY Nicole","description":null,"location":"Avenue Aristide Briand, 33600 Pessac","status":"confirmed","start":"2017-10-02T08:30:00+02:00","end":"2017-10-02T10:00:00+02:00","colorId":null}]}
-        //-->
-        <el-radio class="radio" v-model="radio" label="1">{{proposition.date}}</el-radio>
-        <div class="events">
-            <div :class="e.class" :style="'flex-basis:'+e.duration+'%'" v-for="e in allEvents">{{e.label}}</div>
-        </div>
-    </div>
+    <el-row>
+        <el-col :span="23" :offset="1">
+            <div class="proposition greybox">
+                <el-radio class="radio" v-model="radio" label="1">{{proposition.date}}</el-radio>
+                <div class="events">
+                    <div :class="'event '+ e.class" :style="'flex-basis:'+e.duration+'%'" v-for="e in allEvents">
+                        {{labelFromMinutes(e.duration)}}
+                    </div>
+                </div>
+            </div>
+        </el-col>
+    </el-row>
 </template>
 <script>
 
@@ -18,7 +21,7 @@
     constructor () {
       this.class = ''
       this.duration = 0
-      this.label = ''
+      this.percentage = 0
     }
   }
 
@@ -32,6 +35,19 @@
     },
     data () {
       return {}
+    },
+    methods: {
+      labelFromMinutes (minutes) {
+        let duration = moment.duration(minutes, 'minutes')
+        let label = ''
+        if (duration.get('hours') > 0) {
+          label = duration.get('hours') + 'h'
+        }
+
+        label = label + duration.get('minutes') + 'm'
+
+        return label
+      }
     },
     computed: {
       allEvents () {
@@ -54,8 +70,8 @@
           if (minutesFromBeginningOfPreviousRdv > 0) {
             let creneau = new Creneau()
             creneau.class = 'vide'
-            creneau.duration = getPercentageFromMinutes(minutesFromBeginningOfPreviousRdv)
-            creneau.label = minutesFromBeginningOfPreviousRdv
+            creneau.percentage = getPercentageFromMinutes(minutesFromBeginningOfPreviousRdv)
+            creneau.duration = minutesFromBeginningOfPreviousRdv
             events.push(creneau)
           }
 
@@ -63,8 +79,8 @@
           creneau.class = event.status
           let minutesOfEventEnd = moment(event.end).hour() * 60 + moment(event.end).minutes()
           let dureeCreneau = minutesOfEventEnd - minutesOfEventStart
-          creneau.duration = getPercentageFromMinutes(dureeCreneau)
-          creneau.label = dureeCreneau
+          creneau.percentage = getPercentageFromMinutes(dureeCreneau)
+          creneau.duration = dureeCreneau
           events.push(creneau)
 
           cursorHour = moment(event.end)
@@ -79,8 +95,8 @@
         if (minutesFromEndOfPreviousRdv > 0) {
           let creneau = new Creneau()
           creneau.class = 'vide'
-          creneau.duration = getPercentageFromMinutes(minutesFromEndOfPreviousRdv)
-          creneau.label = minutesFromEndOfPreviousRdv
+          creneau.percentage = getPercentageFromMinutes(minutesFromEndOfPreviousRdv)
+          creneau.duration = minutesFromEndOfPreviousRdv
           events.push(creneau)
         }
 
@@ -92,22 +108,37 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.events {
-    display:flex;
-    flex-direction: row;
-    height: 20px;
-    padding: 0
-}
 
-.events div {
-    padding: 0
-}
+    .proposition {
+        margin: 10px 0 0 0;
+    }
 
-.confirmed {
-    background-color: rgb(167, 0, 0);
-}
+    .proposition :first-child {
+        padding-left: 5px;
+    }
 
-.vide {
-    background-color: lightgray;
-}
+    .events {
+        display: flex;
+        flex-direction: row;
+        height: 20px;
+        padding: 0;
+        line-height: 20px;
+        text-align:center;
+    }
+
+    .events div {
+        padding: 0
+    }
+
+    .event {
+        border-left: #D1DBE5 1px solid;
+    }
+
+    .confirmed {
+        background-color: rgba(242, 100, 7, 0.57);
+    }
+
+    .vide {
+        background-color: rgba(19, 206, 102, 0.74);
+    }
 </style>
