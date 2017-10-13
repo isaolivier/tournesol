@@ -198,7 +198,7 @@
         this.dialogFormVisible = true
       },
       updatePlaceId (selected) {
-        console.log('PlaceId selected ' + selected.place)
+        // console.log('PlaceId selected ' + selected.place)
         this.form.placeId = selected.place
       },
       createClient () {
@@ -209,6 +209,7 @@
               if (err) {
                 this.error = err.toString()
               } else {
+                this.$emit('change', {'operation': 'create', 'client': this.form})
                 this.dialogFormVisible = false
               }
             })
@@ -225,6 +226,7 @@
               if (err) {
                 this.error = err.toString()
               } else {
+                this.$emit('change', {'operation': 'update', 'client': this.form})
                 this.dialogFormVisible = false
               }
             })
@@ -239,6 +241,7 @@
           if (err) {
             this.error = err.toString()
           } else {
+            this.$emit('change', {'operation': 'delete', 'client': this.form})
             this.dialogFormVisible = false
           }
         })

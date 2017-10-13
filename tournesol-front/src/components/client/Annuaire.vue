@@ -12,7 +12,7 @@
 
         <template v-for="(client, index) in filteredClients">
             <template v-if="client.id">
-                <client :rang="index" :client="client" :key="client.id"></client>
+                <client :rang="index" :client="client" :key="client.id" @create="updateClients" @update="updateClients" @delete="updateClients"></client>
             </template>
             <template v-else>
                 <letter :letter="client" :separator="true"/>
@@ -35,7 +35,6 @@
       return {
         recherche: null,
         clients: [],
-        elements: [],
         loading: false,
         error: null,
         currentLetter: null
@@ -67,8 +66,23 @@
               (client.portable && client.portable.toUpperCase().includes(search)))
           })
         } else {
-          return this.elements
+          return this.visualItems
         }
+      },
+      // Construction des éléments visuels : clients + spéarateurs lettres
+      visualItems: function () {
+        let result = []
+        let letters = this.letters
+        let curIndexLetter = 0
+        for (let client of this.clients) {
+          let clientLetter = client.societe ? client.societe.charAt(0) : (client.nom ? client.nom.charAt(0) : '?')
+          if (letters[curIndexLetter] === clientLetter) {
+            result.push(clientLetter)
+            curIndexLetter++
+          }
+          result.push(client)
+        }
+        return result
       }
     },
     components: {
@@ -78,6 +92,9 @@
       'letter': Letter
     },
     methods: {
+      updateClients (value) {
+        this.fetchData()
+      },
       fetchData () {
         this.error = null
         this.loading = true
@@ -88,16 +105,6 @@
             this.error = err.toString()
           } else {
             this.clients = result
-            let letters = this.letters
-            let curIndexLetter = 0
-            for (let client of this.clients) {
-              let clientLetter = client.societe ? client.societe.charAt(0) : (client.nom ? client.nom.charAt(0) : '?')
-              if (letters[curIndexLetter] === clientLetter) {
-                this.elements.push(clientLetter)
-                curIndexLetter++
-              }
-              this.elements.push(client)
-            }
           }
         })
       }

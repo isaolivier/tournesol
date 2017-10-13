@@ -15,7 +15,7 @@
         <span v-if="client.email" class="mail"><span class="clickable"><i class="fa fa-envelope-o"></i> {{client.email}}</span></span>
         <el-rate class="note" v-model="client.note" disabled disabled-void-color="#CCCCCC"></el-rate>
         <rdv-form class="ajouter-rdv" :client="client"></rdv-form>
-        <client-form :client="client"></client-form>
+        <client-form :client="client" @change="emitClientEvent"></client-form>
     </div>
 </template>
 
@@ -53,6 +53,9 @@
           return 'Mr & Mme'
         }
         return this.client.civilite
+      },
+      emitClientEvent (value) {
+        this.$emit(value.operation)
       }
     }
   }

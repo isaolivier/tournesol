@@ -245,7 +245,7 @@
       },
 
       updateDate (date) {
-        console.log('Receiving date', date)
+        // console.log('Receiving date', date)
         this.form.event.date = date
       },
 
