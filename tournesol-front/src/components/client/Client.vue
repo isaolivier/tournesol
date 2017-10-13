@@ -20,8 +20,8 @@
 </template>
 
 <script>
-  import ClientForm from './ClientForm.vue'
-  import RendezVousForm from './RendezVousForm.vue'
+  import ClientForm from './form/ClientForm.vue'
+  import RendezVousForm from './form/RendezVousForm.vue'
 
   export default {
     name: 'annuaire',

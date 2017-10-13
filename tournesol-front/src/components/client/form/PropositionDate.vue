@@ -15,8 +15,8 @@
     </el-row>
 </template>
 <script>
-  import Constants from '../../bean/Constants'
-  import {entreprise} from '../../bean/EntrepriseBean'
+  import Constants from '../../../bean/Constants'
+  import {entreprise} from '../../../bean/EntrepriseBean'
   import moment from 'moment'
 
   class Creneau {

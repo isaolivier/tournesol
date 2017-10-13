@@ -141,11 +141,11 @@
 </template>
 
 <script>
-  import Constants from '../../bean/Constants'
-  import {entreprise} from '../../bean/EntrepriseBean'
+  import Constants from '../../../bean/Constants'
+  import {entreprise} from '../../../bean/EntrepriseBean'
   import moment from 'moment'
-  import AdresseAutoComplete from '../AdresseAutoComplete.vue'
-  import {RendezVousResource} from '../../resource/RendezVousResource'
+  import AdresseAutoComplete from './AdresseAutoComplete.vue'
+  import {RendezVousResource} from '../../../resource/RendezVousResource'
   import PropositionDate from './PropositionDate.vue'
 
   export default {

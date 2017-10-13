@@ -25,9 +25,9 @@
 <script>
   import {ClientResource} from '../../resource/ClientResource'
   import Client from './Client.vue'
-  import Letters from './Letters.vue'
-  import Letter from './Letter.vue'
-  import ClientForm from './ClientForm.vue'
+  import Letters from './letters/Letters.vue'
+  import Letter from './letters/Letter.vue'
+  import ClientForm from './form/ClientForm.vue'
 
   export default {
     name: 'annuaire',

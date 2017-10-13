@@ -8,7 +8,7 @@
 </template>
 
 <script>
-  import {PlaceBean} from '../bean/PlaceBean'
+  import {PlaceBean} from '../../../bean/PlaceBean'
 
   export default {
     name: 'adresse-autocomplete',

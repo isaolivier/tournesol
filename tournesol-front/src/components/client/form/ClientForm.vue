@@ -115,8 +115,8 @@
 </template>
 
 <script>
-  import {ClientResource} from '../../resource/ClientResource'
-  import AdresseAutoComplete from '../AdresseAutoComplete.vue'
+  import {ClientResource} from '../../../resource/ClientResource'
+  import AdresseAutoComplete from './AdresseAutoComplete.vue'
 
   export default {
     name: 'clientForm',
