@@ -3,9 +3,14 @@ package com.tournesol.service.entity;
 import java.sql.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
+import static javax.persistence.GenerationType.SEQUENCE;
 
 /**
  * Created by iolivier on 10/04/2017.
@@ -15,6 +20,12 @@ import javax.persistence.Table;
 public class AppareilEntity extends BaseEntity {
 	
 	private static final long serialVersionUID = 2138505980112741865L;
+
+    @Id
+    @SequenceGenerator(name="my_seq", sequenceName="appareil_sequence", allocationSize = 1, initialValue = 10000)
+    @GeneratedValue(strategy = SEQUENCE, generator = "my_seq")
+    @Column(name = "id", nullable = false, unique = true)
+    private Long id;
 
     @Column(name = "client_id", insertable = false, updatable = false)
     private String clientId;
@@ -57,6 +68,14 @@ public class AppareilEntity extends BaseEntity {
 
     @ManyToOne(targetEntity = ClientEntity.class)
     private ClientEntity client;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public AdresseEntity getAdresse() {
         return adresse;

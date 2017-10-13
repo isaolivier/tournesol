@@ -52,7 +52,7 @@ public class ClientController {
 
         return StreamSupport.stream(clientEntities.spliterator(), false)
                 .map(c -> ClientMapper.INSTANCE.clientEntityToClientOutpuBean(c))
-                .sorted(Comparator.comparing(c -> c.getSociete() == null ? (c.getNom() == null ? "" : c.getNom()) : c.getSociete()))
+                .sorted(Comparator.comparing(c -> StringUtils.isEmpty(c.getSociete()) ? (c.getNom() == null ? "" : c.getNom()) : c.getSociete()))
                 .collect(Collectors.toList());
     }
 

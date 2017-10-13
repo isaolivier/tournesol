@@ -3,7 +3,12 @@ package com.tournesol.service.entity;
 import java.time.LocalTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
+import static javax.persistence.GenerationType.SEQUENCE;
 
 /**
  * Created by iolivier on 10/04/2017.
@@ -13,6 +18,12 @@ import javax.persistence.Table;
 public class EntrepriseEntity extends BaseEntity {
 	
 	private static final long serialVersionUID = 4988724258162598786L;
+
+    @Id
+    @SequenceGenerator(name="my_seq", sequenceName="entreprise_sequence", allocationSize = 1, initialValue = 10000)
+    @GeneratedValue(strategy = SEQUENCE, generator = "my_seq")
+    @Column(name = "id", nullable = false, unique = true)
+    private Long id;
 
     @Column(name = "nom")
     private String nom;
@@ -62,6 +73,14 @@ public class EntrepriseEntity extends BaseEntity {
      */
     @Column(name = "search_distance")
     private int searchDistance;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public LocalTime getHeureOuverture() {
         return heureOuverture;
