@@ -2,26 +2,24 @@
     <div>
         <dates @dayChanged="fetchData"></dates>
 
-        <svg id="agenda" :height="nbHeures * hourInterval + 20">
+        <div id="agenda" :style="'height:'+(nbHeures * hourInterval + 100)+'px'">
 
             <!-- Heures -->
-            <text v-for="h in (nbHeures + 1)" x="0" :y="(h - 1) * hourInterval + 15">
+            <div  class="hour" v-for="h in (nbHeures + 1)" :style="'top:'+((h - 1) * hourInterval + 50)+'px'">
                 {{parseInt(h) + parseInt(heureOuverture) - 1}}:00
-            </text>
+            </div>
 
-            <line v-for="h in (nbHeures + 1)" x1="50" x2="100%"
-                  :y1="(h - 1) * hourInterval + 10"
-                  :y2="(h - 1) * hourInterval + 10"
-                  style="stroke:rgb(0,0,0);stroke-width:1"/>
+            <hr v-for="h in (nbHeures + 1)"
+                  :style="'top:'+((h - 1) * hourInterval + 10)+'px'"
+                  />
 
-            <line v-for="h in (nbHeures + 1)" x1="50" x2="100%"
-                  :y1="(h - 1) * hourInterval + 10 + (hourInterval/2)"
-                  :y2="(h - 1) * hourInterval + 10 + (hourInterval/2)"
-                  style="stroke:rgb(180,180,180);stroke-width:0.5"/>
+            <hr v-for="h in (nbHeures + 1)" x1="50" x2="100%"
+                :style="'top:'+((h - 1) * hourInterval + 10 + (hourInterval/2))+'px'"
+                  />
 
             <!-- Rendez-vous -->
-            <rdv v-if="distances" v-for="(rdv, key, index) in rendezvous" :rdv="rdv" :distance="getDistance(key)" :key="key"/>
-        </svg>
+        </div>
+        <rdv v-if="distances" v-for="(rdv, key, index) in rendezvous" :rdv="rdv" :distance="getDistance(key)" :key="key"/>
     </div>
 </template>
 
@@ -95,8 +93,17 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+    hr, .hour {
+        position: absolute
+    }
+    hr {
+        left: 50px;
+        width:100%;
+    }
+
     #agenda {
         width: 100%;
-        overflow-y: scroll;
+        overflow-y: hidden;
+        position: relative;
     }
 </style>

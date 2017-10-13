@@ -1,27 +1,28 @@
 <template>
-    <svg>
-        <rect x="90" :y="yDebut" width="80%" :height="height" style="fill:#EEF1F6;stroke:#D1DBE5;stroke-width:1"/>
-        <text x="100" :y="yDebut + 25" v-if="rdv.client">{{rdv.client.civilite}} {{rdv.client.nom}}</text>
-        <text x="100" :y="yDebut + 50">{{rdv.event.description}}</text>
+    <div class="greybox rdv" :style="'top:'+yDebut+'px;height:'+height+'px;'">
+        {{rdv.event.start}}
+        {{rdv.event.end}}
+        <div v-if="rdv.client">{{rdv.client.civilite}} {{rdv.client.nom}}</div>
+        <div v-if="rdv.client">{{rdv.event.description}}</div>
 
         <a v-if="rdv.client && rdv.client.telephone" :href="'tel:' + rdv.client.telephone">
-            <icon name="phone" scale="1.7" x="450px" :y="yDebut + 5"/>
+            <i class="fa fa-phone"></i>
         </a>
 
         <a v-if="rdv.client && rdv.client.portable" :href="'tel:' + rdv.client.portable">
-            <icon name="phone" scale="1.7" x="500px" :y="yDebut + 5"/>
+            <i class="fa fa-phone"></i>
         </a>
 
         <a v-if="rdv.event.location" :href="'waze://?q=' + rdv.event.location" style="display: inline-block">
-            <icon name="waze" scale="1.7" x="550px" :y="yDebut + 5"/>
+            waze
         </a>
 
-        <text x="100" :y="yDebut + 75">{{rdv.event.location}}</text>
+        <span>{{rdv.event.location}}</span>
 
-        <text v-if="distance" x="100" :y="yDebut + 100">
+        <span v-if="distance">
             {{distance.distance}} {{distance.duration}}
-        </text>
-    </svg>
+        </span>
+    </div>
 </template>
 
 <script>
@@ -55,3 +56,12 @@
     }
   }
 </script>
+
+<style scoped>
+.rdv {
+    position: absolute;
+    left: 50px;
+    right: 10px;
+}
+
+</style>
