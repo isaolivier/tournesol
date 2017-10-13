@@ -48,14 +48,19 @@
     },
     computed: {
       heureOuverture: function () {
-        return moment.duration(entreprise.configuration.heureOuverture).hours()
+        let heureOuverture = moment(entreprise.configuration.heureOuverture).format('HH:mm')
+        return moment.duration(heureOuverture).asHours()
       },
       heureFermeture: function () {
-        return moment.duration(entreprise.configuration.heureFermeture).hours()
+        let heureFermeture = moment(entreprise.configuration.heureFermeture).format('HH:mm')
+        return moment.duration(heureFermeture).asHours()
       },
       nbHeures: function () {
-        // console.log(heureFermeture - heureOuverture)
-        return moment.duration(entreprise.configuration.heureFermeture.diff(entreprise.configuration.heureOuverture)).hours()
+        let heureOuverture = moment(entreprise.configuration.heureOuverture).format('HH:mm')
+        let heureFermeture = moment(entreprise.configuration.heureFermeture).format('HH:mm')
+        let result = Math.round((moment.duration(heureFermeture).asMinutes() - moment.duration(heureOuverture).asMinutes()) / 60)
+        // console.log('nb heures', result)
+        return result
       }
     },
     components: {

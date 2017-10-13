@@ -34,7 +34,7 @@ class EntrepriseBean {
           self.configuration.searchDistance = conf.searchDistance
           self.configuration.searchDays = conf.searchDays
           self.configuration.tempsRdv = conf.tempsRdv
-          self.configuration.timeStep = moment.duration(conf.timeStep, 'minutes').format('HH:mm')
+          self.configuration.timeStep = moment.utc(conf.timeStep * 60 * 1000).format('HH:mm')
         } else {
           console.log('Entreprise not loaded')
         }
