@@ -19,13 +19,15 @@
 
             <!-- Rendez-vous -->
         </div>
-        <rdv v-if="distances" v-for="(rdv, key, index) in rendezvous" :rdv="rdv" :distance="getDistance(key)" :key="key"/>
+        <rdv v-for="(rdv, key, index) in rendezvous" :rdv="rdv" :key="rdv.event.id"/>
+        <estimation v-if="distances" v-for="(distance, key, index) in distances" :estimation="distance" :rdvs="rendezvous" :key="distance.sourceEventId"/>
     </div>
 </template>
 
 <script>
   import {entreprise} from '../../bean/EntrepriseBean'
   import RendezVous from './RendezVous.vue'
+  import Estimation from './Estimation.vue'
   import DateStrip from './DateStrip.vue'
   import Constants from '../../bean/Constants'
   import moment from 'moment'
@@ -65,7 +67,8 @@
     },
     components: {
       'rdv': RendezVous,
-      'dates': DateStrip
+      'dates': DateStrip,
+      'estimation': Estimation
     },
     methods: {
       fetchData: function (date) {
@@ -87,10 +90,6 @@
             this.distances = result
           }
         }, date.format(Constants.rdv.dateFormat))
-      },
-
-      getDistance (index) {
-        return this.distances[index]
       }
     }
   }

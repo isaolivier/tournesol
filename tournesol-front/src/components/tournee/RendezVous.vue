@@ -18,10 +18,6 @@
         </a>
 
         <span>{{rdv.event.location}}</span>
-
-        <span v-if="distance">
-            {{distance.distance}} {{distance.duration}}
-        </span>
     </div>
 </template>
 
@@ -34,10 +30,6 @@
       rdv: {
         type: Object,
         required: true
-      },
-      distance: {
-        type: Object,
-        required: false
       }
     },
     data () {
