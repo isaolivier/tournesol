@@ -33,4 +33,19 @@ public class DistanceRendezVousBean {
         this.duration = duration;
     }
 
+    public String getSourceEventId() {
+        return sourceEventId;
+    }
+
+    public void setSourceEventId(String sourceEventId) {
+        this.sourceEventId = sourceEventId;
+    }
+
+    public String getTargetEventId() {
+        return targetEventId;
+    }
+
+    public void setTargetEventId(String targetEventId) {
+        this.targetEventId = targetEventId;
+    }
 }
