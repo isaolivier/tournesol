@@ -6,7 +6,7 @@
                 </span>
         </div>
         <div v-else @click="showDialog">
-                <span class="fa-stack fa-3x add-button">
+                <span class="fa-stack fa-2x add-button">
                   <i class="fa fa-circle fa-stack-2x"></i>
                   <i class="fa fa-plus fa-stack-1x fa-inverse"></i>
                 </span>
@@ -272,7 +272,7 @@
 
     .add-button {
         position: fixed;
-        right: 50px;
+        right: 80px;
         bottom: 40px;
     }
 

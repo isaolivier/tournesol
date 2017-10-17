@@ -6,7 +6,6 @@
         </span>
         <hr v-if="separator"/>
     </a>
-
 </template>
 
 <script>
@@ -40,7 +39,7 @@
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
     .letter {
-        margin: 0 0 0 1em;
+        margin: 0 0 0 0;
     }
 
     hr {
