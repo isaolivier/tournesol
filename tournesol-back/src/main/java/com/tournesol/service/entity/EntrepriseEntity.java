@@ -1,6 +1,9 @@
 package com.tournesol.service.entity;
 
+import java.time.DayOfWeek;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -100,6 +103,20 @@ public class EntrepriseEntity extends BaseEntity {
 
     public byte getJoursOuverture() {
         return joursOuverture;
+    }
+
+    public List<DayOfWeek> getListJoursOuverture (){
+        final List<DayOfWeek> days = new ArrayList<>();
+        int daysMask = getJoursOuverture();
+
+        for (int i = 0; i <7; i++){
+            int value = daysMask & 0x01;
+            daysMask = daysMask >> 1;
+            if (value == 1) {
+                days.add(DayOfWeek.of(7 - i));
+            }
+        }
+        return days;
     }
 
     public void setJoursOuverture(byte joursOuverture) {

@@ -6,16 +6,16 @@ package com.tournesol.mapper;
 
 
 import com.tournesol.bean.EntrepriseBean;
-import com.tournesol.bean.EntrepriseConfigurationBean;
 import com.tournesol.service.entity.EntrepriseEntity;
 
+import org.mapstruct.DecoratedWith;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
 import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
 
 @Mapper
+@DecoratedWith(EntrepriseMapperDecorator.class)
 public interface EntrepriseMapper {
 
     EntrepriseMapper INSTANCE = Mappers.getMapper( EntrepriseMapper.class );
@@ -32,8 +32,5 @@ public interface EntrepriseMapper {
 
     EntrepriseEntity map(EntrepriseBean entrepriseBean);
 
-    void updateEntrerpiseEntityFromBean(EntrepriseConfigurationBean entrepriseConfigurationBean, @MappingTarget EntrepriseEntity entity);
-
-    EntrepriseEntity map(EntrepriseConfigurationBean entrepriseBean);
 }
 

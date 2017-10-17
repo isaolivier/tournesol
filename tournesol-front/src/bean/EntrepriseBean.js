@@ -29,6 +29,7 @@ class EntrepriseBean {
           self.nom = response.data.nom
           self.siret = response.data.siret
           let conf = response.data.configuration
+          self.configuration.joursOuverture = conf.joursOuverture
           self.configuration.heureOuverture = moment(conf.heureOuverture, 'HH:mm')
           self.configuration.heureFermeture = moment(conf.heureFermeture, 'HH:mm')
           self.configuration.searchDistance = conf.searchDistance

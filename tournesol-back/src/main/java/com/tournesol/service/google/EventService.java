@@ -43,9 +43,9 @@ public class EventService {
     }
 
     /**
-     * Recherche des évènements correspondant à partir du jour spécifié, et sur une plage de jours donnée.
+     * Recherche des évènements du calendrier entre les dates @startDate et @endDate.
      */
-    public List<Event> getEvents(AuthInfo authInfo, LocalDate day, int dayRange) {
+    public List<Event> getEvents(AuthInfo authInfo, LocalDate startDate, LocalDate endDate) {
 
         final List<Event> events = new ArrayList<>();
 
@@ -55,8 +55,8 @@ public class EventService {
             Calendar calendar = new Calendar.Builder(new NetHttpTransport(), JacksonFactory.getDefaultInstance(), creds).setApplicationName("TOURNESOL")
                     .build();
             try {
-                final DateTime timeMin = DateMapper.map(day);
-                final DateTime timeMax = DateMapper.map(day.plusDays(dayRange));
+                final DateTime timeMin = DateMapper.map(startDate);
+                final DateTime timeMax = DateMapper.map(endDate);
 
                 final Events googleEvents = calendar.events().list("primary")
                         .setTimeMin(timeMin)
@@ -75,6 +75,14 @@ public class EventService {
         Collections.sort(events, Comparator.comparing(e -> EventMapper.INSTANCE.eventDateTimeToLocalDateTime(e.getStart())));
 
         return events;
+    }
+
+    /**
+     * Recherche des évènements du calendrier à partir du jour spécifié, et sur une plage de jours donnée.
+     */
+    public List<Event> getEvents(AuthInfo authInfo, LocalDate day, int dayRange) {
+
+        return getEvents(authInfo, day, day.plusDays(dayRange));
     }
 
     /**

@@ -18,7 +18,7 @@ public class EntrepriseConfigurationBean {
      * Indexes des jours d'ouverture de l'entrerpise.
      * 0, 1, 2, 3, 4 pour lundi, mardi, mercredi jeudi, vendredi.
      */
-    private byte joursOuverture;
+    private Integer[] joursOuverture;
 
     /**
      * Steps utilisés pour l'affichage des heures dans le form de prise de rdv.
@@ -56,11 +56,11 @@ public class EntrepriseConfigurationBean {
         this.heureFermeture = heureFermeture;
     }
 
-    public byte getJoursOuverture() {
+    public Integer[] getJoursOuverture() {
         return joursOuverture;
     }
 
-    public void setJoursOuverture(byte joursOuverture) {
+    public void setJoursOuverture(Integer[] joursOuverture) {
         this.joursOuverture = joursOuverture;
     }
 

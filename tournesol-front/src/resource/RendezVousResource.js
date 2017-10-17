@@ -54,6 +54,23 @@ export class RendezVousResource {
       })
   }
 
+  // Recherche des dates disponibles pour le mois sélectionné
+  findFreeDays (month, year, result) {
+    let startDate = moment([year, month]).format(Constants.rdv.dateFormat)
+    let endDate = moment(startDate).endOf('month').format(Constants.rdv.dateFormat)
+    return Vue.http.get(Constants.back.hostname + '/rdv/free?startDate=' + startDate + '&endDate=' + endDate,
+      {
+        headers: {
+          'uid': authService.getAuthInfo().uid,
+          'email': authService.getAuthInfo().email
+        }
+      }).then(response => {
+        result(null, response.data)
+      }, response => {
+        result(response, null)
+      })
+  }
+
   createRendezVous (rdvForm, client, result) {
     let rdv = this.map(rdvForm, client)
 

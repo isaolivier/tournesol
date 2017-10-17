@@ -23,6 +23,7 @@ import com.tournesol.service.google.EventService;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -30,6 +31,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -178,7 +180,7 @@ public class RendezVousController {
         /*
             Recherche des évenements dans le calendrier distant (google)
          */
-        final List<Event> events = eventService.getEvents(authInfo, LocalDate.now(), distanceRange);
+        final List<Event> events = eventService.getEvents(authInfo, LocalDate.now(), dayRange);
 
         events.stream()
                 .filter(e -> flyDistanceService.calculateFlyDistance(latitude, longitude, e) <= distanceRange)
@@ -208,6 +210,35 @@ public class RendezVousController {
         Collections.sort(result);
 
         return result;
+    }
+
+    /**
+     * Retourne la liste des dates de jours ouverts, ne contenant aucun evenement.
+     */
+    @GetMapping("/rdv/free")
+    public Collection<LocalDate> search(@RequestHeader(value = "uid", required = true) String uid,
+                                       @RequestHeader(value = "email", required = true) String email,
+                                       @RequestParam(value = "startDate", required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                                       @RequestParam(value = "endDate", required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) throws Exception {
+
+        AuthInfo authInfo = new AuthInfo(null, email, uid);
+
+        /*
+            Recherche des évenements dans le calendrier distant (google)
+         */
+        final Set<LocalDate> bookedDates = eventService.getEvents(authInfo, startDate, endDate).stream()
+                .map(e -> EventMapper.INSTANCE.eventDateTimeToLocalDateTime(e.getStart()).toLocalDate())
+                .collect(Collectors.toSet());
+
+        /*
+            Filtrage sur l'ensemble des dates entre startDate et endDate
+         */
+        return IntStream.range(0, (int) ChronoUnit.DAYS.between(startDate, endDate))
+                .mapToObj(startDate::plusDays)
+                .filter(d -> entrepriseConfiguration.getJoursOuverture().contains(d.getDayOfWeek()))
+                .filter(d -> !bookedDates.contains(d))
+                .collect(Collectors.toList());
+
     }
 
     @PostMapping("/rdv")

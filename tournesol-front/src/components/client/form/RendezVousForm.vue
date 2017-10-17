@@ -78,11 +78,7 @@
                     <el-radio class="radio" v-model="choixDePropositions" label="saisie_libre">Choisir une date
                     </el-radio>
                     <el-col :offset="1" :span="23">
-                        <el-date-picker :disabled="this.choixDePropositions === 'proposition'" v-model="form.event.date"
-                                        type="date" placeholder="Date"
-                                        format="dddd dd MMMM yyyy"
-                                        :picker-options="{ disabledDate: disabledDate }"
-                                        style="width: 100%;"></el-date-picker>
+                        <date-picker :date="form.event.date" :disabled="this.choixDePropositions === 'proposition'" @change="updateDate"></date-picker>
                     </el-col>
                 </el-form-item>
             </el-form>
@@ -147,15 +143,16 @@
   import AdresseAutoComplete from './AdresseAutoComplete.vue'
   import {RendezVousResource} from '../../../resource/RendezVousResource'
   import PropositionDate from './PropositionDate.vue'
+  import DatePicker from './DatePicker.vue'
 
   export default {
     name: 'rdvForm',
     components: {
       'adresse-autocomplete': AdresseAutoComplete,
-      'proposition-date': PropositionDate
+      'proposition-date': PropositionDate,
+      'date-picker': DatePicker
     },
     props: {
-      formLabelWidth: '120px',
       client: {
         type: Object,
         required: true
@@ -199,9 +196,6 @@
       }
     },
     computed: {
-      now: function () {
-        return moment().startOf('day')
-      },
       heureOuverture: function () {
         return moment(entreprise.configuration.heureOuverture).format('HH:mm')
       },
@@ -216,10 +210,6 @@
       }
     },
     methods: {
-      // Calcul des dates désactivées lors du choix des dates
-      disabledDate (date) {
-        return this.now > moment(date)
-      },
       // Ajout du temps de rdv par défaut lors du choix de l'heure de début
       updateEndTime () {
         if (this.form.event.startTime) {

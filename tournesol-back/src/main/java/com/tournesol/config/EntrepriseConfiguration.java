@@ -5,7 +5,6 @@ import com.tournesol.service.repository.EntrepriseRepository;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,15 +58,6 @@ public class EntrepriseConfiguration {
     }
 
     public List<DayOfWeek> getJoursOuverture (){
-        final List<DayOfWeek> days = new ArrayList<>();
-        final byte daysMask = getConfiguration().getJoursOuverture();
-
-        for (int i = 0; i <7; i++){
-            final int dayValue = daysMask >> i;
-            if (dayValue == 1) {
-                days.add(DayOfWeek.of(7 - i));
-            }
-        }
-        return days;
+        return getConfiguration().getListJoursOuverture();
     }
 }
