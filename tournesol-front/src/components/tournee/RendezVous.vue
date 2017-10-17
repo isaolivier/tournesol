@@ -53,7 +53,7 @@
 .rdv {
     position: absolute;
     left: 50px;
-    right: 10px;
+    right: 10vw;
 }
 
 </style>

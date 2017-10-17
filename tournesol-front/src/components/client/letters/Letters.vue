@@ -1,7 +1,7 @@
 <template>
     <div class="letters">
         <ul>
-            <li v-for="(letter, index) in letters" x="98%" :y="index * 20 + 30">
+            <li v-for="(letter, index) in letters">
                 <letter :separator="false" :letter="letter"/>
             </li>
         </ul>
@@ -41,7 +41,7 @@
         top: 150px;
         border: none;
         height: 100%;
-        overflow-y: hidden;
+        overflow-y: visible;
     }
 
     .letters ul {
