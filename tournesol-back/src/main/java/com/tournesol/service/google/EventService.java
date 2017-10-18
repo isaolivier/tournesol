@@ -35,14 +35,6 @@ public class EventService {
     private static final Logger LOGGER = LoggerFactory.getLogger(EventService.class);
 
     /**
-     * Recherche des évènements correspondant au jour spécifié.
-     */
-    public List<Event> getEvents(AuthInfo authInfo, LocalDate day) {
-
-        return getEvents(authInfo, day, 1);
-    }
-
-    /**
      * Recherche des évènements du calendrier entre les dates @startDate et @endDate.
      */
     public List<Event> getEvents(AuthInfo authInfo, LocalDate startDate, LocalDate endDate) {

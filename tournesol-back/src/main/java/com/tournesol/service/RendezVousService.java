@@ -59,9 +59,18 @@ public class RendezVousService {
         }
     }
 
-    public Map<String, List<RendezVousEntity>> findRendezVousGroupByEvent(Collection<String> eventIds) {
+    public Map<String, List<RendezVousEntity>> findRendezVousGroupByEvent(Collection<String> eventIds, boolean fullRdv) {
 
-        return rdvRepository.findRendezVousEntities(eventIds).stream()
+        List<RendezVousEntity> rendezVousEntities;
+
+        if (fullRdv) {
+            rendezVousEntities = rdvRepository.findRendezVousEntities(eventIds);
+        } else {
+            rendezVousEntities = rdvRepository.findNakedRendezVousEntities(eventIds);
+        }
+
+        return rendezVousEntities.stream()
                 .collect(Collectors.groupingBy(RendezVousEntity::getEventId, Collectors.toList()));
     }
+
 }

@@ -10,8 +10,23 @@ Vue.use(VueResource)
 export class RendezVousResource {
 
   // Recherche des rendez-vous pour une date précise
-  findRendezVous (result, dateStr) {
-    return Vue.http.get(Constants.back.hostname + '/rdvs?date=' + dateStr,
+  findRendezVous (result, date) {
+    return Vue.http.get(Constants.back.hostname + '/rdvs?date=' + date,
+      {
+        headers: {
+          'uid': authService.getAuthInfo().uid,
+          'email': authService.getAuthInfo().email
+        }
+      }).then(response => {
+        result(null, response.data)
+      }, response => {
+        result(response, null)
+      })
+  }
+
+  // Recherche des rendez-vous pour une date précise
+  findClientRendezVous (dayRange, result) {
+    return Vue.http.get(Constants.back.hostname + '/rdvs?dayRange=' + dayRange + '&clientRequired=true',
       {
         headers: {
           'uid': authService.getAuthInfo().uid,

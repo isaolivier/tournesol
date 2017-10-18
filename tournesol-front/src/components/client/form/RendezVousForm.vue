@@ -1,7 +1,11 @@
 <template>
     <div>
-        <span @click="showDialog" class="fa-stack fa-lg">
-          <i class="fa fa-circle fa-stack-2x"></i>
+        <span v-if="rdv" @click="showDialog" class="fa-stack fa-lg">
+          <i class="fa fa-circle fa-circle-edit fa-stack-2x"></i>
+          <i class="fa fa-calendar-check-o fa-stack-1x fa-inverse"></i>
+        </span>
+        <span v-else @click="showDialog" class="fa-stack fa-lg">
+          <i class="fa fa-circle fa-circle-add fa-stack-2x"></i>
           <i class="fa fa-calendar-plus-o fa-stack-1x fa-inverse"></i>
         </span>
 
@@ -78,7 +82,8 @@
                     <el-radio class="radio" v-model="choixDePropositions" label="saisie_libre">Choisir une date
                     </el-radio>
                     <el-col :offset="1" :span="23">
-                        <date-picker :date="form.event.date" :disabled="this.choixDePropositions === 'proposition'" @change="updateDate"></date-picker>
+                        <date-picker :date="form.event.date" :disabled="this.choixDePropositions === 'proposition'"
+                                     @change="updateDate"></date-picker>
                     </el-col>
                 </el-form-item>
             </el-form>
@@ -156,6 +161,10 @@
       client: {
         type: Object,
         required: true
+      },
+      rdv: {
+        type: Object,
+        required: false
       }
     },
     data () {
@@ -189,6 +198,11 @@
       }
     },
     created () {
+      if (this.rdv) {
+        this.form.date = this.rdv.event.start
+        this.form.startTime = this.rdv.event.start
+        this.form.endTime = this.rdv.event.end
+      }
       if (!this.form.event.id) {
         let civilite = this.client.civilite ? this.client.civilite + ' ' : ''
         let nom = this.client.nom ? this.client.nom : ''
@@ -297,9 +311,16 @@
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 
-    .fa-circle {
+    .fa-circle-add {
         color: #f25f5c;
+    }
+
+    .fa-circle {
         text-shadow: 1px 1px 3px black;
+    }
+
+    .fa-circle-edit {
+        color: rgba(105, 214, 72, 0.95);
     }
 
     .propositions {

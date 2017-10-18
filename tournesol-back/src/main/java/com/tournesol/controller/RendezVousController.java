@@ -3,6 +3,7 @@ package com.tournesol.controller;
 import com.google.api.services.calendar.model.Event;
 import com.google.maps.model.DistanceMatrix;
 import com.tournesol.bean.AuthInfo;
+import com.tournesol.bean.ClientBean;
 import com.tournesol.bean.Coordonnees;
 import com.tournesol.bean.DistanceRendezVousBean;
 import com.tournesol.bean.JourBean;
@@ -89,7 +90,7 @@ public class RendezVousController {
 
         LocalDate dateRecherche = date == null ? LocalDate.now() : date;
 
-        final List<EventOutputBean> events = eventService.getEvents(authInfo, dateRecherche).stream()
+        final List<EventOutputBean> events = eventService.getEvents(authInfo, dateRecherche, 1).stream()
                 .map(e -> EventMapper.INSTANCE.eventToEventOutputBean(e))
                 .sorted(Comparator.comparing(EventOutputBean::getStart))
                 .collect(Collectors.toList());
@@ -98,11 +99,13 @@ public class RendezVousController {
         if (!events.isEmpty()) {
             final Coordonnees home = new Coordonnees(entrepriseConfiguration.getHomeAdresse().getLatitude(), entrepriseConfiguration.getHomeAdresse().getLongitude());
 
+            // Ajout de l'évènement de départ de l'entreprise à l'heure d'ouverture
             EventOutputBean startEvent = new EventOutputBean();
             startEvent.setEnd(LocalDateTime.of(date, entrepriseConfiguration.getHeureOuverture()));
             startEvent.setCoordonnees(home);
             events.add(0, startEvent);
 
+            // Ajout de l'évènement de retour à l'entreprise à l'heure de fermeture
             EventOutputBean endEvent = new EventOutputBean();
             endEvent.setStart(LocalDateTime.of(date, entrepriseConfiguration.getHeureFermeture()));
             endEvent.setCoordonnees(home);
@@ -130,15 +133,19 @@ public class RendezVousController {
     }
 
     /**
-     * Recherche de l'ensemble des rendez-vous sur une journée donnée.
+     * Recherche de l'ensemble des rendez-vous à partir d'une date et d'une période donnée.
      *
-     * @param date, date de recherche des rendez-vous, si celle-ci n'est pas précisée c'est la date du jour qui sera utilisée.
+     * @param date,          date de recherche des rendez-vous, si celle-ci n'est pas précisée c'est la date du jour qui sera utilisée.
+     * @param dayRange       période en nombre de jours, de recherche des events. Si celle-ci n'est pas précisée, on effectue la recherche uniquement sur la date précisée
+     * @param clientRequired lorsque true, indique que les rdvs remontés sont uniquement ceux pouvant être rapproché avec un client présent en base de données
      * @return la liste des rendez-vous du jour, aggrégeant l'ensemble des infos relatives au rdv (client, appareil ...)
      */
     @GetMapping("/rdvs")
-    public List<RendezVousBean> greeting(@RequestHeader(value = "uid", required = true) String uid,
-                                         @RequestHeader(value = "email", required = true) String email,
-                                         @RequestParam(value = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+    public List<RendezVousBean> searchDayEvents(@RequestHeader(value = "uid", required = true) String uid,
+                                                @RequestHeader(value = "email", required = true) String email,
+                                                @RequestParam(value = "dayRange", defaultValue = "1") int dayRange,
+                                                @RequestParam(value = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+                                                @RequestParam(value = "clientRequired", defaultValue = "false") boolean clientRequired) {
 
         AuthInfo authInfo = new AuthInfo(null, email, uid);
 
@@ -147,24 +154,24 @@ public class RendezVousController {
          */
         LocalDate dateRecherche = date == null ? LocalDate.now() : date;
 
-        final Map<String, Event> eventMap = eventService.getEvents(authInfo, dateRecherche).stream()
+        final Map<String, Event> eventMap = eventService.getEvents(authInfo, dateRecherche, dayRange).stream()
                 .collect(Collectors.toMap(Event::getICalUID, e -> e));
 
         /*
             Recherche des rdvs dans la base locale,
             Regroupement par eventId.
          */
-        final Map<String, List<RendezVousEntity>> rendezVousEntities = rendezVousService.findRendezVousGroupByEvent(new ArrayList<>(eventMap.keySet()));
+        final Map<String, List<RendezVousEntity>> rendezVousEntities = rendezVousService.findRendezVousGroupByEvent(new ArrayList<>(eventMap.keySet()), false);
 
         /*
             Aggrégation des données, et tri sur la date de de début
          */
         return eventMap.entrySet().stream()
+                .filter(e -> !clientRequired || (clientRequired && rendezVousEntities.get(e.getKey()) != null))
                 .map(e -> buildRendezVousBean(rendezVousEntities.get(e.getKey()), e.getValue()))
                 .sorted(Comparator.comparing(r -> r.getEvent().getStart()))
                 .collect(Collectors.toList());
     }
-
 
     /**
      * Recherche des dates optimales par rapport à un client donné.
@@ -177,13 +184,13 @@ public class RendezVousController {
      * @return la liste des rendez-vous du jour, aggrégeant l'ensemble des infos relatives au rdv (client, appareil ...)
      */
     @GetMapping("/rdv/search")
-    public Collection<JourBean> search(@RequestHeader(value = "uid", required = true) String uid,
-                                       @RequestHeader(value = "email", required = true) String email,
-                                       @RequestParam(value = "dayRange", required = true) int dayRange,
-                                       @RequestParam(value = "distanceRange", required = true) int distanceRange,
-                                       @RequestParam(value = "placeId", required = true) String placeId,
-                                       @RequestParam(value = "adresseId", required = false) Long adresseId,
-                                       @RequestParam(value = "rdvSize", required = false) Integer rdvSize) throws Exception {
+    public Collection<JourBean> searchOtimizedDays(@RequestHeader(value = "uid", required = true) String uid,
+                                                   @RequestHeader(value = "email", required = true) String email,
+                                                   @RequestParam(value = "dayRange", required = true) int dayRange,
+                                                   @RequestParam(value = "distanceRange", required = true) int distanceRange,
+                                                   @RequestParam(value = "placeId", required = true) String placeId,
+                                                   @RequestParam(value = "adresseId", required = false) Long adresseId,
+                                                   @RequestParam(value = "rdvSize", required = false) Integer rdvSize) throws Exception {
 
         List<JourBean> result = new ArrayList<>();
 
@@ -235,10 +242,10 @@ public class RendezVousController {
      * Retourne la liste des dates de jours ouverts, ne contenant aucun evenement.
      */
     @GetMapping("/rdv/free")
-    public Collection<LocalDate> search(@RequestHeader(value = "uid", required = true) String uid,
-                                        @RequestHeader(value = "email", required = true) String email,
-                                        @RequestParam(value = "startDate", required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-                                        @RequestParam(value = "endDate", required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) throws Exception {
+    public Collection<LocalDate> searchFreeDays(@RequestHeader(value = "uid", required = true) String uid,
+                                                @RequestHeader(value = "email", required = true) String email,
+                                                @RequestParam(value = "startDate", required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                                                @RequestParam(value = "endDate", required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) throws Exception {
 
         AuthInfo authInfo = new AuthInfo(null, email, uid);
 
@@ -297,6 +304,11 @@ public class RendezVousController {
             rdvEntities.forEach(r -> {
                         rdv.getAppareils().add(AppareilMapper.INSTANCE.appareilEntityToAppareilBean(r.getAppareil()));
                         rdv.setClient(ClientMapper.INSTANCE.clientEntityToClientOutpuBean(r.getClient()));
+
+                        if(rdv.getClient() == null) {
+                            rdv.setClient(new ClientBean());
+                            rdv.getClient().setId(r.getClientId());
+                        }
                     }
             );
         }

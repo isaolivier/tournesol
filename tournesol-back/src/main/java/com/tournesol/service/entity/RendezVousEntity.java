@@ -2,6 +2,7 @@ package com.tournesol.service.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
@@ -21,14 +22,20 @@ public class RendezVousEntity extends BaseEntity {
     @Column(name = "id", nullable = false, unique = true)
     private Long id;
 
-    @ManyToOne(targetEntity = AppareilEntity.class)
+    @ManyToOne(targetEntity = AppareilEntity.class, fetch = FetchType.LAZY)
     private AppareilEntity appareil;
 
-    @OneToOne(targetEntity = ClientEntity.class)
+    @OneToOne(targetEntity = ClientEntity.class, fetch = FetchType.LAZY)
     private ClientEntity client;
 
     @Column(name = "event_cal_id")
     private String eventId;
+
+    @Column(name = "client_id", insertable = false, updatable = false)
+    private Long clientId;
+
+    @Column(name = "appareil_id", insertable = false, updatable = false)
+    private Long appareilId;
 
     public Long getId() {
         return id;
@@ -52,6 +59,22 @@ public class RendezVousEntity extends BaseEntity {
 
     public void setEventId(String eventId) {
         this.eventId = eventId;
+    }
+
+    public Long getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(Long clientId) {
+        this.clientId = clientId;
+    }
+
+    public Long getAppareilId() {
+        return appareilId;
+    }
+
+    public void setAppareilId(Long appareilId) {
+        this.appareilId = appareilId;
     }
 
     public ClientEntity getClient() {

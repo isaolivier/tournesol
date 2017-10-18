@@ -16,6 +16,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface RendezVousRepository extends PagingAndSortingRepository<RendezVousEntity, Long> {
 
-    @Query("select r from RendezVousEntity r where r.eventId in :eventIds")
+    @Query("select r from RendezVousEntity r join fetch r.client where r.eventId in :eventIds")
     List<RendezVousEntity> findRendezVousEntities(@Param("eventIds") Collection<String> eventIds);
+
+    @Query("select r from RendezVousEntity r where r.eventId in :eventIds")
+    List<RendezVousEntity> findNakedRendezVousEntities(@Param("eventIds") Collection<String> eventIds);
 }

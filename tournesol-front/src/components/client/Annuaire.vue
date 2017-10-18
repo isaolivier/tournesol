@@ -6,13 +6,14 @@
         <client-form></client-form>
         <el-row id="search" :gutter="20">
             <el-col :span="12" :offset="12">
-                <el-input  class="input-search" icon="search" placeholder="Rechercher" v-model="recherche"></el-input>
+                <el-input class="input-search" icon="search" placeholder="Rechercher" v-model="recherche"></el-input>
             </el-col>
         </el-row>
 
         <template v-for="(client, index) in filteredClients">
             <template v-if="client.id">
-                <client :rang="index" :client="client" :key="client.id" @create="updateClients" @update="updateClients" @delete="updateClients"></client>
+                <client :rang="index" :client="client" :rdv="findRendezVous(client)" :key="client.id"
+                        @create="updateClients" @update="updateClients" @delete="updateClients"></client>
             </template>
             <template v-else>
                 <letter :letter="client" :separator="true"/>
@@ -24,6 +25,7 @@
 
 <script>
   import {ClientResource} from '../../resource/ClientResource'
+  import {RendezVousResource} from '../../resource/RendezVousResource'
   import Client from './Client.vue'
   import Letters from './letters/Letters.vue'
   import Letter from './letters/Letter.vue'
@@ -35,6 +37,7 @@
       return {
         recherche: null,
         clients: [],
+        rdvs: [],
         loading: false,
         error: null,
         currentLetter: null
@@ -95,6 +98,9 @@
       updateClients (value) {
         this.fetchData()
       },
+      findRendezVous (client) {
+        return this.rdvs.find(r => r.client.id === client.id)
+      },
       fetchData () {
         this.error = null
         this.loading = true
@@ -105,6 +111,15 @@
             this.error = err.toString()
           } else {
             this.clients = result
+          }
+        })
+
+        let rdvResource = new RendezVousResource()
+        rdvResource.findClientRendezVous(180, (err, result) => {
+          if (err) {
+            this.error = err.toString()
+          } else {
+            this.rdvs = result
           }
         })
       }
@@ -118,7 +133,7 @@
     #search {
         position: fixed;
         top: 103px;
-        right:2px;
+        right: 2px;
         left: 200px;
     }
 </style>
