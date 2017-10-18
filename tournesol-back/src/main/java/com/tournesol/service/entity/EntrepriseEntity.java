@@ -4,10 +4,13 @@ import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -30,6 +33,12 @@ public class EntrepriseEntity extends BaseEntity {
 
     @Column(name = "nom")
     private String nom;
+
+    /**
+     * Adresse de l'entreprise.
+     */
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private AdresseEntity adresse;
 
     @Column(name = "siret")
     private String siret;
@@ -171,4 +180,11 @@ public class EntrepriseEntity extends BaseEntity {
         this.siret = siret;
     }
 
+    public AdresseEntity getAdresse() {
+        return adresse;
+    }
+
+    public void setAdresse(AdresseEntity adresse) {
+        this.adresse = adresse;
+    }
 }

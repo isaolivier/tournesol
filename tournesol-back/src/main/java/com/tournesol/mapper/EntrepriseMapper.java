@@ -5,7 +5,9 @@ package com.tournesol.mapper;
  */
 
 
+import com.tournesol.bean.AdresseBean;
 import com.tournesol.bean.EntrepriseBean;
+import com.tournesol.service.entity.AdresseEntity;
 import com.tournesol.service.entity.EntrepriseEntity;
 
 import org.mapstruct.DecoratedWith;
@@ -32,5 +34,8 @@ public interface EntrepriseMapper {
 
     EntrepriseEntity map(EntrepriseBean entrepriseBean);
 
+    AdresseBean map(AdresseEntity adresseEntity);
+
+    AdresseEntity map(AdresseBean adresseBean);
 }
 

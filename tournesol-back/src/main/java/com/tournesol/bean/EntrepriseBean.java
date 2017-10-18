@@ -13,6 +13,8 @@ public class EntrepriseBean  implements Serializable {
 
     private String siret;
 
+    private AdresseBean adresse;
+
     private EntrepriseConfigurationBean configuration;
 
     public Long getId() {
@@ -45,5 +47,13 @@ public class EntrepriseBean  implements Serializable {
 
     public void setConfiguration(EntrepriseConfigurationBean configuration) {
         this.configuration = configuration;
+    }
+
+    public AdresseBean getAdresse() {
+        return adresse;
+    }
+
+    public void setAdresse(AdresseBean adresse) {
+        this.adresse = adresse;
     }
 }

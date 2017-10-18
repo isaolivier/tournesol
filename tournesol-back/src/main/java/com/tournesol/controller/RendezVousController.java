@@ -3,11 +3,13 @@ package com.tournesol.controller;
 import com.google.api.services.calendar.model.Event;
 import com.google.maps.model.DistanceMatrix;
 import com.tournesol.bean.AuthInfo;
+import com.tournesol.bean.Coordonnees;
 import com.tournesol.bean.DistanceRendezVousBean;
 import com.tournesol.bean.JourBean;
 import com.tournesol.bean.RendezVousBean;
 import com.tournesol.bean.input.RendezVousInputBean;
 import com.tournesol.bean.output.EventOutputBean;
+import com.tournesol.bean.SegmentBean;
 import com.tournesol.config.EntrepriseConfiguration;
 import com.tournesol.mapper.AppareilMapper;
 import com.tournesol.mapper.ClientMapper;
@@ -22,6 +24,7 @@ import com.tournesol.service.google.DistanceService;
 import com.tournesol.service.google.EventService;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -75,12 +78,12 @@ public class RendezVousController {
     /**
      * Recherche des distances et temps de parcours entre les rdvs d'une journée donnée.
      */
-    @GetMapping("/rdv/distance")
-    public List<DistanceRendezVousBean> searchDistanceAndTime(@RequestHeader(value = "uid", required = true) String uid,
-                                                              @RequestHeader(value = "email", required = true) String email,
-                                                              @RequestParam(value = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+    @GetMapping("/rdv/timeline")
+    public List<SegmentBean> getTimeLine(@RequestHeader(value = "uid", required = true) String uid,
+                                         @RequestHeader(value = "email", required = true) String email,
+                                         @RequestParam(value = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
 
-        List<DistanceRendezVousBean> result = new ArrayList<>();
+        List<SegmentBean> result = new ArrayList<>();
 
         AuthInfo authInfo = new AuthInfo(null, email, uid);
 
@@ -92,20 +95,37 @@ public class RendezVousController {
                 .collect(Collectors.toList());
 
 
-        IntStream.range(0, events.size() - 1).forEach(i -> {
+        if (!events.isEmpty()) {
+            final Coordonnees home = new Coordonnees(entrepriseConfiguration.getHomeAdresse().getLatitude(), entrepriseConfiguration.getHomeAdresse().getLongitude());
 
-            final EventOutputBean currentEvent = events.get(i);
-            final EventOutputBean nextEvent = events.get(i + 1);
+            EventOutputBean startEvent = new EventOutputBean();
+            startEvent.setEnd(LocalDateTime.of(date, entrepriseConfiguration.getHeureOuverture()));
+            startEvent.setCoordonnees(home);
+            events.add(0, startEvent);
 
-            final DistanceMatrix timeDistance = distanceService.getDurationAndDistance(currentEvent.getEnd(), currentEvent.getCoordonnees(), nextEvent.getCoordonnees());
+            EventOutputBean endEvent = new EventOutputBean();
+            endEvent.setStart(LocalDateTime.of(date, entrepriseConfiguration.getHeureFermeture()));
+            endEvent.setCoordonnees(home);
+            events.add(endEvent);
 
-            String distance = timeDistance.rows[0].elements[0].distance.humanReadable;
-            String duration = timeDistance.rows[0].elements[0].duration.humanReadable;
-            //String durationInTrafic = timeDistance.rows[0].elements[0].durationInTraffic.humanReadable;
+            IntStream.range(0, events.size() - 1).forEach(i -> {
 
-            result.add(new DistanceRendezVousBean(currentEvent.getId(), nextEvent.getId(), distance, duration));
-        });
+                final EventOutputBean currentEvent = events.get(i);
+                final EventOutputBean nextEvent = events.get(i + 1);
 
+                final DistanceMatrix timeDistance = distanceService.getDurationAndDistance(currentEvent.getEnd(), currentEvent.getCoordonnees(), nextEvent.getCoordonnees());
+
+                String distance = timeDistance.rows[0].elements[0].distance.humanReadable;
+                String duration = timeDistance.rows[0].elements[0].duration.humanReadable;
+                //String durationInTrafic = timeDistance.rows[0].elements[0].durationInTraffic.humanReadable;
+
+                result.add(new DistanceRendezVousBean(currentEvent.getEnd(), nextEvent.getStart(), distance, duration));
+
+                if (nextEvent.getEnd() != null) {
+                    result.add(nextEvent);
+                }
+            });
+        }
         return result;
     }
 
@@ -146,7 +166,6 @@ public class RendezVousController {
     }
 
 
-
     /**
      * Recherche des dates optimales par rapport à un client donné.
      * Lorsque le temps de rendez-vous est fourni, on filtre sur les journées qui disposent d'un créneau disponible pour ce temps
@@ -164,7 +183,7 @@ public class RendezVousController {
                                        @RequestParam(value = "distanceRange", required = true) int distanceRange,
                                        @RequestParam(value = "placeId", required = true) String placeId,
                                        @RequestParam(value = "adresseId", required = false) Long adresseId,
-                                       @RequestParam(value= "rdvSize", required = false) Integer rdvSize) throws Exception {
+                                       @RequestParam(value = "rdvSize", required = false) Integer rdvSize) throws Exception {
 
         List<JourBean> result = new ArrayList<>();
 
@@ -198,7 +217,7 @@ public class RendezVousController {
         /*
             Filtrage des journées possédant un créneau de n (rdvSize) minutes disponbiles
          */
-        if(rdvSize != null) {
+        if (rdvSize != null) {
             final LocalTime heureOuverture = entrepriseConfiguration.getHeureOuverture();
             final LocalTime heureFermeture = entrepriseConfiguration.getHeureFermeture();
 
@@ -217,9 +236,9 @@ public class RendezVousController {
      */
     @GetMapping("/rdv/free")
     public Collection<LocalDate> search(@RequestHeader(value = "uid", required = true) String uid,
-                                       @RequestHeader(value = "email", required = true) String email,
-                                       @RequestParam(value = "startDate", required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-                                       @RequestParam(value = "endDate", required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) throws Exception {
+                                        @RequestHeader(value = "email", required = true) String email,
+                                        @RequestParam(value = "startDate", required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                                        @RequestParam(value = "endDate", required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) throws Exception {
 
         AuthInfo authInfo = new AuthInfo(null, email, uid);
 

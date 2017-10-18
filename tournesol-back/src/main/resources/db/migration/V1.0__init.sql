@@ -39,6 +39,7 @@ create sequence entreprise_sequence;
 create table entreprise (
   id bigint not null default entreprise_sequence.nextval primary key,
   nom varchar(255),
+  adresse_id bigint,
   siret varchar(255),
   heure_ouverture time,
   heure_fermeture time,

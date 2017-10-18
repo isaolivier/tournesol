@@ -2,13 +2,14 @@ package com.tournesol.bean.output;
 
 import com.tournesol.bean.Coordonnees;
 import com.tournesol.bean.EventBean;
+import com.tournesol.bean.SegmentBean;
 
 import java.time.LocalDateTime;
 
 /**
  * Created by iolivier on 22/09/2017.
  */
-public class EventOutputBean extends EventBean {
+public class EventOutputBean extends EventBean implements SegmentBean {
 
     private LocalDateTime start;
 

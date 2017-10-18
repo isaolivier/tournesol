@@ -1,18 +1,20 @@
 package com.tournesol.bean;
 
-public class DistanceRendezVousBean {
+import java.time.LocalDateTime;
 
-    private String sourceEventId;
+public class DistanceRendezVousBean implements SegmentBean {
 
-    private String targetEventId;
+    private LocalDateTime start;
+
+    private LocalDateTime end;
 
     private String distance;
 
     private String duration;
 
-    public DistanceRendezVousBean(String sourceEventId, String targetEventId, String distance, String duration) {
-        this.sourceEventId = sourceEventId;
-        this.targetEventId = targetEventId;
+    public DistanceRendezVousBean(LocalDateTime start, LocalDateTime end, String distance, String duration) {
+        this.start = start;
+        this.end = end;
         this.distance = distance;
         this.duration = duration;
     }
@@ -33,19 +35,21 @@ public class DistanceRendezVousBean {
         this.duration = duration;
     }
 
-    public String getSourceEventId() {
-        return sourceEventId;
+    @Override
+    public LocalDateTime getStart() {
+        return start;
     }
 
-    public void setSourceEventId(String sourceEventId) {
-        this.sourceEventId = sourceEventId;
+    public void setStart(LocalDateTime start) {
+        this.start = start;
     }
 
-    public String getTargetEventId() {
-        return targetEventId;
+    @Override
+    public LocalDateTime getEnd() {
+        return end;
     }
 
-    public void setTargetEventId(String targetEventId) {
-        this.targetEventId = targetEventId;
+    public void setEnd(LocalDateTime end) {
+        this.end = end;
     }
 }

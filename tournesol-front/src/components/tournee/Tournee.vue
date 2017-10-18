@@ -5,29 +5,30 @@
         <div id="agenda" :style="'height:'+(nbHeures * hourInterval + 100)+'px'">
 
             <!-- Heures -->
-            <div  class="hour" v-for="h in (nbHeures + 1)" :style="'top:'+((h - 1) * hourInterval + 50)+'px'">
+            <div class="hour" v-for="h in (nbHeures + 1)" :style="'top:'+((h - 1) * hourInterval + 50)+'px'">
                 {{parseInt(h) + parseInt(heureOuverture) - 1}}:00
             </div>
 
             <hr v-for="h in (nbHeures + 1)"
-                  :style="'top:'+((h - 1) * hourInterval + 10)+'px'"
-                  />
+                :style="'top:'+((h - 1) * hourInterval + 10)+'px'"
+            />
 
             <hr v-for="h in (nbHeures + 1)" x1="50" x2="100%"
                 :style="'top:'+((h - 1) * hourInterval + 10 + (hourInterval/2))+'px'"
-                  />
+            />
 
             <!-- Rendez-vous -->
         </div>
         <rdv v-for="(rdv, key, index) in rendezvous" :rdv="rdv" :key="rdv.event.id"/>
-        <estimation v-if="distances" v-for="(distance, key, index) in distances" :estimation="distance" :rdvs="rendezvous" :key="distance.sourceEventId"/>
+        <segment v-if="timeline && dateInFuture" v-for="(segment, key, index) in timeline" :segment="segment"
+                 :key="segment.start+segment.end"/>
     </div>
 </template>
 
 <script>
   import {entreprise} from '../../bean/EntrepriseBean'
   import RendezVous from './RendezVous.vue'
-  import Estimation from './Estimation.vue'
+  import Segment from './Segment.vue'
   import DateStrip from './DateStrip.vue'
   import Constants from '../../bean/Constants'
   import moment from 'moment'
@@ -41,7 +42,7 @@
         hourInterval: Constants.tournee.hourInterval,
         agenda: null,
         rendezvous: null,
-        distances: null,
+        timeline: null,
         currentDate: moment()
       }
     },
@@ -68,9 +69,12 @@
     components: {
       'rdv': RendezVous,
       'dates': DateStrip,
-      'estimation': Estimation
+      'segment': Segment
     },
     methods: {
+      dateInFuture () {
+        return moment().startOf('day').isBefore(this.currentDate)
+      },
       fetchData: function (date) {
         this.error = null
         let rdvResource = new RendezVousResource()
@@ -83,11 +87,11 @@
           }
         }, date.format(Constants.rdv.dateFormat))
 
-        rdvResource.findDistanceRendezVous((err, result) => {
+        rdvResource.getTimeline((err, result) => {
           if (err) {
             this.error = err.toString()
           } else {
-            this.distances = result
+            this.timeline = result
           }
         }, date.format(Constants.rdv.dateFormat))
       }
@@ -100,9 +104,10 @@
     hr, .hour {
         position: absolute
     }
+
     hr {
         left: 50px;
-        width:100%;
+        width: 100%;
     }
 
     #agenda {

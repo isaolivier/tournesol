@@ -37,12 +37,12 @@ public class DistanceService {
                 .build();
     }
 
-    public DistanceMatrix getDurationAndDistance(LocalDateTime arrivalTime, Coordonnees origins, Coordonnees destinations) {
+    public DistanceMatrix getDurationAndDistance(LocalDateTime departureTime, Coordonnees origins, Coordonnees destinations) {
 
-        return getDurationAndDistance(arrivalTime, Lists.newArrayList(origins), Lists.newArrayList(destinations));
+        return getDurationAndDistance(departureTime, Lists.newArrayList(origins), Lists.newArrayList(destinations));
     }
 
-    public DistanceMatrix getDurationAndDistance(LocalDateTime arrivalTime, List<Coordonnees> origins, List<Coordonnees> destinations) {
+    public DistanceMatrix getDurationAndDistance(LocalDateTime departureTime, List<Coordonnees> origins, List<Coordonnees> destinations) {
 
         List<String> originsParam = origins.stream()
                 .map(c -> c.getLatitude() + "," + c.getLongitude())
@@ -56,9 +56,12 @@ public class DistanceService {
             DistanceMatrixApiRequest distanceMatrixApiRequest = DistanceMatrixApi.getDistanceMatrix(context,
                     originsParam.toArray(new String[0]),
                     destinationsParam.toArray(new String[0]))
-                    .arrivalTime(new DateTime(arrivalTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()))
                     .language("fr")
                     .units(Unit.METRIC);
+
+            if(LocalDateTime.now().isBefore(departureTime)) {
+                distanceMatrixApiRequest.departureTime(new DateTime(departureTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()));
+            }
 
             return distanceMatrixApiRequest.await();
         } catch (Exception e) {

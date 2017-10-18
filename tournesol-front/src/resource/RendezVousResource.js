@@ -24,9 +24,9 @@ export class RendezVousResource {
       })
   }
 
-  // Recherche des infos de temps et de distance entre rendez-vous pour une date précise
-  findDistanceRendezVous (result, dateStr) {
-    return Vue.http.get(Constants.back.hostname + '/rdv/distance?date=' + dateStr,
+  // Rectourne la timeline, contenant également les infos de distance, pour une journée donnée
+  getTimeline (result, date) {
+    return Vue.http.get(Constants.back.hostname + '/rdv/timeline?date=' + date,
       {
         headers: {
           'uid': authService.getAuthInfo().uid,

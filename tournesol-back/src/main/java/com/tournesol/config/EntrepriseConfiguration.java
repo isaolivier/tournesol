@@ -1,5 +1,6 @@
 package com.tournesol.config;
 
+import com.tournesol.service.entity.AdresseEntity;
 import com.tournesol.service.entity.EntrepriseEntity;
 import com.tournesol.service.repository.EntrepriseRepository;
 
@@ -59,5 +60,9 @@ public class EntrepriseConfiguration {
 
     public List<DayOfWeek> getJoursOuverture (){
         return getConfiguration().getListJoursOuverture();
+    }
+
+    public AdresseEntity getHomeAdresse() {
+        return getConfiguration().getAdresse();
     }
 }
