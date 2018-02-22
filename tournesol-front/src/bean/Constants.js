@@ -6,7 +6,7 @@ export default {
     hourInterval: 100 // nb d'intervalles en px entre 2 heures
   },
   back: {
-    hostname: 'http://localhost:8081'
+    hostname: process.env.URL_BACK
   },
   rdv: {
     dateFormat: 'YYYY-MM-DD', // Format de date envoyé au back

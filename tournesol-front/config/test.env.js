@@ -3,5 +3,5 @@ var devEnv = require('./dev.env')
 
 module.exports = merge(devEnv, {
   NODE_ENV: '"testing"',
-  URL_BACK: '"localhost:8080"'
+  URL_BACK: '"http://localhost:8081"'
 })

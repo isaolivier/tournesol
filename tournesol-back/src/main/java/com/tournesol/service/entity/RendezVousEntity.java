@@ -17,8 +17,8 @@ import static javax.persistence.GenerationType.SEQUENCE;
 public class RendezVousEntity extends BaseEntity {
 
     @Id
-    @SequenceGenerator(name="my_seq", sequenceName="rendezvous_sequence", allocationSize = 1, initialValue = 10000)
-    @GeneratedValue(strategy = SEQUENCE, generator = "my_seq")
+    @SequenceGenerator(name="rendezvous_sequence", sequenceName="rendezvous_sequence", allocationSize = 1, initialValue = 10000)
+    @GeneratedValue(strategy = SEQUENCE, generator = "rendezvous_sequence")
     @Column(name = "id", nullable = false, unique = true)
     private Long id;
 

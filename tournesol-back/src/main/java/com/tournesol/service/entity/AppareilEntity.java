@@ -22,8 +22,8 @@ public class AppareilEntity extends BaseEntity {
 	private static final long serialVersionUID = 2138505980112741865L;
 
     @Id
-    @SequenceGenerator(name="my_seq", sequenceName="appareil_sequence", allocationSize = 1, initialValue = 10000)
-    @GeneratedValue(strategy = SEQUENCE, generator = "my_seq")
+    @SequenceGenerator(name="appareil_sequence", sequenceName="appareil_sequence", allocationSize = 1, initialValue = 10000)
+    @GeneratedValue(strategy = SEQUENCE, generator = "appareil_sequence")
     @Column(name = "id", nullable = false, unique = true)
     private Long id;
 

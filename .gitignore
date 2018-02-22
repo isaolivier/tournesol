@@ -27,3 +27,5 @@ dependency-tree.log
 target
 
 tournesol-front/www/
+/tournesol-back/src/main/resources/public/index.html
+/tournesol-back/src/main/resources/public/static/

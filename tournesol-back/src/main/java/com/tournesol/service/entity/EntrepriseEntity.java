@@ -26,8 +26,8 @@ public class EntrepriseEntity extends BaseEntity {
 	private static final long serialVersionUID = 4988724258162598786L;
 
     @Id
-    @SequenceGenerator(name="my_seq", sequenceName="entreprise_sequence", allocationSize = 1, initialValue = 10000)
-    @GeneratedValue(strategy = SEQUENCE, generator = "my_seq")
+    @SequenceGenerator(name="entreprise_sequence", sequenceName="entreprise_sequence", allocationSize = 1, initialValue = 10000)
+    @GeneratedValue(strategy = SEQUENCE, generator = "entreprise_sequence")
     @Column(name = "id", nullable = false, unique = true)
     private Long id;
 

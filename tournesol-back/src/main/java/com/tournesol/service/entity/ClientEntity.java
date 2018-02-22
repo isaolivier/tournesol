@@ -24,8 +24,8 @@ public class ClientEntity extends BaseEntity {
 	private static final long serialVersionUID = -4413980880542144023L;
 
     @Id
-    @SequenceGenerator(name="my_seq", sequenceName="client_sequence", allocationSize = 1, initialValue = 10000)
-    @GeneratedValue(strategy = SEQUENCE, generator = "my_seq")
+    @SequenceGenerator(name="client_sequence", sequenceName="client_sequence", allocationSize = 1, initialValue = 10000)
+    @GeneratedValue(strategy = SEQUENCE, generator = "client_sequence")
     @Column(name = "id", nullable = false, unique = true)
     private Long id;
 

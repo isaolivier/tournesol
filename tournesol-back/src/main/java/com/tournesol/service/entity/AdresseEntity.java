@@ -17,8 +17,8 @@ import static javax.persistence.GenerationType.SEQUENCE;
 public class AdresseEntity extends BaseEntity {
 
     @Id
-    @SequenceGenerator(name="my_seq", sequenceName="adresse_sequence", allocationSize = 1, initialValue = 10000)
-    @GeneratedValue(strategy = SEQUENCE, generator = "my_seq")
+    @SequenceGenerator(name="adresse_sequence", sequenceName="adresse_sequence", allocationSize = 1, initialValue = 10000)
+    @GeneratedValue(strategy = SEQUENCE, generator = "adresse_sequence")
     @Column(name = "id", nullable = false, unique = true)
     private Long id;
 

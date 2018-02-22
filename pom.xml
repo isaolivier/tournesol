@@ -9,6 +9,7 @@
     <packaging>pom</packaging>
 	
 	<modules>
+        <module>tournesol-front</module>
         <module>tournesol-back</module>
 	</modules>
 	
