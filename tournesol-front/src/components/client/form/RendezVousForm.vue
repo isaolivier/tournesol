@@ -15,7 +15,7 @@
             <!--                             ETAPES                            -->
             <!-- ************************************************************* -->
             <el-row>
-                <el-col :offset="6" :span="12">
+                <el-col :offset="7" :span="16">
                     <el-steps space="100%" :active="etape" finish-status="success">
                         <el-step title="Choix d'une date"></el-step>
                         <el-step title="Détails"></el-step>
@@ -26,92 +26,107 @@
             <!-- ************************************************************* -->
             <!--                             ENTETE                            -->
             <!-- ************************************************************* -->
-            Nom: {{this.client.nom}}
+            <span class="client-name">{{this.client.nom}}</span>
             <el-rate class="note" v-model="client.note" disabled disabled-void-color="#CCCCCC"></el-rate>
 
 
-            <el-form v-if="etape === 1" :model="form" :rules="rules" label-position="top" label-width="120px"
+            <el-form v-if="etape === 1" :model="form" label-position="left" label-width="140px"
                      ref="form1">
 
                 <!-- ************************************************************* -->
                 <!--                             ADRESSE                           -->
                 <!-- ************************************************************* -->
-                <el-form-item label="Adresse" prop="placeId">
+                <el-form-item label="Adresse" prop="placeId"
+                    :rules="{required: true, message: 'Veuillez saisir une adresse valide'}">
+
                     <adresse-autocomplete :adresse="client.adresse" @select="updateLocation"></adresse-autocomplete>
+
                 </el-form-item>
 
                 <!-- ************************************************************* -->
                 <!--                      DUREE PREVUE                             -->
                 <!-- ************************************************************* -->
-                <el-form-item label="Durée prévue du rendez-vous">
-                    <el-time-select v-model="duree"
-                                    :picker-options="{ start: step, step: step, end: '8:00' }"
-                                    placeholder="Durée prévue">
-                    </el-time-select>
+                <el-form-item label="Durée prévue">
+                    <el-col :span="3">
+                        <el-select v-model="duree">
+                            <el-option v-for="item in durees" :key="item" :label="item" :value="item"></el-option>
+                        </el-select>
+                    </el-col>
                 </el-form-item>
 
                 <!-- ************************************************************* -->
                 <!--                     PROPOSITIONS DATE                         -->
                 <!-- ************************************************************* -->
-                <el-form-item>
-                    <el-radio class="radio" v-model="choixDePropositions" label="proposition">
-                        Meilleures dates possibles dans un rayon de
-                    </el-radio>
+                <el-form-item label="Date" required>
+                    <el-col :span="10">
+                        <el-radio class="radio" v-model="choixDePropositions" label="proposition">Meilleures dates possibles dans un rayon de</el-radio>
+                    </el-col>
+                    <el-col :span="3">
+                        <span></span>
+                        <el-select :disabled="this.choixDePropositions === 'saisie_libre'" v-model="rayon"
+                                   placeholder="Select" @change="findPropositionsRdv" style="display: inline">
+                            <el-option v-for="item in rayons" :key="item" :label="item + ' km'" :value="item"></el-option>
+                        </el-select>
+                    </el-col>
 
-                    <el-select :disabled="this.choixDePropositions === 'saisie_libre'" v-model="rayon"
-                               placeholder="Select" @change="findPropositionsRdv">
-                        <el-option v-for="item in rayons" :key="item" :label="item + ' km'" :value="item"></el-option>
-                    </el-select>
-
-                    <div v-if="propositions.length == 0">Aucune proposition trouvée</div>
-                    <div v-else class="propositions">
-                        <proposition-date v-for="proposition in propositions"
-                                          :disabled="choixDePropositions != 'proposition'"
-                                          :key="proposition.date+form.event.date+choixDePropositions"
-                                          :dateSelected="form.event.date" :proposition="proposition"
-                                          @change="updateDate">
-                        </proposition-date>
-                    </div>
+                    <el-col :span="24">
+                        <div v-if="propositions.length == 0">Aucune proposition trouvée</div>
+                        <div v-else class="propositions">
+                            <proposition-date v-for="proposition in propositions"
+                                              :disabled="choixDePropositions != 'proposition'"
+                                              :key="proposition.date+form.event.date+choixDePropositions"
+                                              :dateSelected="form.event.date" :proposition="proposition"
+                                              @change="updateDate">
+                            </proposition-date>
+                        </div>
+                    </el-col>
 
                 </el-form-item>
 
                 <!-- ************************************************************* -->
                 <!--                     CHOIX DATE                         -->
                 <!-- ************************************************************* -->
-                <el-form-item :disabled="true" prop="event.date">
-                    <el-radio class="radio" v-model="choixDePropositions" label="saisie_libre">Choisir une date
-                    </el-radio>
-                    <el-col :offset="1" :span="23">
+                <el-form-item :disabled="true" prop="event.date"
+                    :rules="{required: true, message: 'Veuillez saisir (ou choisir) une date'}">
+
+                    <el-col :span="5">
+                        <el-radio class="radio" v-model="choixDePropositions" label="saisie_libre">Choisir une date</el-radio>
+                    </el-col>
+                    <el-col :offset="1" :span="8">
                         <date-picker :date="form.event.date" :disabled="this.choixDePropositions === 'proposition'"
                                      @change="updateDate"></date-picker>
                     </el-col>
                 </el-form-item>
-            </el-form>
 
-
-            <el-form v-if="etape === 2" :model="form" :rules="rules" label-position="top" label-width="120px"
-                     ref="form2">
                 <!-- ************************************************************* -->
                 <!--                       HEURES DEBUT / FIN                      -->
                 <!-- ************************************************************* -->
-                <el-form-item>
-                    <el-col :span="11">
-                        <el-form-item prop="event.startTime" label="Heure de début" required>
-                            <el-time-select v-model="form.event.startTime" placeholder="Heure Début"
+                <el-form-item label="Heures" required>
+                    <el-col :span="5">
+                        <el-form-item prop="event.startTime"
+                                :rules="{required: true, message: 'Veuillez saisir une heure de début'}">
+
+                            <el-time-select v-model="form.event.startTime" placeholder="Début"
                                             @change="updateEndTime"
                                             :picker-options="{ start: heureOuverture, step: step, end: heureFermeture }"
                                             style="width: 100%;"></el-time-select>
                         </el-form-item>
                     </el-col>
-                    <el-col class="line" :span="2">&nbsp;</el-col>
-                    <el-col :span="11">
-                        <el-form-item prop="event.endTime" label="Heure de fin" required>
-                            <el-time-select v-model="form.event.endTime" placeholder="Heure Fin"
+
+                    <el-col :offset="1" :span="5">
+                        <el-form-item prop="event.endTime"
+                            :rules="{required: true, message: 'Veuillez saisir une heure de fin'}">
+
+                            <el-time-select v-model="form.event.endTime" placeholder="Fin"
                                             :picker-options="{ start: heureOuverture, step: step, end: heureFermeture, minTime: form.event.startTime }"
                                             style="width: 100%;"></el-time-select>
                         </el-form-item>
                     </el-col>
                 </el-form-item>
+            </el-form>
+
+
+            <el-form v-if="etape === 2" :model="form" label-position="top" label-width="120px" ref="form2">
                 <!-- ************************************************************* -->
                 <!--                       INTITULE RDV                            -->
                 <!-- ************************************************************* -->
@@ -188,12 +203,6 @@
             location: '',
             status: null
           }
-        },
-        rules: {
-          placeId: [{required: true, message: 'Veuillez saisir une adresse valide', trigger: 'change'}],
-          'event.date': [{required: true, message: 'Veuillez saisir (ou choisir) une date', trigger: 'change'}],
-          'event.startTime': [{required: true, message: 'Veuillez saisir une heure de début', trigger: 'change'}],
-          'event.endTime': [{required: true, message: 'Veuillez saisir une heure de fin', trigger: 'change'}]
         }
       }
     },
@@ -221,6 +230,19 @@
       },
       rayons: function () {
         return Constants.rdv.rayons
+      },
+      durees: function () {
+        let result = []
+        let step = entreprise.configuration.timeStep
+        let current = moment.duration(step, 'HH:mm')
+
+        for (let i = 0; current.asHours() <= 8; i++) {
+          result.push(moment.utc(current.asMilliseconds()).format('HH:mm'))
+          // console.log(current.asHours() + ', ' + moment.duration(step).asMinutes() + ', ' + result)
+          current.add(step)
+        }
+
+        return result
       }
     },
     methods: {
@@ -311,6 +333,15 @@
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 
+    .client-name {
+        vertical-align: text-top;
+    }
+
+    .note {
+        display: inline-block;
+        margin-left: 15px;
+    }
+
     .fa-circle-add {
         color: #f25f5c;
     }
@@ -324,8 +355,8 @@
     }
 
     .propositions {
-        overflow-y: scroll;
-        height: 15em;
+        max-height: 15em;
+        overflow-y: auto;
     }
 
 </style>

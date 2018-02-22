@@ -15,7 +15,7 @@ Vue.config.productionTip = false
 Vue.use(ElementUI, { locale })
 Vue.use(VueResource)
 
-import 'element-ui/lib/theme-default/index.css'
+import 'element-ui/lib/theme-chalk/index.css'
 
 const AuthStatus = {
   initialized: false,

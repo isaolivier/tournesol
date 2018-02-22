@@ -72,7 +72,7 @@
         let availableCells = document.querySelectorAll('.el-date-table td.available')
 
         Array.prototype.slice.call(availableCells)
-          .filter(e => freeDates.includes(e.innerText) || freeDates.includes('0' + e.innerText))
+          .filter(e => freeDates.includes(e.innerText.replace('\n', '')) || freeDates.includes('0' + e.innerText.replace('\n', '')))
           .forEach(e => e.classList.add('free'))
       },
       updateDate (d) {
