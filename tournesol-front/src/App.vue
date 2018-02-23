@@ -28,9 +28,9 @@
         height: calc(100% - 44px);
     }
 
-    .el-tabs__content {
+    div.el-tabs__content {
         height: calc(100% - 74px);
-        overflow-y: scroll;
+        overflow-y: scroll !important;
     }
 
     .clickable {

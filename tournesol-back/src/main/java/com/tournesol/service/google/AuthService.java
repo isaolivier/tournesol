@@ -18,6 +18,7 @@ import com.tournesol.bean.AuthInfo;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.Arrays;
@@ -79,7 +80,7 @@ public class AuthService {
         if (SECRETS == null) {
             try {
                 SECRETS = GoogleClientSecrets.load(JacksonFactory.getDefaultInstance(),
-                        new FileReader(getClass().getClassLoader().getResource(CLIENT_SECRET_FILE).getFile()));
+                        new InputStreamReader(getClass().getClassLoader().getResourceAsStream(CLIENT_SECRET_FILE)));
             } catch (IOException e) {
                 LOGGER.error("Could not load app secret", e);
                 SECRETS = null;
