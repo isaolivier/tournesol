@@ -36,7 +36,7 @@
       initService () {
         if (!this.store.initialized) {
           let gapiprops = {
-            'client_id': '852257797025-0clu0g1mipjtb0sc5fugp54et2uk91jp.apps.googleusercontent.com',
+            'client_id': '108454532704-ad5ips5206l0lutsqpmcbvh7229e3t0g.apps.googleusercontent.com',
             'scope': 'email profile https://www.googleapis.com/auth/calendar',
             'fetch_basic_profile': true,
             'prompt': 'consent',

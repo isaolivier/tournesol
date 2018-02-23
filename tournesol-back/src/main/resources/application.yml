@@ -21,12 +21,12 @@ endpoints:
 
 logging:
   level:
-    org.hibernate.SQL: error
+    org.hibernate.SQL: info
     com.tournesol: info
     com.google.api: error
 
 google:
-  apiKey: AIzaSyCXnZKQevQd4NxoQQhoW9QDimUvxk6Z800
+  apiKey: AIzaSyA2HDavbEKSxA9BZNvpdmbqycQNjO2-y3c
 
 spring:
   profiles: proxy
