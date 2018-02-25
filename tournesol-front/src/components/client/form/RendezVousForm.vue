@@ -47,7 +47,7 @@
                 <!--                      DUREE PREVUE                             -->
                 <!-- ************************************************************* -->
                 <el-form-item label="Durée prévue">
-                    <el-col :span="3">
+                    <el-col :span="4">
                         <el-select v-model="duree">
                             <el-option v-for="item in durees" :key="item" :label="item" :value="item"></el-option>
                         </el-select>
@@ -58,10 +58,10 @@
                 <!--                     PROPOSITIONS DATE                         -->
                 <!-- ************************************************************* -->
                 <el-form-item label="Date" required>
-                    <el-col :span="10">
+                    <el-col :span="15">
                         <el-radio class="radio" v-model="choixDePropositions" label="proposition">Meilleures dates possibles dans un rayon de</el-radio>
                     </el-col>
-                    <el-col :span="3">
+                    <el-col :span="5">
                         <span></span>
                         <el-select :disabled="this.choixDePropositions === 'saisie_libre'" v-model="rayon"
                                    placeholder="Select" @change="findPropositionsRdv" style="display: inline">
@@ -89,10 +89,10 @@
                 <el-form-item :disabled="true" prop="event.date"
                     :rules="{required: true, message: 'Veuillez saisir (ou choisir) une date'}">
 
-                    <el-col :span="5">
+                    <el-col :span="6">
                         <el-radio class="radio" v-model="choixDePropositions" label="saisie_libre">Choisir une date</el-radio>
                     </el-col>
-                    <el-col :offset="1" :span="8">
+                    <el-col :offset="1" :span="10">
                         <date-picker :date="form.event.date" :disabled="this.choixDePropositions === 'proposition'"
                                      @change="updateDate"></date-picker>
                     </el-col>
