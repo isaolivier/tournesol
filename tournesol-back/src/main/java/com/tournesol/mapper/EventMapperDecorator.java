@@ -36,7 +36,7 @@ public abstract class EventMapperDecorator implements EventMapper {
 
         EventOutputBean eventOutputBean = delegate.eventToEventOutputBean(event);
 
-        if(event.getExtendedProperties().getShared() != null && event.getExtendedProperties().getShared().containsKey("latitude") && event.getExtendedProperties().getShared().containsKey("longitude")) {
+        if(event.getExtendedProperties() != null && event.getExtendedProperties().getShared() != null && event.getExtendedProperties().getShared().containsKey("latitude") && event.getExtendedProperties().getShared().containsKey("longitude")) {
             eventOutputBean.setCoordonnees(new Coordonnees(
                     Double.valueOf(event.getExtendedProperties().getShared().get("latitude")),
                     Double.valueOf(event.getExtendedProperties().getShared().get("longitude"))));
