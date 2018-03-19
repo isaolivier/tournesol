@@ -187,6 +187,7 @@
         etape: 1,
         error: null,
         dialogFormVisible: false,
+        labelPosition: Constants.formLabelPosition,
         propositions: [],
         rayon: entreprise.configuration.searchDistance,
         duree: moment('00:00', 'HH:mm').add(entreprise.configuration.tempsRdv, 'm').format('HH:mm'),

@@ -6,7 +6,7 @@
         <client-form></client-form>
         <el-row id="search" :gutter="20">
             <el-col :span="12" :offset="12">
-                <el-input class="input-search" icon="search" placeholder="Rechercher" v-model="recherche"></el-input>
+                <el-input class="input-search" suffix-icon="search" placeholder="Rechercher" v-model="recherche"></el-input>
             </el-col>
         </el-row>
 

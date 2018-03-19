@@ -14,7 +14,7 @@
 
         <el-dialog :summary="this.summary" :visible.sync="dialogFormVisible">
 
-            <el-form :model="form" :rules="rules" label-position="top" ref="form">
+            <el-form :model="form" :rules="rules" label-position="left" ref="form">
 
                 <!-- ************************************************************* -->
                 <!--                            SOCIETE                            -->
@@ -105,10 +105,10 @@
             </el-form>
 
             <span slot="footer" class="dialog-footer">
-                <el-button type="danger" icon="delete" class="trashbin" @click="deleteClient"></el-button>
+                <el-button type="danger" icon="el-icon-delete" class="trashbin" @click="deleteClient"></el-button>
                 <el-button v-if="client" type="primary" @click="updateClient">Enregistrer</el-button>
                 <el-button v-else type="primary" @click="createClient">Créer</el-button>
-                <el-button @click="dialogFormVisible = false">Annuler</el-button>
+                <el-button @click="!dialogFormVisible">Annuler</el-button>
             </span>
         </el-dialog>
     </div>
@@ -117,6 +117,7 @@
 <script>
   import {ClientResource} from '../../../resource/ClientResource'
   import AdresseAutoComplete from './AdresseAutoComplete.vue'
+  import Constants from '../../../bean/Constants'
 
   export default {
     name: 'clientForm',
@@ -152,6 +153,7 @@
         summary: '',
         error: null,
         dialogFormVisible: false,
+        labelPosition: Constants.formLabelPosition,
         form: {
           civilite: '',
           nom: '',

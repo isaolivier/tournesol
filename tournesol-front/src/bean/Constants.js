@@ -2,6 +2,7 @@
  * Created by draluy on 03/07/2017.
  */
 export default {
+  formLabelPosition: 'top',
   tournee: {
     hourInterval: 100 // nb d'intervalles en px entre 2 heures
   },
