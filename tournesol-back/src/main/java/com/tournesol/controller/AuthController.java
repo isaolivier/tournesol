@@ -39,12 +39,15 @@ public class AuthController {
 
     @CrossOrigin
     @PostMapping("/auth")
-    public ResponseEntity<?> auth(@RequestBody AuthInfo authInfo) throws FileNotFoundException, IOException {
+    public ResponseEntity<?> auth(@RequestBody AuthInfo authInfo) throws Exception {
+
         LOGGER.debug("#### auth #####");
         LOGGER.debug(authInfo.toString());
         LOGGER.debug("Generating UID");
+
         String UID = authSvc.generateUID(authInfo);
         Credential creds = null;
+
         if (!StringUtils.isEmpty(authInfo.getUID()) && !UID.equals(authInfo.getUID())) {
             LOGGER.error("UID mismatch - possible break in attempt");
         } else {
@@ -53,6 +56,7 @@ public class AuthController {
             LOGGER.debug("Acquiring credentials");
             creds = authSvc.getCreds(authInfo);
         }
+
         LOGGER.debug(String.format("creds %s", creds));
         authInfo.setAuthcode(null);
         return new ResponseEntity<>(authInfo, creds != null ? HttpStatus.OK : HttpStatus.INTERNAL_SERVER_ERROR);
@@ -61,7 +65,9 @@ public class AuthController {
     @CrossOrigin
     @PostMapping("/isSessionAlive")
     public ResponseEntity<Boolean> isSessionAlive(@RequestBody AuthInfo authInfo) {
+
         LOGGER.debug("#### isSessionAlive #####");
+
         boolean isSessionAlive = authSvc.isSessionAlive(authInfo);
         ResponseEntity<Boolean> resp = new ResponseEntity<>(isSessionAlive, HttpStatus.OK);
         return resp;
@@ -70,10 +76,13 @@ public class AuthController {
     @CrossOrigin
     @PostMapping("/fetchCal")
     public ResponseEntity<?> fetchCal(@RequestBody AuthInfo authInfo) {
+
         LOGGER.debug("#### fetchCal #####");
         LOGGER.debug(authInfo.toString());
+
         Credential creds = authSvc.getCreds(authInfo);
         CalendarList calendars = calSvc.fetchCalendars(creds);
+
         return new ResponseEntity<>(calendars, calendars != null ? HttpStatus.OK : HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
