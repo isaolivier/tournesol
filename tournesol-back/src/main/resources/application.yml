@@ -28,11 +28,4 @@ logging:
 google:
   apiKey: AIzaSyA2HDavbEKSxA9BZNvpdmbqycQNjO2-y3c
 
-spring:
-  profiles: proxy
-proxy:
-  host: zscaler-paris.pj.fr
-  port: 80
-
-
 

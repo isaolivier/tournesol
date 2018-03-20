@@ -1,0 +1,6 @@
+proxy:
+  host: zscaler-paris.pj.fr
+  port: 80
+
+
+
